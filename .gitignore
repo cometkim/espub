@@ -1,0 +1,15 @@
+.DS_Store
+*.log
+*.tsbuildinfo
+
+node_modules/
+
+/bin.mjs
+
+.yarn/*
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+.pnp.*
