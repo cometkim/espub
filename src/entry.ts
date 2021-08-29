@@ -33,6 +33,12 @@ export function getEntriesFromConfig(config: Config, {
     if (!sourceFile) {
       return;
     }
+
+    if (key.includes('*') || path.includes('*')) {
+      reporter.warn(`Ignoring ${key}: subpath pattern(\`*\`) is not supported`);
+      return;
+    }
+
     const entry = entryMap.get(path);
     if (entry && (entry.platform !== platform || entry.module !== module)) {
       reporter.warn(`
