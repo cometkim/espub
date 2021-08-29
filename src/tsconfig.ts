@@ -1,6 +1,5 @@
-import * as ts from 'typescript';
-import * as path from 'path';
-import * as fs from 'fs/promises';
+import * as fs from 'node:fs/promises';
+import ts from 'typescript';
 
 export type TsConfig = {
   compilerOptions?: {
@@ -10,20 +9,29 @@ export type TsConfig = {
 };
 
 type LoadTsConfigOptions = {
+  tsconfigPath: string,
   basePath: string,
-  incremental: boolean,
 };
 
 export async function loadTsConfig({
+  tsconfigPath,
   basePath,
-  incremental,
-}: LoadTsConfigOptions): Promise<TsConfig> {
+}: LoadTsConfigOptions): Promise<TsConfig | null> {
   const configPath = ts.findConfigFile(
     basePath,
     ts.sys.fileExists,
-    'tsconfig.json',
+    tsconfigPath,
   );
 
   if (!configPath) {
+    return null;
+  }
+
+  try {
+    const tsconfig = await fs.readFile(configPath, 'utf8')
+      .then(JSON.parse) as TsConfig
+    return tsconfig;
+  } catch {
+    return null;
   }
 }

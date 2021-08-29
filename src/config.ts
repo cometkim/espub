@@ -1,13 +1,21 @@
-import * as path from 'path';
-import * as fs from 'fs/promises';
+import * as path from 'node:path';
+import * as fs from 'node:fs/promises';
 
 export type Config = {
+  type?: string,
+
+  /**
+   * Source file for the `main`, `module`, and `exports` entry
+   */
   source?: string,
 
   main?: string,
   module?: string,
+
+  // Main type declaration path
   types?: string,
 
+  // Import maps
   imports?: {
     [module: string]: string | {
       default?: string,
@@ -15,6 +23,7 @@ export type Config = {
     },
   },
 
+  // Export maps
   exports?: string | {
     [module: string]: string | {
       default?: string,
@@ -22,6 +31,14 @@ export type Config = {
       require?: string,
       import?: string,
     },
+  },
+
+  dependencies?: {
+    [name: string]: string,
+  },
+
+  peerDependencies?: {
+    [name: string]: string,
   },
 
   browserslist?: string | string[],

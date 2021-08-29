@@ -1,6 +1,6 @@
 # nanobundle
 
-Yet another zero-configuration bundler for tiny modules, powered by [esbuild]
+Yet another bundler for tiny modules, powered by [esbuild]
 
 Thanks to [microbundle] for saving my days, but we can save even more days with [esbuild]!
 
@@ -19,10 +19,10 @@ Thanks to [microbundle] for saving my days, but we can save even more days with 
    {
      "name": "your-package-name",
 
-     "source": "src/foo.ts",        // required, the entry source file
+     "source": "./src/foo.ts",        // required, the entry source file
+
      "module": "./dist/foo.mjs",    // where to generate the ESM bundle
      "main": "./dist/foo.cjs",      // where to generate the main entry (CommonJS by default, or ESM if `"type": "module"` and not `*.cjs`)
-     "bin": "./dist/foo.cjs",       // where to generate the binary entry (CommonJS by default, or ESM if `"type": "module"` and not `*.cjs`)
 
      "imports": {                   // import maps for modules/paths alias
        // ...
@@ -43,23 +43,23 @@ Thanks to [microbundle] for saving my days, but we can save even more days with 
 
 ## Usage & Configuration
 
-This is inspired by microbundle, but more daring to try to remove the configuration much as possible. I believe the `package.json` today is huge enough and already contains most of the configuration for common modules.
+nanobundle is heavily inspired by [microbundle], but more daring to try to remove the configuration much as possible. I believe the `package.json` today is complex enough and already contains most of the configuration for common module use cases.
 
-Most of the options depend on features already supported by esbuild.
+So attempting to turn users' attention back to the [Node's package spec](https://nodejs.org/api/packages.html) and some meaningful proposals like [ES Modules](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules) and [Import maps] which are already supported and highly recommended by Node.js, rather than some other custom tooling.
 
 ### Build targets
 
 **nanobundle expects you to write a Web-compatible package. If you use the Node.js API, you need to tell it explicitly.**
 
 When is build target set to Node.js:
-- If you use entry point with `.cjs` extension
+- If you use entry point with `.cjs` or `.node` extension
 - If you specify Node.js version in `package.json`
 
 Otherwise, it is assumed to be Web target.
 
 #### Node.js target
 
-If you specify the Node.js version via `engines` in your `package.json`, the build target is automatically set to that node version.
+If you specify the Node.js version via `engines` in your `package.json`, the default build target is automatically set to that node version.
 
 ```jsonc
 {
@@ -69,11 +69,11 @@ If you specify the Node.js version via `engines` in your `package.json`, the bui
 }
 ```
 
-For cjs entry points set Node v14 by default.
+For commonjs entry points set Node v14 by default.
 
 ### Import Map
 
-nanobundle supports [import maps](https://github.com/WICG/import-maps)!
+nanobundle supports [Import maps]
 
 You can specify import alias by your `package.json`, or by a separated json file with the `--import-map` option.
 
@@ -96,18 +96,17 @@ You can specify import alias by your `package.json`, or by a separated json file
 
 You can specify multiple/conditional entry points in your `package.json`.
 
-See [Node.js docs](https://nodejs.org/api/packages.html#packages_package_entry_points) for more detail
+See [Node.js docs](https://nodejs.org/api/packages.html#packages_package_entry_points) for more detail.
 
 ```jsonc
 {
+  "type": "module",
   "main": "./main.js",
   "exports": {
     ".": "./main.js",
     "./feature": {
-      "default": "./feature.mjs",
-      "import": "./feature.mjs",
-      "require": "./feature.cjs",
-      "node": "./feature.cjs"
+      "default": "./feature.js",
+      "node": "./feature-node.js"
     }
   }
 }
@@ -124,7 +123,7 @@ You can specify `declarationDir` in your tsconfig, or nanobundle infer the dir f
 ## Alternatives
 
 - [microbundle] : Rollup wrapper that provides similar concept
-- [esbuild] : This is a simple esbuild wrapper so you can get similar results with just esbuild alone.
+- [esbuild] : This is a simple esbuild wrapper so you can get similar results with just esbuild alone
 - [estrella] : Build tool based on esbuild
 - [tsup] : Zero-config bundler based on esbuild
 
@@ -132,6 +131,7 @@ You can specify `declarationDir` in your tsconfig, or nanobundle infer the dir f
 
 MIT
 
+[Import maps]: (https://wicg.github.io/import-maps/)
 [esbuild]: https://esbuild.github.io/
 [microbundle]: https://github.com/developit/microbundle
 [estrella]: https://github.com/rsms/estrella

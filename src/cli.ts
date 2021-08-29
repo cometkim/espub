@@ -4,7 +4,7 @@ import meow from 'meow';
 
 export const cli = meow(`
 Usage
-  $ nanobundle <command> [options]
+  $ nanobundle <command> [input] [options]
 
 Available Commands
   build    Build once and exit
@@ -14,9 +14,9 @@ Options
   --version          Displays current version
   --cwd              Use an alternative working directory
   --tsconfig         Specify the path to a custom tsconfig.json
-  --import-map       Specify import map file path  (default \`imports\` in package.json)
-  --external         Specify external dependencies (default \`peerDependencies\` and \`dependencies\` in package.json)
-  --compress         Compress output (default: true)
+  --import-map       Specify import map file path  (default: package.json)
+  --external         Specify external dependencies (default: \`peerDependencies\` and \`dependencies\` in package.json)
+  --minify           Minify output (default: true)
   --sourcemap        Generate source map (default true)
   --help             Displays this message
 
@@ -41,7 +41,7 @@ Examples
       isMultiple: true,
       default: [],
     },
-    compress: {
+    minify: {
       type: 'boolean',
       default: true,
     },

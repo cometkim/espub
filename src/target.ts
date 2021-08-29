@@ -9,10 +9,11 @@ function isSupported(platform: string): platform is SupportedPlatform {
 
 type LoadTargetOptions = {
   basePath: string,
+  query?: string,
 };
 
-export function loadTargets(options: LoadTargetOptions): string[] {
-  const baseTargets = browserslist(undefined, {
+export async function loadTargets(options: LoadTargetOptions): Promise<string[]> {
+  const baseTargets = browserslist(options.query, {
     path: options.basePath,
   });
 
@@ -32,6 +33,6 @@ export function loadTargets(options: LoadTargetOptions): string[] {
     }
   }
 
-  return [...targetVersions.entries()]
+  return Array.from(targetVersions.entries())
     .map(([platform, version]) => platform + version);
 }

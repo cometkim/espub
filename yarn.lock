@@ -39,10 +39,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^16.7.0":
-  version: 16.7.0
-  resolution: "@types/node@npm:16.7.0"
-  checksum: 8fa8e04a12a09ce6fe89a20bc304489b88734395d4b1bce7885e74d3f630e5eac55be301555330648f48061326b0ae79d27abf9affb74ae287658560147688dd
+"@types/node@npm:^16.7.6":
+  version: 16.7.6
+  resolution: "@types/node@npm:16.7.6"
+  checksum: a8533386a1d4ca0ed67885413001af8789c63948df288f3d36e31bd8fccffacf5dffb95e190c8cd57bb40385f010fb9a30f596bad6bb26b2bb88737d54d8ed95
   languageName: node
   linkType: hard
 
@@ -184,12 +184,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild@npm:^0.12.21":
-  version: 0.12.21
-  resolution: "esbuild@npm:0.12.21"
+"esbuild@npm:^0.12.24":
+  version: 0.12.24
+  resolution: "esbuild@npm:0.12.24"
   bin:
     esbuild: bin/esbuild
-  checksum: c33c98e60c2c154553b6751864284b3b281ac5ef98008a16921e8540ea7c9c383c0aa04216838d47b1b6281f94f9897ef83a3ec53e20b423b4f75bcf8259aab2
+  checksum: 3bb0e48d51ca87506730f9c0dc946c121680439d43dfc89ee9a22117c6d79d0124192b05d113627d1229e31b7e82e463599e48c45ce0572f0099287666e16b16
   languageName: node
   linkType: hard
 
@@ -384,23 +384,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mri@npm:^1.1.5":
-  version: 1.1.6
-  resolution: "mri@npm:1.1.6"
-  checksum: c568269a40e2e95d48f28b88ab8b24bdc7c586edbfbb3e5ce7a4e3cee0665aef673b86bc2b63c98289d29b573a39d0e054924e415286a8dafdabfc68785746c7
-  languageName: node
-  linkType: hard
-
 "nanobundle@workspace:.":
   version: 0.0.0-use.local
   resolution: "nanobundle@workspace:."
   dependencies:
-    "@types/node": ^16.7.0
+    "@types/node": ^16.7.6
     browserslist: ^4.16.8
-    esbuild: ^0.12.21
+    esbuild: ^0.12.24
     meow: ^10.1.1
-    typescript: ^4.3.5
-    watchlist: ^0.2.3
+    pretty-bytes: ^5.6.0
+    typescript: ^4.4.2
+  peerDependencies:
+    typescript: ">=4.0.0"
+  peerDependenciesMeta:
+    typescript:
+      optional: true
   bin:
     nanobundle: ./bin.mjs
   languageName: unknown
@@ -459,6 +457,13 @@ __metadata:
   version: 4.0.0
   resolution: "path-exists@npm:4.0.0"
   checksum: 505807199dfb7c50737b057dd8d351b82c033029ab94cb10a657609e00c1bc53b951cfdbccab8de04c5584d5eff31128ce6afd3db79281874a5ef2adbba55ed1
+  languageName: node
+  linkType: hard
+
+"pretty-bytes@npm:^5.6.0":
+  version: 5.6.0
+  resolution: "pretty-bytes@npm:5.6.0"
+  checksum: 9c082500d1e93434b5b291bd651662936b8bd6204ec9fa17d563116a192d6d86b98f6d328526b4e8d783c07d5499e2614a807520249692da9ec81564b2f439cd
   languageName: node
   linkType: hard
 
@@ -579,23 +584,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-typescript@^4.3.5:
-  version: 4.3.5
-  resolution: "typescript@npm:4.3.5"
+typescript@^4.4.2:
+  version: 4.4.2
+  resolution: "typescript@npm:4.4.2"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: bab033b5e2b0790dd35b77fd005df976ef80b8d84fd2c6e63cc31808151875beae9216e5a315fe7068e8499905c3c354248fe83272cdfc13b7705635f0c66c97
+  checksum: 194e08e9d1971d667d6fd1a0554616b7022312a2319d70e81a64e502a265992061ee7817ed9a69b52bbabe7a9b85e7938cb8c11c433e40a516b277f8c4dacd51
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^4.3.5#~builtin<compat/typescript>":
-  version: 4.3.5
-  resolution: "typescript@patch:typescript@npm%3A4.3.5#~builtin<compat/typescript>::version=4.3.5&hash=d8b4e7"
+"typescript@patch:typescript@^4.4.2#~builtin<compat/typescript>":
+  version: 4.4.2
+  resolution: "typescript@patch:typescript@npm%3A4.4.2#~builtin<compat/typescript>::version=4.4.2&hash=d8b4e7"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: bc2c4fdf0f1557fdafe4ef74848c72ebd9c8c60829568248f869121aea2bb20e16649a252431d0acb185ec118143be22bed73d08f64379557810d82756afedde
+  checksum: 11d6ab6e868117908c388401e2ac06d503c5c8709115ab80ee69a1a6352c1f98471d1e595636bfe6a2d6b20b03a44df6bb2d3d198cea97c0c328968cd18d2b70
   languageName: node
   linkType: hard
 
@@ -606,17 +611,6 @@ typescript@^4.3.5:
     spdx-correct: ^3.0.0
     spdx-expression-parse: ^3.0.0
   checksum: 35703ac889d419cf2aceef63daeadbe4e77227c39ab6287eeb6c1b36a746b364f50ba22e88591f5d017bc54685d8137bc2d328d0a896e4d3fd22093c0f32a9ad
-  languageName: node
-  linkType: hard
-
-"watchlist@npm:^0.2.3":
-  version: 0.2.3
-  resolution: "watchlist@npm:0.2.3"
-  dependencies:
-    mri: ^1.1.5
-  bin:
-    watchlist: bin.js
-  checksum: 2292af60762d7fe6c9246b1854554dd5c01eb693a4a96800bd99b719bc67fe3bc1dba02af4f77eb19f802b8f9c9404667c0bf0e75f96db6fcbcc878733c60ca0
   languageName: node
   linkType: hard
 
