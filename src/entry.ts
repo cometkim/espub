@@ -115,6 +115,10 @@ Conflict found for ${path}
         }
       }
     }
+  } else {
+    reporter.warn(`Using "exports" field is highly recommended.
+See https://nodejs.org/api/packages.html for more detail.
+`);
   }
 
   return Array.from(entryMap.values());
