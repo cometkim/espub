@@ -3,6 +3,7 @@
 import { performance } from 'node:perf_hooks';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
+import * as ts from 'typescript';
 import { cli } from './cli';
 import { loadConfig } from './config';
 import { loadTargets } from './target';
@@ -39,6 +40,12 @@ switch (command) {
       throw new Error('`"source"` field must be specified in the package.json');
     }
 
+    const tsconfig = ts.findConfigFile(
+      basePath,
+      ts.sys.fileExists,
+      flags.tsconfig,
+    );
+
     const targets = await loadTargets({ basePath });
 
     const entries = getEntriesFromConfig(config, {
@@ -57,6 +64,7 @@ switch (command) {
       sourceFile,
       entries,
       targets,
+      tsconfig,
       externalDependencies,
       minify: flags.minify,
       sourcemap: flags.sourcemap,
@@ -64,7 +72,9 @@ switch (command) {
 
     const endedAt = performance.now();
     const elapsedTime = endedAt - startedAt;
-    reporter.info(`\n⚡ Done in ${(elapsedTime).toFixed(1)}ms.`);
+    reporter.info(`
+⚡ Done in ${(elapsedTime).toFixed(1)}ms.
+`);
 
     break;
   }
