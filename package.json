@@ -13,6 +13,7 @@
     "email": "hey@hyeseong.kim"
   },
   "scripts": {
+    "prepack": "yarn build",
     "build": "esbuild src/bin.ts --bundle --minify --format=esm --platform=node --target=node14.8 --outfile=bin.mjs --external:meow --external:esbuild --external:browserslist --external:typescript"
   },
   "files": [
