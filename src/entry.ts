@@ -51,6 +51,9 @@ Conflict found for ${path}
 
   (ignored) ${key}
   { module: "${module}", platform: "${platform}" }
+
+Did you forget to specify the Node.js version in the "engines" field?
+Or you may not need to specify "require" or "node" entries.
 `);
       return;
     }
