@@ -1,6 +1,6 @@
 import browserslist from 'browserslist';
 
-const supportedPlatforms = ['chrome', 'firefox', 'safari', 'edge', 'node'] as const;
+const supportedPlatforms = ['chrome', 'firefox', 'safari', 'edge', 'node', 'deno'] as const;
 type SupportedPlatform = typeof supportedPlatforms[number];
 
 function isSupported(platform: string): platform is SupportedPlatform {
