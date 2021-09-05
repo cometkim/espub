@@ -48,21 +48,33 @@ export async function buildCommand({
   };
 
   const build = entries.map(async entry => {
+    const outfile = entry.outputFile;
+    const format = entry.module === 'commonjs' ? 'cjs' : 'esm';
     if (entry.platform === 'node') {
+      const nodeTargets = targets
+        .filter(target => target.startsWith('node'));
+
+      if (nodeTargets.length === 0) {
+        nodeTargets.push('node14');
+      }
+
       return [entry, await esbuild.build({
         ...defaultBuildOptions,
+        outfile,
+        format,
         platform: 'node',
-        format: entry.module === 'commonjs' ? 'cjs' : 'esm',
-        outfile: entry.outputFile,
-        target: targets.filter(target => target.startsWith('node')),
+        target: nodeTargets,
       })] as const;
     } else {
+      const webTargets = targets
+        .filter(target => !target.startsWith('node'));
+
       return [entry, await esbuild.build({
         ...defaultBuildOptions,
-        outfile: entry.outputFile,
+        outfile,
+        format,
         platform: 'neutral',
-        format: entry.module === 'commonjs' ? 'cjs' : 'esm',
-        target: targets.filter(target => !target.startsWith('node')),
+        target: webTargets,
       })] as const;
     }
   });
