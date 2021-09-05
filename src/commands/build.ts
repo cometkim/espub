@@ -103,6 +103,7 @@ export async function buildCommand({
     }
   } catch (error) {
     reporter.error(error);
+    return 1;
   }
 
   return 0;
