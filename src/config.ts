@@ -2,6 +2,8 @@ import * as path from 'node:path';
 import * as fs from 'node:fs/promises';
 
 export type Config = {
+  name?: string,
+
   type?: string,
 
   /**

@@ -14,9 +14,12 @@ import { buildCommand } from './commands/build';
 const { flags, input } = cli;
 const [command] = input;
 
+const noop = () => {};
+const debugEnabled = process.env.DEBUG === 'true';
 const basePath = flags.cwd;
 
 const reporter: Reporter = {
+  debug: debugEnabled ? console.log : noop,
   info: console.log,
   warn: console.warn,
   error: console.error,
@@ -40,13 +43,20 @@ switch (command) {
       throw new Error('`"source"` field must be specified in the package.json');
     }
 
+    reporter.debug(`build ${config.name || 'unnamed'} package`);
+    reporter.debug(`load source from ${sourceFile}`);
+
     const tsconfig = ts.findConfigFile(
       basePath,
       ts.sys.fileExists,
       flags.tsconfig,
     );
+    if (tsconfig) {
+      reporter.debug(`load tsconfig from ${tsconfig}`);
+    }
 
     const targets = await loadTargets({ basePath });
+    reporter.debug(`targets to ${targets.join(', ')}`);
 
     const entries = getEntriesFromConfig(config, {
       sourceFile,
