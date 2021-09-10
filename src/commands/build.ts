@@ -87,6 +87,11 @@ export async function buildCommand({
       for (const error of result.errors) {
         reporter.error(error.text);
       }
+      if (result.errors.length > 0) {
+        reporter.error('Failed to build.');
+        return 1;
+      }
+
       for (const warning of result.warnings) {
         reporter.warn(warning.text);
       }
