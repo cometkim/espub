@@ -1,5 +1,6 @@
 import * as path from 'node:path';
 import * as fs from 'node:fs/promises';
+import type { NodeImportMaps } from './importMaps';
 
 export type Config = {
   name?: string,
@@ -18,12 +19,7 @@ export type Config = {
   types?: string,
 
   // Import maps
-  imports?: {
-    [module: string]: string | {
-      default?: string,
-      node?: string,
-    },
-  },
+  imports?: Partial<NodeImportMaps>,
 
   // Export maps
   exports?: string | {
