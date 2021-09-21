@@ -19,9 +19,11 @@ export function makePlugin({
     setup(build) {
       build.onResolve({ filter: /.*/ }, args => {
         if (imports[args.path]) {
-          const resolvedPath = resolvePath(imports[args.path]);
+          const modulePath = imports[args.path];
+          const resolvedPath = resolvePath(modulePath);
+          const external = isExternalPath(resolvedPath);
           return {
-            path: resolvedPath,
+            path: external ? modulePath : resolvedPath,
             external: isExternalPath(resolvedPath),
           };
         }
@@ -30,10 +32,12 @@ export function makePlugin({
             continue;
           }
           if (args.path.startsWith(fromPrefix)) {
-            const resolvedPath = resolvePath(args.path.replace(fromPrefix, toPrefix));
+            const modulePath = args.path.replace(fromPrefix, toPrefix);
+            const resolvedPath = resolvePath(modulePath);
+            const external = isExternalPath(resolvedPath);
             return {
-              path: resolvedPath,
-              external: isExternalPath(resolvedPath),
+              path: external ? modulePath : resolvedPath,
+              external,
             };
           }
         }
