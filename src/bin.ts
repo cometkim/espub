@@ -14,114 +14,109 @@ import { buildCommand } from './commands/build';
 
 const { flags, input } = cli;
 const [command] = input;
-
 const noop = () => {};
 const debugEnabled = process.env.DEBUG === 'true';
 const basePath = flags.cwd;
-
 const reporter: Reporter = {
   debug: debugEnabled ? console.debug : noop,
   info: console.info,
   warn: console.warn,
   error: console.error,
 };
-
 const resolvePath = (file: string) => path.resolve(basePath, file);
 
-let exitCode = 0;
-
-switch (command) {
-  case undefined: {
-    cli.showHelp(0);
-  }
-
-  case 'build': {
-    const startedAt = performance.now();
-
-    const config = await loadConfig({ resolvePath });
-    const sourceFile = config.source && resolvePath(config.source);
-    if (!sourceFile || !fs.existsSync(sourceFile)) {
-      throw new Error('`"source"` field must be specified in the package.json');
+try {
+  switch (command) {
+    case undefined: {
+      cli.showHelp(0);
     }
 
-    reporter.debug(`build ${config.name || 'unnamed'} package`);
-    reporter.debug(`load source from ${sourceFile}`);
+    case 'build': {
+      const startedAt = performance.now();
 
-    const importMaps = await loadImportMaps(
-      flags.importMaps,
-      { resolvePath },
-    );
-    const webImportMaps = validateImportMaps(
-      normalizeImportMaps(importMaps, 'web'),
-      { resolvePath },
-    );
-    const nodeImportMaps = validateImportMaps(
-      normalizeImportMaps(importMaps, 'node'),
-      { resolvePath },
-    );
+      const config = await loadConfig({ resolvePath });
+      const sourceFile = config.source && resolvePath(config.source);
+      if (!sourceFile || !fs.existsSync(sourceFile)) {
+        throw new Error('`"source"` field must be specified in the package.json');
+      }
 
-    const tsconfig = ts.findConfigFile(
-      basePath,
-      ts.sys.fileExists,
-      flags.tsconfig,
-    );
-    if (tsconfig) {
-      reporter.debug(`load tsconfig from ${tsconfig}`);
+      reporter.debug(`build ${config.name || 'unnamed'} package`);
+      reporter.debug(`load source from ${sourceFile}`);
+
+      const importMaps = await loadImportMaps(
+        flags.importMaps,
+        { resolvePath },
+      );
+      const webImportMaps = validateImportMaps(
+        normalizeImportMaps(importMaps, 'web'),
+        { resolvePath },
+      );
+      const nodeImportMaps = validateImportMaps(
+        normalizeImportMaps(importMaps, 'node'),
+        { resolvePath },
+      );
+
+      const tsconfig = ts.findConfigFile(
+        basePath,
+        ts.sys.fileExists,
+        flags.tsconfig,
+      );
+      if (tsconfig) {
+        reporter.debug(`load tsconfig from ${tsconfig}`);
+      }
+
+      const targets = await loadTargets({ basePath });
+      reporter.debug(`targets to ${targets.join(', ')}`);
+
+      const entries = getEntriesFromConfig(config, {
+        sourceFile,
+        reporter,
+        resolvePath,
+      });
+
+      const externalDependencies = [
+        ...(config.dependencies ? Object.keys(config.dependencies) : []),
+        ...(config.peerDependencies ? Object.keys(config.peerDependencies) : []),
+      ];
+
+      await buildCommand({
+        reporter,
+        sourceFile,
+        entries,
+        targets,
+        tsconfig,
+        externalDependencies,
+        resolvePath,
+        minify: flags.minify,
+        sourcemap: flags.sourcemap,
+        imports: {
+          web: webImportMaps.imports,
+          node: nodeImportMaps.imports,
+        },
+      });
+
+      const endedAt = performance.now();
+      const elapsedTime = endedAt - startedAt;
+      reporter.info(`
+  ⚡ Done in ${(elapsedTime).toFixed(1)}ms.
+  `);
+
+      break;
     }
 
-    const targets = await loadTargets({ basePath });
-    reporter.debug(`targets to ${targets.join(', ')}`);
+    case 'watch': {
+      throw new Error('sorry, not implemeted yet');
+    }
 
-    const entries = getEntriesFromConfig(config, {
-      sourceFile,
-      reporter,
-      resolvePath,
-    });
+    default: {
+      throw new Error(`
+    Command "${command}" is not available.
 
-    const externalDependencies = [
-      ...(config.dependencies ? Object.keys(config.dependencies) : []),
-      ...(config.peerDependencies ? Object.keys(config.peerDependencies) : []),
-    ];
-
-    exitCode = await buildCommand({
-      reporter,
-      sourceFile,
-      entries,
-      targets,
-      tsconfig,
-      externalDependencies,
-      resolvePath,
-      minify: flags.minify,
-      sourcemap: flags.sourcemap,
-      imports: {
-        web: webImportMaps.imports,
-        node: nodeImportMaps.imports,
-      },
-    })
-
-    const endedAt = performance.now();
-    const elapsedTime = endedAt - startedAt;
-    reporter.info(`
-⚡ Done in ${(elapsedTime).toFixed(1)}ms.
-`);
-
-    break;
+    Run \`nanobundle --help\` for more detail.`,
+      );
+    }
   }
-
-  case 'watch': {
-    reporter.error('sorry, not implemeted yet');
-    exitCode = 1;
-    break;
-  }
-
-  default: {
-    reporter.error(`
-  Command "${command}" is not available.
-
-  Run \`nanobundle --help\` for more detail.`,
-    );
-    exitCode = 1;
-  }
+} catch (error) {
+  reporter.error(error);
+  process.exit(1);
 }
-
-process.exit(exitCode);

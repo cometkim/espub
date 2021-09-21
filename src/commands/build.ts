@@ -43,7 +43,7 @@ export async function buildCommand({
   tsconfig,
   resolvePath,
   imports = {},
-}: BuildCommandOptions): Promise<number> {
+}: BuildCommandOptions): Promise<void> {
   const defaultBuildOptions: BuildOptions = {
     bundle: true,
     write: false,
@@ -96,49 +96,41 @@ export async function buildCommand({
     }
   });
 
-  try {
-    const results = await Promise.all(build);
-    reporter.info('📦 Build info:');
+  const results = await Promise.all(build);
+  reporter.info('📦 Build info:');
 
-    for (const [entry, result] of results) {
-      for (const error of result.errors) {
-        reporter.error(error.text);
-      }
-      if (result.errors.length > 0) {
-        reporter.error('Failed to build.');
-        return 1;
-      }
+  for (const [entry, result] of results) {
+    for (const error of result.errors) {
+      reporter.error(error.text);
+    }
+    if (result.errors.length > 0) {
+      throw new Error('Failed to build');
+    }
 
-      for (const warning of result.warnings) {
-        reporter.warn(warning.text);
-      }
+    for (const warning of result.warnings) {
+      reporter.warn(warning.text);
+    }
 
-      for (const outputFile of result.outputFiles || []) {
-        const dirname = path.dirname(outputFile.path);
-        await fs.mkdir(dirname, { recursive: true });
+    for (const outputFile of result.outputFiles || []) {
+      const dirname = path.dirname(outputFile.path);
+      await fs.mkdir(dirname, { recursive: true });
 
-        await fs.writeFile(outputFile.path, outputFile.contents, 'utf8');
+      await fs.writeFile(outputFile.path, outputFile.contents, 'utf8');
 
-        if (!outputFile.path.endsWith('.map')) {
-          const [
-            gzipped,
-            brotlied,
-          ] = await Promise.all([
-            gzip(outputFile.contents),
-            brotli(outputFile.contents),
-          ]);
-          reporter.info(`
-  ${formatModule(entry.module)} entry ${entry.path}${entry.platform === 'node' ? ' for Node.js' : ''}
-    size      : ${prettyBytes(outputFile.contents.length)}
-    size (gz) : ${prettyBytes(gzipped.byteLength)}
-    size (br) : ${prettyBytes(brotlied.byteLength)}`);
-        }
+      if (!outputFile.path.endsWith('.map')) {
+        const [
+          gzipped,
+          brotlied,
+        ] = await Promise.all([
+          gzip(outputFile.contents),
+          brotli(outputFile.contents),
+        ]);
+        reporter.info(`
+${formatModule(entry.module)} entry ${entry.path}${entry.platform === 'node' ? ' for Node.js' : ''}
+  size      : ${prettyBytes(outputFile.contents.length)}
+  size (gz) : ${prettyBytes(gzipped.byteLength)}
+  size (br) : ${prettyBytes(brotlied.byteLength)}`);
       }
     }
-  } catch (error) {
-    reporter.error(error);
-    return 1;
   }
-
-  return 0;
 }
