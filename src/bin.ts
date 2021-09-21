@@ -4,10 +4,11 @@ import { performance } from 'node:perf_hooks';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import ts from 'typescript';
+import type { Reporter } from './report';
 import { cli } from './cli';
 import { loadConfig } from './config';
 import { loadTargets } from './target';
-import type { Reporter } from './report';
+import { loadImportMaps, normalizeImportMaps } from './importMaps';
 import { getEntriesFromConfig } from './entry';
 import { buildCommand } from './commands/build';
 
@@ -19,13 +20,13 @@ const debugEnabled = process.env.DEBUG === 'true';
 const basePath = flags.cwd;
 
 const reporter: Reporter = {
-  debug: debugEnabled ? console.log : noop,
-  info: console.log,
+  debug: debugEnabled ? console.debug : noop,
+  info: console.info,
   warn: console.warn,
   error: console.error,
 };
 
-const resolver = (file: string) => path.resolve(basePath, file);
+const resolvePath = (file: string) => path.resolve(basePath, file);
 
 let exitCode = 0;
 
@@ -37,14 +38,19 @@ switch (command) {
   case 'build': {
     const startedAt = performance.now();
 
-    const config = await loadConfig({ basePath });
-    const sourceFile = config.source && resolver(config.source);
+    const config = await loadConfig({ resolvePath });
+    const sourceFile = config.source && resolvePath(config.source);
     if (!sourceFile || !fs.existsSync(sourceFile)) {
       throw new Error('`"source"` field must be specified in the package.json');
     }
 
     reporter.debug(`build ${config.name || 'unnamed'} package`);
     reporter.debug(`load source from ${sourceFile}`);
+
+    const importMaps = await loadImportMaps({
+      resolvePath,
+      filePath: flags.importMap,
+    });
 
     const tsconfig = ts.findConfigFile(
       basePath,
@@ -61,7 +67,7 @@ switch (command) {
     const entries = getEntriesFromConfig(config, {
       sourceFile,
       reporter,
-      resolvePath: resolver,
+      resolvePath,
     });
 
     const externalDependencies = [
@@ -78,6 +84,10 @@ switch (command) {
       externalDependencies,
       minify: flags.minify,
       sourcemap: flags.sourcemap,
+      imports: {
+        web: normalizeImportMaps(importMaps, 'web').imports,
+        node: normalizeImportMaps(importMaps, 'node').imports,
+      },
     })
 
     const endedAt = performance.now();

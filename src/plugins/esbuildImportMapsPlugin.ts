@@ -13,6 +13,9 @@ export function makePlugin(name: string, imports: Imports): Plugin {
           };
         }
         for (const [fromPrefix, toPrefix] of Object.entries(imports)) {
+          if (!fromPrefix.endsWith('/')) {
+            continue;
+          }
           if (args.path.startsWith(fromPrefix)) {
             return {
               path: args.path.replace(fromPrefix, toPrefix),

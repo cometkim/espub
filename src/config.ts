@@ -1,6 +1,4 @@
-import * as path from 'node:path';
 import * as fs from 'node:fs/promises';
-import type { NodeImportMaps } from './importMaps';
 
 export type Config = {
   name?: string,
@@ -17,9 +15,6 @@ export type Config = {
 
   // Main type declaration path
   types?: string,
-
-  // Import maps
-  imports?: Partial<NodeImportMaps>,
 
   // Export maps
   exports?: string | {
@@ -51,11 +46,11 @@ type ConfigWithOverride = Config & {
 };
 
 type LoadConfigOptions = {
-  basePath: string,
+  resolvePath: (path: string) => string,
 };
 
-export async function loadConfig(options: LoadConfigOptions): Promise<Config> {
-  const configPath = path.resolve(options.basePath, 'package.json');
+export async function loadConfig({ resolvePath }: LoadConfigOptions): Promise<Config> {
+  const configPath = resolvePath('package.json');
 
   const { publishConfig, ...config } = await fs.readFile(configPath, 'utf-8')
     .then(JSON.parse) as ConfigWithOverride;
