@@ -40,12 +40,10 @@ export function normalizeImportMaps(
 }
 
 type LoadImportMapsOptions = {
-  filePath: string,
   resolvePath: (path: string) => string,
 }
 
-export async function loadImportMaps({
-  filePath,
+export async function loadImportMaps(filePath: string, {
   resolvePath,
 }: LoadImportMapsOptions): Promise<NodeImportMaps> {
   const importMapsPath = resolvePath(filePath);

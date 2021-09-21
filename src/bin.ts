@@ -47,10 +47,10 @@ switch (command) {
     reporter.debug(`build ${config.name || 'unnamed'} package`);
     reporter.debug(`load source from ${sourceFile}`);
 
-    const importMaps = await loadImportMaps({
-      resolvePath,
-      filePath: flags.importMap,
-    });
+    const importMaps = await loadImportMaps(
+      flags.importMaps,
+      { resolvePath },
+    );
     const webImportMaps = validateImportMaps(
       normalizeImportMaps(importMaps, 'web'),
       { resolvePath },

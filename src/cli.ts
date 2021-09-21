@@ -14,7 +14,7 @@ Options
   --version          Displays current version
   --cwd              Use an alternative working directory
   --tsconfig         Specify the path to a custom tsconfig.json
-  --import-map       Specify import map file path  (default: package.json)
+  --import-maps      Specify import map file path  (default: package.json)
   --external         Specify external dependencies (default: \`peerDependencies\` and \`dependencies\` in package.json)
   --minify           Minify output (default: true)
   --sourcemap        Generate source map (default true)
@@ -32,7 +32,7 @@ Examples
       type: 'string',
       default: 'tsconfig.json',
     },
-    importMap: {
+    importMaps: {
       type: 'string',
       default: 'package.json',
     },
