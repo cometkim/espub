@@ -1,4 +1,5 @@
 import type { Plugin } from 'esbuild';
+import { isFileSystemReference } from '../utils';
 
 type Imports = Record<string, string>;
 
@@ -13,7 +14,7 @@ export function makePlugin({
   imports,
   resolvePath,
 }: PluginOptions): Plugin {
-  const isExternalPath = (path: string) => path.includes('/node_modules/');
+  const isExternalPath = (path: string) => !isFileSystemReference(path);
   return {
     name: 'importMaps/' + name,
     setup(build) {
@@ -24,7 +25,7 @@ export function makePlugin({
           const external = isExternalPath(resolvedPath);
           return {
             path: external ? modulePath : resolvedPath,
-            external: isExternalPath(resolvedPath),
+            external,
           };
         }
         for (const [fromPrefix, toPrefix] of Object.entries(imports)) {

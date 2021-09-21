@@ -1,6 +1,6 @@
 import * as fs from 'node:fs/promises';
 import { existsSync } from 'node:fs';
-import { formatPlatform } from './utils';
+import { formatPlatform, isFileSystemReference } from './utils';
 
 type NodeImportMaps = {
   imports: Record<string, string | {
@@ -67,6 +67,11 @@ export function validateImportMaps(importMaps: ImportMaps, {
   resolvePath,
 }: ValidateImportMapsOptions): ValidImportMaps {
   for (const path of Object.values(importMaps.imports)) {
+    if (!isFileSystemReference(path)) {
+      // Loosen validation if path doesn't seems to be a file system reference
+      // Instead, expecting it can be resolved as a Node.js module later
+      continue;
+    }
     const resolvedPath = resolvePath(path);
     if (!existsSync(resolvedPath)) {
       throw new Error(`${resolvedPath} doesn't exist`);
