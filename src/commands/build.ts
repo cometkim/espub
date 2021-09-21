@@ -2,13 +2,14 @@ import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
 import * as zlib from 'node:zlib';
 import { promisify } from 'node:util';
-import type { BuildOptions } from 'esbuild';
+import type { BuildOptions, Plugin } from 'esbuild';
 import * as esbuild from 'esbuild';
 import prettyBytes from 'pretty-bytes';
 
 import type { Entry } from '../entry';
 import type { Reporter } from '../report';
 import { formatModule } from '../utils';
+import { makePlugin as makeImportMapsPlugin } from '../plugins/esbuildImportMapsPlugin';
 
 const gzip = promisify(zlib.gzip);
 const brotli = promisify(zlib.brotliCompress);
@@ -22,6 +23,11 @@ type BuildCommandOptions = {
   minify: boolean,
   sourcemap: boolean,
   tsconfig?: string,
+  plugins?: Plugin[],
+  imports?: {
+    web?: Record<string, string>,
+    node?: Record<string, string>,
+  },
 };
 
 export async function buildCommand({
@@ -32,7 +38,9 @@ export async function buildCommand({
   externalDependencies,
   minify,
   sourcemap,
+  plugins,
   tsconfig,
+  imports = {},
 }: BuildCommandOptions): Promise<number> {
   const defaultBuildOptions: BuildOptions = {
     bundle: true,
@@ -43,9 +51,12 @@ export async function buildCommand({
       'process.env.NODE_ENV': 'production',
     },
     tsconfig,
+    plugins,
     minify,
     sourcemap: sourcemap ? 'external' : undefined,
   };
+  const webImportMaps = imports.web && makeImportMapsPlugin('web', imports.web);
+  const nodeImportMaps = imports.node && makeImportMapsPlugin('node', imports.node);
 
   const build = entries.map(async entry => {
     const outfile = entry.outputFile;
@@ -53,28 +64,32 @@ export async function buildCommand({
     if (entry.platform === 'node') {
       const nodeTargets = targets
         .filter(target => target.startsWith('node'));
-
       if (nodeTargets.length === 0) {
         nodeTargets.push('node14');
       }
-
+      const nodePlugins = [nodeImportMaps]
+        .filter(Boolean) as Plugin[];
       return [entry, await esbuild.build({
         ...defaultBuildOptions,
         outfile,
         format,
         platform: 'node',
         target: nodeTargets,
+        plugins: nodePlugins,
       })] as const;
+
     } else {
       const webTargets = targets
         .filter(target => !target.startsWith('node'));
-
+      const webPlugins = [webImportMaps]
+        .filter(Boolean) as Plugin[];
       return [entry, await esbuild.build({
         ...defaultBuildOptions,
         outfile,
         format,
         platform: 'neutral',
         target: webTargets,
+        plugins: webPlugins,
       })] as const;
     }
   });
