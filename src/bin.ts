@@ -90,6 +90,7 @@ switch (command) {
       targets,
       tsconfig,
       externalDependencies,
+      resolvePath,
       minify: flags.minify,
       sourcemap: flags.sourcemap,
       imports: {

@@ -22,6 +22,7 @@ type BuildCommandOptions = {
   externalDependencies: string[],
   minify: boolean,
   sourcemap: boolean,
+  resolvePath: (path: string) => string,
   tsconfig?: string,
   plugins?: Plugin[],
   imports?: {
@@ -40,6 +41,7 @@ export async function buildCommand({
   sourcemap,
   plugins,
   tsconfig,
+  resolvePath,
   imports = {},
 }: BuildCommandOptions): Promise<number> {
   const defaultBuildOptions: BuildOptions = {
@@ -55,8 +57,8 @@ export async function buildCommand({
     minify,
     sourcemap: sourcemap ? 'external' : undefined,
   };
-  const webImportMaps = imports.web && makeImportMapsPlugin('web', imports.web);
-  const nodeImportMaps = imports.node && makeImportMapsPlugin('node', imports.node);
+  const webImportMaps = imports.web && makeImportMapsPlugin({ name: 'web', imports: imports.web, resolvePath });
+  const nodeImportMaps = imports.node && makeImportMapsPlugin({ name: 'node', imports: imports.node, resolvePath });
 
   const build = entries.map(async entry => {
     const outfile = entry.outputFile;
