@@ -8,7 +8,7 @@ import type { Reporter } from './report';
 import { cli } from './cli';
 import { loadConfig } from './config';
 import { loadTargets } from './target';
-import { loadImportMaps, normalizeImportMaps } from './importMaps';
+import { loadImportMaps, normalizeImportMaps, validateImportMaps } from './importMaps';
 import { getEntriesFromConfig } from './entry';
 import { buildCommand } from './commands/build';
 
@@ -51,6 +51,14 @@ switch (command) {
       resolvePath,
       filePath: flags.importMap,
     });
+    const webImportMaps = validateImportMaps(
+      normalizeImportMaps(importMaps, 'web'),
+      { resolvePath },
+    );
+    const nodeImportMaps = validateImportMaps(
+      normalizeImportMaps(importMaps, 'node'),
+      { resolvePath },
+    );
 
     const tsconfig = ts.findConfigFile(
       basePath,
@@ -85,8 +93,8 @@ switch (command) {
       minify: flags.minify,
       sourcemap: flags.sourcemap,
       imports: {
-        web: normalizeImportMaps(importMaps, 'web').imports,
-        node: normalizeImportMaps(importMaps, 'node').imports,
+        web: webImportMaps.imports,
+        node: nodeImportMaps.imports,
       },
     })
 

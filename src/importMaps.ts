@@ -1,4 +1,5 @@
 import * as fs from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 
 type NodeImportMaps = {
   imports: Record<string, string | {
@@ -10,6 +11,8 @@ type NodeImportMaps = {
 type ImportMaps = {
   imports: Record<string, string>,
 };
+
+type ValidImportMaps = ImportMaps & { __BRAND__: 'ValidImportMaps' };
 
 export function normalizeImportMaps(
   importMaps: NodeImportMaps,
@@ -51,4 +54,20 @@ export async function loadImportMaps({
     .then(JSON.parse) as Partial<NodeImportMaps>;
 
   return { imports };
+}
+
+type ValidateImportMapsOptions = {
+  resolvePath: (path: string) => string,
+}
+
+export function validateImportMaps(importMaps: ImportMaps, {
+  resolvePath,
+}: ValidateImportMapsOptions): ValidImportMaps {
+  for (const path of Object.values(importMaps.imports)) {
+    const resolvedPath = resolvePath(path);
+    if (!existsSync(resolvedPath)) {
+      throw new Error(`${resolvedPath} doesn't exist`);
+    }
+  }
+  return importMaps as ValidImportMaps;
 }
