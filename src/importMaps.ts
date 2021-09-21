@@ -1,5 +1,6 @@
 import * as fs from 'node:fs/promises';
 import { existsSync } from 'node:fs';
+import { formatPlatform } from './utils';
 
 type NodeImportMaps = {
   imports: Record<string, string | {
@@ -16,7 +17,7 @@ type ValidImportMaps = ImportMaps & { __BRAND__: 'ValidImportMaps' };
 
 export function normalizeImportMaps(
   importMaps: NodeImportMaps,
-  env: 'web' | 'node'
+  platform: 'web' | 'node'
 ): ImportMaps {
   const result: ImportMaps = {
     imports: {},
@@ -25,14 +26,18 @@ export function normalizeImportMaps(
     if (typeof value === 'string') {
       result.imports[key] = value;
     } else if (typeof value === 'object') {
-      if (env === 'web' && value.default) {
-        result.imports[key] = value.default;
-      } else if (env === 'node' && value.node) {
+      if (platform === 'web') {
+        if (value.default) {
+          result.imports[key] = value.default;
+        }
+        // noop for the web target, if there is no default mapping
+        // explicit mappings only required for the node target
+      } else if (platform === 'node' && value.node) {
         result.imports[key] = value.node;
-      } else if (env === 'node' && value.default) {
+      } else if (platform === 'node' && value.default) {
         result.imports[key] = value.default;
       } else {
-        throw new Error(`Couldn't resolve import map entry ${key} for ${env} environment`);
+        throw new Error(`Couldn't resolve import maps entry "${key}" for ${formatPlatform(platform)} environment`);
       }
     }
   }
