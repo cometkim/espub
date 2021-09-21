@@ -106,7 +106,7 @@ Or you may not need to specify "require" or "node" entries.
     } else if (typeof config.exports === 'object') {
       for (const [key, output] of Object.entries(config.exports)) {
         if (typeof output === 'string') {
-          addMainEntry(`exports.["${key}"]`, output);
+          addMainEntry(`exports["${key}"]`, output);
 
         } else if (typeof output === 'object') {
           if (output.default) {
