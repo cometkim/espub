@@ -13,13 +13,16 @@ export function makePlugin({
   imports,
   resolvePath,
 }: PluginOptions): Plugin {
+  const isExternalPath = (path: string) => path.includes('/node_modules/');
   return {
     name: 'importMaps/' + name,
     setup(build) {
       build.onResolve({ filter: /.*/ }, args => {
         if (imports[args.path]) {
+          const resolvedPath = resolvePath(imports[args.path]);
           return {
-            path: resolvePath(imports[args.path]),
+            path: resolvedPath,
+            external: isExternalPath(resolvedPath),
           };
         }
         for (const [fromPrefix, toPrefix] of Object.entries(imports)) {
@@ -27,8 +30,10 @@ export function makePlugin({
             continue;
           }
           if (args.path.startsWith(fromPrefix)) {
+            const resolvedPath = resolvePath(args.path.replace(fromPrefix, toPrefix));
             return {
-              path: resolvePath(args.path.replace(fromPrefix, toPrefix)),
+              path: resolvedPath,
+              external: isExternalPath(resolvedPath),
             };
           }
         }
