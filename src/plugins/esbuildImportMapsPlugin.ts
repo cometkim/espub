@@ -16,7 +16,7 @@ export function makePlugin({
 }: PluginOptions): Plugin {
   const isExternalPath = (path: string) => !isFileSystemReference(path);
   return {
-    name: 'importMaps/' + name,
+    name: 'nanobundle/import-maps/' + name,
     setup(build) {
       build.onResolve({ filter: /.*/ }, args => {
         if (imports[args.path]) {

@@ -8,19 +8,17 @@ Usage
 
 Available Commands
   build    Build once and exit
-  watch    Rebuilds on any change
 
 Options
   --version          Displays current version
   --cwd              Use an alternative working directory
   --tsconfig         Specify the path to a custom tsconfig.json
   --import-maps      Specify import map file path  (default: package.json)
-  --external         Specify external dependencies (default: \`peerDependencies\` and \`dependencies\` in package.json)
+  --standalone       Embed external dependencies into the bundle (default: false)
+  --external         Specify external dependencies to exclude from the bundle
   --minify           Minify output (default: true)
   --sourcemap        Generate source map (default true)
   --help             Displays this message
-
-Examples
 `, {
   importMeta: import.meta,
   flags: {
@@ -40,6 +38,10 @@ Examples
       type: 'string',
       isMultiple: true,
       default: [],
+    },
+    standalone: {
+      type: 'boolean',
+      default: false,
     },
     minify: {
       type: 'boolean',

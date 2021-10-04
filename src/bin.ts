@@ -11,18 +11,29 @@ import { loadTargets } from './target';
 import { loadImportMaps, normalizeImportMaps, validateImportMaps } from './importMaps';
 import { getEntriesFromConfig } from './entry';
 import { buildCommand } from './commands/build';
+import { makePlugin as makeEmbedPlugin } from './plugins/esbuildEmbedPlugin';
+import { makePlugin as makeImportMapsPlugin } from './plugins/esbuildImportMapsPlugin';
 
 const { flags, input } = cli;
 const [command] = input;
 const noop = () => {};
 const debugEnabled = process.env.DEBUG === 'true';
-const basePath = flags.cwd;
+
+const {
+  cwd: basePath,
+  external: forceExternalDependencies,
+  minify,
+  sourcemap,
+  standalone,
+} = flags;
+
 const reporter: Reporter = {
   debug: debugEnabled ? console.debug : noop,
   info: console.info,
   warn: console.warn,
   error: console.error,
 };
+
 const resolvePath = (file: string) => path.resolve(basePath, file);
 
 try {
@@ -43,6 +54,11 @@ try {
       reporter.debug(`build ${config.name || 'unnamed'} package`);
       reporter.debug(`load source from ${sourceFile}`);
 
+      const externalDependencies = [
+        ...(config.dependencies ? Object.keys(config.dependencies) : []),
+        ...(config.peerDependencies ? Object.keys(config.peerDependencies) : []),
+        ...forceExternalDependencies,
+      ];
       const importMaps = await loadImportMaps(
         flags.importMaps,
         { resolvePath },
@@ -55,6 +71,30 @@ try {
         normalizeImportMaps(importMaps, 'node'),
         { resolvePath },
       );
+      const embedPlugin = makeEmbedPlugin({
+        reporter,
+        standalone,
+        externalDependencies,
+        forceExternalDependencies,
+      });
+      const webImportMapsPlugin = makeImportMapsPlugin({
+        name: 'web',
+        imports: webImportMaps.imports,
+        resolvePath,
+      });
+      const nodeImportMapsPlugin = makeImportMapsPlugin({
+        name: 'node',
+        imports: nodeImportMaps.imports,
+        resolvePath,
+      });
+      const webPlugins = [
+        webImportMapsPlugin,
+        embedPlugin,
+      ];
+      const nodePlugins = [
+        nodeImportMapsPlugin,
+        embedPlugin,
+      ];
 
       const tsconfig = ts.findConfigFile(
         basePath,
@@ -74,32 +114,22 @@ try {
         resolvePath,
       });
 
-      const externalDependencies = [
-        ...(config.dependencies ? Object.keys(config.dependencies) : []),
-        ...(config.peerDependencies ? Object.keys(config.peerDependencies) : []),
-      ];
-
       await buildCommand({
         reporter,
         sourceFile,
         entries,
         targets,
         tsconfig,
-        externalDependencies,
         resolvePath,
-        minify: flags.minify,
-        sourcemap: flags.sourcemap,
-        imports: {
-          web: webImportMaps.imports,
-          node: nodeImportMaps.imports,
-        },
+        minify,
+        sourcemap,
+        webPlugins,
+        nodePlugins,
       });
 
       const endedAt = performance.now();
       const elapsedTime = endedAt - startedAt;
-      reporter.info(`
-  ⚡ Done in ${(elapsedTime).toFixed(1)}ms.
-  `);
+      reporter.info(`⚡ Done in ${(elapsedTime).toFixed(1)}ms.`);
 
       break;
     }
@@ -110,9 +140,9 @@ try {
 
     default: {
       throw new Error(`
-    Command "${command}" is not available.
+Command "${command}" is not available.
 
-    Run \`nanobundle --help\` for more detail.`,
+Run \`nanobundle --help\` for more detail.`,
       );
     }
   }

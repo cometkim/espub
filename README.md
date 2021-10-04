@@ -33,8 +33,7 @@ Thanks to [microbundle] for saving my days, but we can save even more days with 
      },
 
      "scripts": {
-       "build": "nanobundle build", // compiles "source" to "main"/"module"
-       "dev": "nanobundle watch"    // re-build when source files change
+       "build": "nanobundle build"  // compiles "source" to "main"/"module"
      }
    }
    ```
@@ -112,7 +111,13 @@ See [Node.js docs](https://nodejs.org/api/packages.html#packages_package_entry_p
 }
 ```
 
-nanobuild emit bundles at all specified entry points.
+### Embedding dependencies
+
+nanobundle by default does nothing about external like `dependencies` and `peerDependencies`.
+
+However, if the `--standalone` flag is set, it will try to embed all external dependencies into the bundle.
+
+Dependencies specified with `--external` and Node.js internal APIs are always excluded.
 
 ### TypeScript
 

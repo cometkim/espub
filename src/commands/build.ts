@@ -9,7 +9,6 @@ import prettyBytes from 'pretty-bytes';
 import type { Entry } from '../entry';
 import type { Reporter } from '../report';
 import { formatModule } from '../utils';
-import { makePlugin as makeImportMapsPlugin } from '../plugins/esbuildImportMapsPlugin';
 
 const gzip = promisify(zlib.gzip);
 const brotli = promisify(zlib.brotliCompress);
@@ -19,16 +18,12 @@ type BuildCommandOptions = {
   sourceFile: string,
   entries: Entry[],
   targets: string[],
-  externalDependencies: string[],
   minify: boolean,
   sourcemap: boolean,
   resolvePath: (path: string) => string,
   tsconfig?: string,
-  plugins?: Plugin[],
-  imports?: {
-    web?: Record<string, string>,
-    node?: Record<string, string>,
-  },
+  webPlugins?: Plugin[],
+  nodePlugins?: Plugin[],
 };
 
 export async function buildCommand({
@@ -36,29 +31,23 @@ export async function buildCommand({
   sourceFile,
   entries,
   targets,
-  externalDependencies,
   minify,
   sourcemap,
-  plugins,
   tsconfig,
-  resolvePath,
-  imports = {},
+  webPlugins = [],
+  nodePlugins = [],
 }: BuildCommandOptions): Promise<void> {
   const defaultBuildOptions: BuildOptions = {
     bundle: true,
     write: false,
     entryPoints: [sourceFile],
-    external: externalDependencies,
     define: {
       'process.env.NODE_ENV': 'production',
     },
     tsconfig,
-    plugins,
     minify,
-    sourcemap: sourcemap ? 'external' : undefined,
+    sourcemap: sourcemap && 'external',
   };
-  const webImportMaps = imports.web && makeImportMapsPlugin({ name: 'web', imports: imports.web, resolvePath });
-  const nodeImportMaps = imports.node && makeImportMapsPlugin({ name: 'node', imports: imports.node, resolvePath });
 
   const build = entries.map(async entry => {
     const outfile = entry.outputFile;
@@ -69,8 +58,6 @@ export async function buildCommand({
       if (nodeTargets.length === 0) {
         nodeTargets.push('node14');
       }
-      const nodePlugins = [nodeImportMaps]
-        .filter(Boolean) as Plugin[];
       return [entry, await esbuild.build({
         ...defaultBuildOptions,
         outfile,
@@ -83,8 +70,6 @@ export async function buildCommand({
     } else {
       const webTargets = targets
         .filter(target => !target.startsWith('node'));
-      const webPlugins = [webImportMaps]
-        .filter(Boolean) as Plugin[];
       return [entry, await esbuild.build({
         ...defaultBuildOptions,
         outfile,
@@ -97,7 +82,7 @@ export async function buildCommand({
   });
 
   const results = await Promise.all(build);
-  reporter.info('📦 Build info:');
+  reporter.info('📦 Build info:\n');
 
   for (const [entry, result] of results) {
     for (const error of result.errors) {
@@ -125,11 +110,11 @@ export async function buildCommand({
           gzip(outputFile.contents),
           brotli(outputFile.contents),
         ]);
-        reporter.info(`
-${formatModule(entry.module)} entry ${entry.path}${entry.platform === 'node' ? ' for Node.js' : ''}
-  size      : ${prettyBytes(outputFile.contents.length)}
-  size (gz) : ${prettyBytes(gzipped.byteLength)}
-  size (br) : ${prettyBytes(brotlied.byteLength)}`);
+        reporter.info(`${formatModule(entry.module)} entry ${entry.path}${entry.platform === 'node' ? ' for Node.js' : ''}
+    size      : ${prettyBytes(outputFile.contents.length)}
+    size (gz) : ${prettyBytes(gzipped.byteLength)}
+    size (br) : ${prettyBytes(brotlied.byteLength)}
+`);
       }
     }
   }
