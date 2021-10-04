@@ -42,7 +42,7 @@ export async function buildCommand({
     write: false,
     entryPoints: [sourceFile],
     define: {
-      'process.env.NODE_ENV': 'production',
+      'process.env.NODE_ENV': '"production"',
     },
     tsconfig,
     minify,
