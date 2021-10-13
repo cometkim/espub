@@ -82,25 +82,26 @@ export function makePlugin({
   return {
     name: 'nanobundle/embed',
     setup(build) {
-      let isDependOnNode = false;
+      let dependOnNode = false;
 
-      build.onResolve({ filter: /.*/ }, args => {
+      build.onResolve({ filter: /.*/ }, async args => {
         if (isFileSystemReference(args.path)) {
           return;
         }
 
         let resolvedAsNodeApi = isNodeApi(args.path);
         if (resolvedAsNodeApi) {
-          isDependOnNode = true;
+          dependOnNode = true;
         }
-        return {
-          path: args.path,
-          external: resolvedAsNodeApi || !shouldEmbed(args.path),
-        };
+
+        let external = resolvedAsNodeApi || !shouldEmbed(args.path);
+        let path = external ? args.path : undefined;
+
+        return { path, external };
       });
 
       build.onEnd(() => {
-        if (isDependOnNode) {
+        if (dependOnNode) {
           reporter.warn('Not completely standalone bundle, while the code depends on some Node.js APIs.');
         }
       });
