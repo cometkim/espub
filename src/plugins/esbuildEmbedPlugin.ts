@@ -1,5 +1,6 @@
 import type { Plugin } from 'esbuild';
 import type { Reporter } from '../report';
+import { isFileSystemReference } from '../utils';
 
 type PluginOptions = {
   reporter: Reporter,
@@ -84,6 +85,10 @@ export function makePlugin({
       let isDependOnNode = false;
 
       build.onResolve({ filter: /.*/ }, args => {
+        if (isFileSystemReference(args.path)) {
+          return;
+        }
+
         let resolvedAsNodeApi = isNodeApi(args.path);
         if (resolvedAsNodeApi) {
           isDependOnNode = true;
