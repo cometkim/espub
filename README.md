@@ -1,5 +1,9 @@
 # nanobundle
 
+[![Version on NPM](https://img.shields.io/npm/v/nanobundle)](https://www.npmjs.com/package/nanobundle)
+[![Downlaods on NPM](https://img.shields.io/npm/dm/nanobundle)](https://www.npmjs.com/package/nanobundle)
+[![LICENSE - MIT](https://img.shields.io/github/license/cometkim/nanobundle)](#license)
+
 Yet another bundler for tiny modules, powered by [esbuild]
 
 Thanks to [microbundle] for saving my days, but we can save even more days with [esbuild]!
