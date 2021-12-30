@@ -17,7 +17,8 @@ Options
   --standalone       Embed external dependencies into the bundle (default: false)
   --external         Specify external dependencies to exclude from the bundle
   --minify           Minify output (default: true)
-  --sourcemap        Generate source map (default true)
+  --sourcemap        Generate source map (default: true)
+  --dts              Generate TypeScript .d.ts files (default: true)
   --help             Displays this message
 `, {
   importMeta: import.meta,
@@ -48,6 +49,10 @@ Options
       default: true,
     },
     sourcemap: {
+      type: 'boolean',
+      default: true,
+    },
+    dts: {
       type: 'boolean',
       default: true,
     },
