@@ -1,5 +1,11 @@
 # nanobundle
 
+## 0.0.20
+
+### Patch Changes
+
+- 522a039: Fix "Unexpected moduleResolution" on emitting dts
+
 ## 0.0.19
 
 ### Patch Changes
