@@ -38,8 +38,6 @@ const reporter: Reporter = {
 
 const resolvePath = (file: string) => path.resolve(basePath, file);
 
-const tsCache = new Map();
-
 try {
   switch (command) {
     case undefined: {
@@ -104,7 +102,7 @@ try {
       let tsProgram: TSProgram | undefined;
       if (flags.dts) {
         const ts = await import('typescript').then(mod => mod.default);
-        const tsconfigResult = await parseNative(flags.tsconfig, { cache: tsCache });
+        const tsconfigResult = await parseNative(flags.tsconfig);
 
         tsconfig = tsconfigResult.tsconfigFile;
         reporter.debug(`load tsconfig from ${tsconfig}`);
