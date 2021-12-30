@@ -4,7 +4,7 @@ import { performance } from 'node:perf_hooks';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { parseNative } from 'tsconfck';
-import { Program as TSProgram } from 'typescript';
+import type { Program as TSProgram } from 'typescript';
 
 import type { Reporter } from './report';
 import { cli } from './cli';
