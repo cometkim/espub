@@ -3,7 +3,9 @@
 import { performance } from 'node:perf_hooks';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import ts from 'typescript';
+import { parseNative } from 'tsconfck';
+import { Program as TSProgram } from 'typescript';
+
 import type { Reporter } from './report';
 import { cli } from './cli';
 import { loadConfig } from './config';
@@ -96,13 +98,26 @@ try {
         embedPlugin,
       ];
 
-      const tsconfig = ts.findConfigFile(
-        basePath,
-        ts.sys.fileExists,
-        flags.tsconfig,
-      );
-      if (tsconfig) {
+      let tsconfig: string | undefined;
+      let tsProgram: TSProgram | undefined;
+      if (flags.dts) {
+        const ts = await import('typescript').then(mod => mod.default);
+        const tsconfigResult = await parseNative(flags.tsconfig);
+
+        tsconfig = tsconfigResult.tsconfigFile;
         reporter.debug(`load tsconfig from ${tsconfig}`);
+
+        const compilerOptions = {
+          ...tsconfigResult.tsconfig?.compilerOptions,
+          allowJs: true,
+          incremental: true,
+          skipLibCheck: true,
+          declaration: true,
+          emitDeclarationOnly: true,
+        };
+
+        const host = ts.createCompilerHost(compilerOptions);
+        tsProgram = ts.createProgram([sourceFile], compilerOptions, host);
       }
 
       const targets = await loadTargets({ basePath });
@@ -127,9 +142,16 @@ try {
         nodePlugins,
       });
 
+      if (tsProgram) {
+        reporter.info('Emitting .d.ts files...');
+
+        const { emittedFiles } = tsProgram.emit();
+        reporter.debug('emitted', emittedFiles);
+      }
+
       const endedAt = performance.now();
-      const elapsedTime = endedAt - startedAt;
-      reporter.info(`⚡ Done in ${(elapsedTime).toFixed(1)}ms.`);
+      const elapsedTime = (endedAt - startedAt).toFixed(1);
+      reporter.info(`\n⚡ Done in ${elapsedTime}ms.`);
 
       break;
     }

@@ -1,6 +1,6 @@
 export type Reporter = {
-  debug: (msg: string) => void,
-  info: (msg: string) => void,
-  warn: (msg: string) => void,
+  debug: (msg: unknown, ...args: any[]) => void,
+  info: (msg: string, ...args: any[]) => void,
+  warn: (msg: string, ...args: any[]) => void,
   error: (error: unknown) => void,
 };
