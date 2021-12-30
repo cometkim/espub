@@ -109,6 +109,11 @@ try {
 
         const compilerOptions = {
           ...tsconfigResult.tsconfig?.compilerOptions,
+
+          // Unspecify module resolution mode
+          // May revisit later when Node12 resolution support is added.
+          moduleResolution: undefined,
+
           allowJs: true,
           incremental: true,
           skipLibCheck: true,
