@@ -100,7 +100,7 @@ try {
 
       let tsconfig: string | undefined;
       let tsProgram: TSProgram | undefined;
-      if (flags.dts) {
+      if (flags.dts && config.types) {
         const ts = await import('typescript').then(mod => mod.default);
         const tsconfigResult = await parseNative(flags.tsconfig);
 
