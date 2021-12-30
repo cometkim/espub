@@ -1,6 +1,6 @@
 {
   "name": "nanobundle",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "type": "module",
   "license": "MIT",
   "bin": "./bin.mjs",
