@@ -1,5 +1,11 @@
 # nanobundle
 
+## 0.0.21
+
+### Patch Changes
+
+- ccf3a06: upgrade dependencies
+
 ## 0.0.20
 
 ### Patch Changes

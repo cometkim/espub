@@ -1,5 +1,0 @@
----
-"nanobundle": patch
----
-
-upgrade dependencies
