@@ -1,5 +1,12 @@
 # nanobundle
 
+## 0.0.19
+
+### Patch Changes
+
+- 27327c5: Don't emit dts files when "types" is not exist in package.json
+- 78bd184: feat: emit TypeScript declaration files"
+
 ## 0.0.18
 
 ### Patch Changes
