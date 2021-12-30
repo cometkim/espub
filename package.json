@@ -17,7 +17,7 @@
   },
   "scripts": {
     "prepack": "yarn build",
-    "build": "esbuild src/bin.ts --bundle --minify --format=esm --platform=node --target=node14.8 --outfile=bin.mjs --external:meow --external:esbuild --external:browserslist --external:typescript --external:pretty-bytes",
+    "build": "esbuild src/bin.ts --bundle --format=esm --platform=node --target=node14.8 --outfile=bin.mjs --external:meow --external:esbuild --external:browserslist --external:typescript --external:pretty-bytes --external:tsconfck",
     "changeset": "changeset"
   },
   "files": [
@@ -38,12 +38,12 @@
     "browserslist": "^4.0.0",
     "esbuild": "^0.13.0",
     "meow": "^10.1.1",
-    "pretty-bytes": "^5.6.0"
+    "pretty-bytes": "^5.6.0",
+    "tsconfck": "^1.1.1"
   },
   "devDependencies": {
     "@changesets/cli": "^2.17.0",
     "@types/node": "^16.7.6",
-    "tsconfck": "^1.1.1",
     "typescript": "^4.5.4"
   }
 }
