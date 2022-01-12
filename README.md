@@ -48,7 +48,7 @@ Thanks to [microbundle] for saving my days, but we can save even more days with 
 
 nanobundle is heavily inspired by [microbundle], but more daring to try to remove the configuration much as possible. I believe the `package.json` today is complex enough and already contains most of the configuration for common module use cases.
 
-So attempting to turn users' attention back to the [Node's package spec](https://nodejs.org/api/packages.html) and some meaningful proposals like [ES Modules](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules) and [Import maps] which are already supported and highly recommended by Node.js, rather than some other custom tooling.
+So attempting to turn users' attention back to the [Node's package spec](https://nodejs.org/api/packages.html) and some meaningful proposals like [ES Modules](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules) and [Import maps](https://wicg.github.io/import-maps/) which are already supported by Node.js, rather than another custom configuration.
 
 ### Build targets
 
@@ -76,7 +76,7 @@ For commonjs entry points set Node v14 by default.
 
 ### Import Map
 
-nanobundle supports [Import maps]
+nanobundle supports [Import maps](https://wicg.github.io/import-maps/)
 
 You can specify import alias by your `package.json`, or by a separated json file with the `--import-map` option.
 
@@ -129,6 +129,8 @@ Given a `tsconfig.json` file in the cwd or `--tsconfig` option, nanobundle looks
 
 You can specify `declarationDir` in your tsconfig, or nanobundle infer the dir from `types` entry.
 
+nanobundle automatically generate TypeScript declaration as you specify `types` entry in the `package.json`, or you can disable it passing `--dts=false` argument.
+
 ## Alternatives
 
 - [microbundle] : Rollup wrapper that provides similar concept
@@ -140,7 +142,6 @@ You can specify `declarationDir` in your tsconfig, or nanobundle infer the dir f
 
 MIT
 
-[Import maps]: (https://wicg.github.io/import-maps/)
 [esbuild]: https://esbuild.github.io/
 [microbundle]: https://github.com/developit/microbundle
 [estrella]: https://github.com/rsms/estrella
