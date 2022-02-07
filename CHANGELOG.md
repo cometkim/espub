@@ -1,5 +1,12 @@
 # nanobundle
 
+## 0.0.22
+
+### Patch Changes
+
+- a19162b: update dependencies
+- 204cc76: Ignore noEmit option when `types` entry required
+
 ## 0.0.21
 
 ### Patch Changes
