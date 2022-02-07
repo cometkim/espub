@@ -4,13 +4,12 @@
 [![Downlaods on NPM](https://img.shields.io/npm/dm/nanobundle)](https://www.npmjs.com/package/nanobundle)
 [![LICENSE - MIT](https://img.shields.io/github/license/cometkim/nanobundle)](#license)
 
-Yet another bundler for tiny modules, powered by [esbuild]
-
-Thanks to [microbundle] for saving my days, but we can save even more days with [esbuild]!
+Yet another build tool for libraries, powered by [esbuild]
 
 ## Features
 
 - Support for ESM and CommonJS
+- Support [Import Maps](https://wicg.github.io/import-maps/)
 - Find and optimize the esbuild options for you
 - Only configuration you need is `package.json` (and optionally `tsconfig.json`)
 
@@ -52,27 +51,13 @@ So attempting to turn users' attention back to the [Node's package spec](https:/
 
 ### Build targets
 
-**nanobundle expects you to write a Web-compatible package. If you use the Node.js API, you need to tell it explicitly.**
+**nanobundle expects you to write a Web-compatible package.**
 
-When is build target set to Node.js:
-- If you use entry point with `.cjs` or `.node` extension
-- If you specify Node.js version in `package.json`
+If you use any Node.js APIs, you need to tell it explicitly via:.
+- Set the entry point with `.cjs` or `.node` extension
+- Specify Node.js version via `engines` field in the `package.json`
 
-Otherwise, it is assumed to be Web target.
-
-#### Node.js target
-
-If you specify the Node.js version via `engines` in your `package.json`, the default build target is automatically set to that node version.
-
-```jsonc
-{
-  "engines": {
-    "node": ">=14"
-  }
-}
-```
-
-For commonjs entry points set Node v14 by default.
+Without `engines`, the default target will be Node.js v14.
 
 ### Import Map
 
@@ -86,7 +71,7 @@ You can specify import alias by your `package.json`, or by a separated json file
     "~/": "./",
     "@util/": "./src/utils/",
 
-    // Conditional imports for Node.js environment
+    // Node.js-style conditional imports
     "#dep": {
       "default": "./dep-polyfill.js",
       "node": "dep-node-native"
