@@ -4,7 +4,10 @@ import { performance } from 'node:perf_hooks';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { parseNative } from 'tsconfck';
-import type { Program as TSProgram } from 'typescript';
+import type {
+  Program as TSProgram,
+  CompilerOptions as TSCompilerOptions,
+} from 'typescript';
 
 import type { Reporter } from './report';
 import { cli } from './cli';
@@ -107,7 +110,7 @@ try {
         tsconfig = tsconfigResult.tsconfigFile;
         reporter.debug(`load tsconfig from ${tsconfig}`);
 
-        const compilerOptions = {
+        const compilerOptions: TSCompilerOptions = {
           ...tsconfigResult.tsconfig?.compilerOptions,
 
           // Unspecify module resolution mode
@@ -120,6 +123,12 @@ try {
           declaration: true,
           emitDeclarationOnly: true,
         };
+
+        if (compilerOptions.noEmit) {
+          reporter.warn('Ignored `compilerOptions.noEmit` since the package required `types` entry.');
+          reporter.warn('You can still disable emitting declaration via `--dts=false` option');
+          compilerOptions.noEmit = false;
+        }
 
         const host = ts.createCompilerHost(compilerOptions);
         tsProgram = ts.createProgram([sourceFile], compilerOptions, host);
