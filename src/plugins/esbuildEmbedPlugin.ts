@@ -22,11 +22,15 @@ export function makePlugin({
     return modulePath.startsWith('node:') || nodeApis.some(api => modulePath.startsWith(api));
   };
 
+  const ownedModule = (packageName: string, modulePath: string) => {
+    return packageName === modulePath || modulePath.startsWith(packageName + '/');
+  };
+
   const shouldEmbed = (modulePath: string) => {
-    if (forceExternalDependencies.some(dep => modulePath.startsWith(dep))) {
+    if (forceExternalDependencies.some(dep => ownedModule(dep, modulePath))) {
       return false;
     }
-    return standalone || !externalDependencies.some(dep => modulePath.startsWith(dep));
+    return standalone || !externalDependencies.some(dep => ownedModule(dep, modulePath));
   };
 
   return {
