@@ -1,5 +1,11 @@
 # nanobundle
 
+## 0.0.23
+
+### Patch Changes
+
+- 3563009: Fixes packages with names similar to Node.js APIs are not properly embedded.
+
 ## 0.0.22
 
 ### Patch Changes
