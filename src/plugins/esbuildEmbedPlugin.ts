@@ -15,15 +15,15 @@ export function makePlugin({
   externalDependencies,
   forceExternalDependencies,
 }: PluginOptions): Plugin {
+  const ownedModule = (packageName: string, modulePath: string) => {
+    return packageName === modulePath || modulePath.startsWith(packageName + '/');
+  };
+
   const isNodeApi = (modulePath: string) => {
     if (externalDependencies.some(dep => modulePath.startsWith(dep))) {
       return false;
     }
-    return modulePath.startsWith('node:') || nodeApis.some(api => modulePath.startsWith(api));
-  };
-
-  const ownedModule = (packageName: string, modulePath: string) => {
-    return packageName === modulePath || modulePath.startsWith(packageName + '/');
+    return modulePath.startsWith('node:') || nodeApis.some(api => ownedModule(api, modulePath));
   };
 
   const shouldEmbed = (modulePath: string) => {
