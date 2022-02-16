@@ -1,5 +1,11 @@
 # nanobundle
 
+## 0.0.25
+
+### Patch Changes
+
+- 7b4a7ba: Update dependencies
+
 ## 0.0.24
 
 ### Patch Changes
