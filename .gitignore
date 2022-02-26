@@ -3,6 +3,7 @@
 *.tsbuildinfo
 
 node_modules/
+coverage/
 
 /bin.mjs
 

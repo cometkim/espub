@@ -18,6 +18,8 @@
   "scripts": {
     "prepack": "yarn build",
     "build": "esbuild src/bin.ts --bundle --format=esm --platform=node --target=node14.8 --outfile=bin.mjs --external:meow --external:esbuild --external:browserslist --external:typescript --external:pretty-bytes --external:tsconfck",
+    "dev": "vitest --watch",
+    "test": "vitest",
     "changeset": "changeset"
   },
   "files": [
@@ -44,7 +46,9 @@
   "devDependencies": {
     "@changesets/cli": "^2.20.0",
     "@types/node": "^17.0.18",
-    "typescript": "^4.5.5"
+    "c8": "^7.11.0",
+    "typescript": "^4.5.5",
+    "vitest": "^0.5.7"
   },
   "packageManager": "yarn@3.1.1"
 }

@@ -47,7 +47,7 @@ export async function loadTargets(options: LoadTargetOptions): Promise<string[]>
 
     if (browser === 'android') {
       // according to https://developer.android.com/guide/webapps/migrating
-      if (minVersion >= 4.4) {
+      if (minVersion > 4.4) {
         target = 'chrome';
         // "defaults" minimum chrome version
         // at 2022.02.26.
