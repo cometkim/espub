@@ -1,5 +1,17 @@
 # nanobundle
 
+## 0.0.26
+
+### Patch Changes
+
+- ad3caf9: update browserslist
+- 761a11d: update esbuild
+- edf2458: update tsconfck
+- 4b284a0: fix build target resolutions
+
+  - Support `ios_safari`, `android`, `and_chr` and `and_ff` query
+  - Drop `deno` query
+
 ## 0.0.25
 
 ### Patch Changes
