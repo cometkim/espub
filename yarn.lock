@@ -1465,7 +1465,7 @@ __metadata:
     esbuild: ^0.14.23
     meow: ^10.1.2
     pretty-bytes: ^6.0.0
-    tsconfck: ^1.1.2
+    tsconfck: ^1.2.0
     typescript: ^4.5.5
   peerDependencies:
     typescript: ^3.7.0 || ^4.0.0
@@ -2083,9 +2083,9 @@ resolve@^1.10.0:
   languageName: node
   linkType: hard
 
-"tsconfck@npm:^1.1.2":
-  version: 1.1.2
-  resolution: "tsconfck@npm:1.1.2"
+"tsconfck@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "tsconfck@npm:1.2.0"
   peerDependencies:
     typescript: ^4.3.5
   peerDependenciesMeta:
@@ -2093,7 +2093,7 @@ resolve@^1.10.0:
       optional: true
   bin:
     tsconfck: bin/tsconfck.js
-  checksum: 99fafb27d2af5e21542b169906849367b453bd11c8319f922f3dad4dc241ad7368ea0892916d6acbed38937a43018827ccdeb5ad585816a0c66e487710bc2b2e
+  checksum: ae48512da3f918edd00a58b0016bbb0386057dffd280545e9eee9c82c8c278e4e248bd4656fac8f6d01edebccd78ee4be75857205dc4555b3e59943afde58f4f
   languageName: node
   linkType: hard
 
