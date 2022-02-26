@@ -35,7 +35,7 @@
     }
   },
   "dependencies": {
-    "browserslist": "^4.19.1",
+    "browserslist": "^4.19.3",
     "esbuild": "^0.14.21",
     "meow": "^10.1.2",
     "pretty-bytes": "^6.0.0",
