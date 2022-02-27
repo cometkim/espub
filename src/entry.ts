@@ -10,15 +10,19 @@ export type Entry = {
   outputFile: string,
 };
 
-export function getEntriesFromConfig(config: Config, {
-  sourceFile,
+interface GetEntriesFromConfig {
+  (props: {
+    config: Config,
+    resolvePath: (path: string) => string,
+    reporter: Reporter,
+  }): Entry[];
+};
+
+export const getEntriesFromConfig: GetEntriesFromConfig = ({
+  config,
   reporter,
   resolvePath,
-}: {
-  sourceFile: string,
-  reporter: Reporter,
-  resolvePath: (path: string) => string,
-}): Entry[] {
+}) => {
   const defaultModule = (config.type === 'module')
     ? 'esmodule'
     : 'commonjs';
@@ -30,7 +34,7 @@ export function getEntriesFromConfig(config: Config, {
   const entryMap = new Map<string, Entry>();
 
   function addEntry(key: string, path: string, platform: Entry['platform'], module: Entry['module']) {
-    if (!sourceFile) {
+    if (!config.source) {
       return;
     }
 
@@ -106,8 +110,13 @@ Or you may not need to specify "require" or "node" entries.
     } else if (typeof config.exports === 'object') {
       for (const [key, output] of Object.entries(config.exports)) {
         if (typeof output === 'string') {
-          addMainEntry(`exports["${key}"]`, output);
-
+          if (key === 'import') {
+            addModuleEntry(`exports["${key}"]`, output);
+          } else if (key === 'require') {
+            addNodeEntry(`exports["${key}"]`, output);
+          } else {
+            addMainEntry(`exports["${key}"]`, output);
+          }
         } else if (typeof output === 'object') {
           if (output.default) {
             addMainEntry(`exports["${key}"].default`, output.default);

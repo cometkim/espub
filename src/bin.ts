@@ -137,8 +137,8 @@ try {
       const targets = await loadTargets({ basePath });
       reporter.debug(`targets to ${targets.join(', ')}`);
 
-      const entries = getEntriesFromConfig(config, {
-        sourceFile,
+      const entries = getEntriesFromConfig({
+        config,
         reporter,
         resolvePath,
       });
