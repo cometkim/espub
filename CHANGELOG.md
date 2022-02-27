@@ -1,5 +1,12 @@
 # nanobundle
 
+## 0.0.27
+
+### Patch Changes
+
+- 4eed241: choose prefered target based on module type specified by "exports" entry
+- 127cf17: ignore android 4.4 target
+
 ## 0.0.26
 
 ### Patch Changes
