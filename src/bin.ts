@@ -111,14 +111,10 @@ try {
         reporter.debug(`load tsconfig from ${tsconfig}`);
 
         const compilerOptions: TSCompilerOptions = {
-          ...tsconfigResult.tsconfig?.compilerOptions,
-
-          // Unspecify module resolution mode
-          // May revisit later when Node12 resolution support is added.
-          moduleResolution: undefined,
+          ...tsconfigResult.result.options,
 
           allowJs: true,
-          incremental: true,
+          incremental: false,
           skipLibCheck: true,
           declaration: true,
           emitDeclarationOnly: true,
