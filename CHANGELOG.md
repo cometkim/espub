@@ -1,5 +1,11 @@
 # nanobundle
 
+## 0.0.28
+
+### Patch Changes
+
+- 6e07e74: Fix types generation
+
 ## 0.0.27
 
 ### Patch Changes
