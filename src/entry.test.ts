@@ -1,5 +1,5 @@
 import * as path from 'node:path';
-import { describe, expect } from 'vitest';
+import { describe, expect, vi } from 'vitest';
 
 import type { Config } from './config';
 import type { Reporter } from './report';
@@ -7,230 +7,367 @@ import type { Entry } from './entry';
 import { getEntriesFromConfig } from './entry';
 
 describe('getEntriesFromConfig', test => {
-  const noop = () => {};
-
   const resolvePath = (to: string) => path.join('/project', to);
 
   const reporter: Reporter = {
-    debug: noop,
-    info: noop,
-    warn: noop,
-    error: noop,
+    debug: vi.fn(),
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
   };
 
-  const expectEntries = (config: Config) => {
-    return expect(
-      getEntriesFromConfig({
-        config,
-        resolvePath,
-        reporter,
-      }),
-    );
+  const entriesFromConfig = (config: Config) => {
+    return getEntriesFromConfig({
+      config,
+      resolvePath,
+      reporter,
+      rootDir: './src',
+      outDir: './lib',
+    });
   };
 
   test('empty package', () => {
-    expectEntries({
+    expect(entriesFromConfig({
       name: 'my-package',
-    }).toEqual([]);
+    })).toEqual([]);
   });
 
-  test('no source', () => {
-    expectEntries({
+  test('main entry, implicit commonjs', () => {
+    expect(entriesFromConfig({
       name: 'my-package',
-      main: './index.js',
-    }).toEqual([]);
-  });
-
-  test('main field, implicit commonjs', () => {
-    expectEntries({
-      name: 'my-package',
-      source: './src/index.ts',
       main: './lib/index.js',
-    }).toEqual<Entry[]>([
+    })).toEqual<Entry[]>([
       {
         key: 'main',
         module: 'commonjs',
         path: './lib/index.js',
+        mode: 'production',
+        platform: 'browser',
+        sourceFile: ['/project/src/index.js'],
         outputFile: '/project/lib/index.js',
-        platform: 'web',
       },
     ]);
   });
 
   test('main field, explicit commonjs', () => {
-    expectEntries({
+    expect(entriesFromConfig({
       name: 'my-package',
       type: 'commonjs',
-      source: './src/index.ts',
       main: './lib/index.js',
-    }).toEqual<Entry[]>([
+    })).toEqual<Entry[]>([
       {
         key: 'main',
         module: 'commonjs',
         path: './lib/index.js',
+        mode: 'production',
+        platform: 'browser',
+        sourceFile: ['/project/src/index.js'],
         outputFile: '/project/lib/index.js',
-        platform: 'web',
       },
     ]);
   });
 
   test('main field, explicit esmodule', () => {
-    expectEntries({
+    expect(entriesFromConfig({
       name: 'my-package',
       type: 'module',
-      source: './src/index.ts',
       main: './lib/index.js',
-    }).toEqual<Entry[]>([
+    })).toEqual<Entry[]>([
       {
         key: 'main',
         module: 'esmodule',
         path: './lib/index.js',
+        mode: 'production',
+        platform: 'browser',
+        sourceFile: ['/project/src/index.js'],
         outputFile: '/project/lib/index.js',
-        platform: 'web',
       },
     ]);
   });
 
-
-  test('main field, commonjs file extension', () => {
-    expectEntries({
+  test('main field with module extension', () => {
+    expect(entriesFromConfig({
       name: 'my-package',
       type: 'module',
-      source: './src/index.ts',
       main: './lib/index.cjs',
-    }).toEqual<Entry[]>([
+    })).toEqual<Entry[]>([
       {
         key: 'main',
         module: 'commonjs',
         path: './lib/index.cjs',
+        mode: 'production',
+        platform: 'browser',
+        sourceFile: ['/project/src/index.cjs'],
         outputFile: '/project/lib/index.cjs',
-        platform: 'node',
       },
     ]);
 
-    expectEntries({
-      name: 'my-package',
-      type: 'module',
-      source: './src/index.ts',
-      main: './lib/index.node',
-    }).toEqual<Entry[]>([
-      {
-        key: 'main',
-        module: 'commonjs',
-        path: './lib/index.node',
-        outputFile: '/project/lib/index.node',
-        platform: 'node',
-      },
-    ]);
-  });
-
-  test('main field, esmodule file extension', () => {
-    expectEntries({
+    expect(entriesFromConfig({
       name: 'my-package',
       type: 'commonjs',
-      source: './src/index.ts',
       main: './lib/index.mjs',
-    }).toEqual<Entry[]>([
+    })).toEqual<Entry[]>([
       {
         key: 'main',
         module: 'esmodule',
         path: './lib/index.mjs',
+        mode: 'production',
+        platform: 'browser',
+        sourceFile: ['/project/src/index.mjs'],
         outputFile: '/project/lib/index.mjs',
-        platform: 'web',
+      },
+    ]);
+  });
+
+  test('main field accepts js, json, node addon paths', () => {
+    expect(entriesFromConfig({
+      name: 'my-package',
+      main: './lib/index.json',
+    })).toEqual<Entry[]>([
+      {
+        key: 'main',
+        module: 'file',
+        path: './lib/index.json',
+        mode: 'production',
+        platform: 'browser',
+        sourceFile: ['/project/src/index.json'],
+        outputFile: '/project/lib/index.json',
+      },
+    ]);
+
+    expect(entriesFromConfig({
+      name: 'my-package',
+      main: './lib/index.node',
+    })).toEqual<Entry[]>([
+      {
+        key: 'main',
+        module: 'file',
+        path: './lib/index.node',
+        mode: 'production',
+        platform: 'node',
+        sourceFile: ['/project/src/index.node'],
+        outputFile: '/project/lib/index.node',
+      },
+    ]);
+
+    // otherwise treated as JavaScript text
+    expect(entriesFromConfig({
+      name: 'my-package',
+      main: './lib/index.css',
+    })).toEqual<Entry[]>([
+      {
+        key: 'main',
+        module: 'commonjs',
+        path: './lib/index.css',
+        mode: 'production',
+        platform: 'browser',
+        sourceFile: ['/project/src/index.css'],
+        outputFile: '/project/lib/index.css',
       },
     ]);
   });
 
   test('module field', () => {
-    expectEntries({
+    expect(entriesFromConfig({
       name: 'my-package',
-      type: 'commonjs',
-      source: './src/index.ts',
       main: './lib/main.js',
       module: './lib/module.js',
-    }).toEqual<Entry[]>([
+    })).toEqual<Entry[]>([
       {
         key: 'main',
         module: 'commonjs',
+        mode: 'production',
         path: './lib/main.js',
+        sourceFile: ['/project/src/main.js'],
         outputFile: '/project/lib/main.js',
-        platform: 'web',
+        platform: 'browser',
       },
       {
         key: 'module',
         module: 'esmodule',
+        mode: 'production',
         path: './lib/module.js',
+        sourceFile: ['/project/src/module.js'],
         outputFile: '/project/lib/module.js',
-        platform: 'web',
+        platform: 'browser',
       },
     ]);
   });
 
-  test('exports', () => {
-    expectEntries({
+  test('prefer "main" over "module" on conflict', () => {
+    expect(entriesFromConfig({
       name: 'my-package',
-      type: 'commonjs',
-      source: './src/index.ts',
+      main: './lib/index.js',
+      module: './lib/index.js',
+    })).toEqual<Entry[]>([
+      {
+        key: 'main',
+        module: 'commonjs',
+        mode: 'production',
+        path: './lib/index.js',
+        sourceFile: ['/project/src/index.js'],
+        outputFile: '/project/lib/index.js',
+        platform: 'browser',
+      },
+    ]);
+
+    expect(entriesFromConfig({
+      name: 'my-package',
+      module: './lib/index.js',
+      main: './lib/index.js',
+    })).toEqual<Entry[]>([
+      {
+        key: 'main',
+        module: 'commonjs',
+        mode: 'production',
+        path: './lib/index.js',
+        sourceFile: ['/project/src/index.js'],
+        outputFile: '/project/lib/index.js',
+        platform: 'browser',
+      },
+    ]);
+  });
+
+  test('prefer "exports" over "module" on conflict', () => {
+    expect(entriesFromConfig({
+      name: 'my-package',
       exports: './lib/index.js',
-    }).toEqual<Entry[]>([
+      module: './lib/index.js',
+    })).toEqual<Entry[]>([
       {
         key: 'exports',
         module: 'commonjs',
+        mode: 'production',
         path: './lib/index.js',
+        sourceFile: ['/project/src/index.js'],
         outputFile: '/project/lib/index.js',
-        platform: 'web',
+        platform: 'browser',
       },
     ]);
 
-    expectEntries({
+    expect(entriesFromConfig({
       name: 'my-package',
-      source: './src/index.ts',
-      exports: {
-        import: './lib/index.esmodule.js',
-        require: './lib/index.commonjs.js',
-      },
-    }).toEqual<Entry[]>([
+      module: './lib/index.js',
+      exports: './lib/index.js',
+    })).toEqual<Entry[]>([
       {
-        key: 'exports["import"]',
-        module: 'esmodule',
-        path: './lib/index.esmodule.js',
-        outputFile: '/project/lib/index.esmodule.js',
-        platform: 'web',
-      },
-      {
-        key: 'exports["require"]',
+        key: 'exports',
         module: 'commonjs',
-        path: './lib/index.commonjs.js',
-        outputFile: '/project/lib/index.commonjs.js',
-        platform: 'node',
-      },
-    ]);
-
-    expectEntries({
-      name: 'my-package',
-      source: './src/index.ts',
-      exports: {
-        '.': {
-          import: './lib/index.esmodule.js',
-          require: './lib/index.commonjs.js',
-        },
-        './package.json': './package.json',
-      },
-    }).toEqual<Entry[]>([
-      {
-        key: 'exports["."].import',
-        module: 'esmodule',
-        path: './lib/index.esmodule.js',
-        outputFile: '/project/lib/index.esmodule.js',
-        platform: 'web',
-      },
-      {
-        key: 'exports["."].require',
-        module: 'commonjs',
-        path: './lib/index.commonjs.js',
-        outputFile: '/project/lib/index.commonjs.js',
-        platform: 'node',
+        mode: 'production',
+        path: './lib/index.js',
+        sourceFile: ['/project/src/index.js'],
+        outputFile: '/project/lib/index.js',
+        platform: 'browser',
       },
     ]);
   });
+
+  test('exports field', () => {
+    expect(entriesFromConfig({
+      name: 'my-package',
+      exports: './index.js',
+    })).toEqual<Entry[]>([
+      {
+        key: 'exports',
+        module: 'commonjs',
+        mode: 'production',
+        path: './index.js',
+        sourceFile: ['/project/src/index.js'],
+        outputFile: '/project/index.js',
+        platform: 'browser',
+      },
+    ]);
+  });
+
+  test('exports field always precedense over main', () => {
+    expect(entriesFromConfig({
+      name: 'my-package',
+      main: './index.js',
+      exports: './index.js',
+    })).toEqual<Entry[]>([
+      {
+        key: 'exports',
+        module: 'commonjs',
+        mode: 'production',
+        path: './index.js',
+        sourceFile: ['/project/src/index.js'],
+        outputFile: '/project/index.js',
+        platform: 'browser',
+      },
+    ]);
+  });
+
+  test('conditional exports', () => {
+    expect(entriesFromConfig({
+      name: 'my-package',
+      exports: {
+        require: './index.js',
+        import: './index.js',
+      },
+    })).toEqual<Entry[]>([
+      {
+        key: 'exports.require',
+        module: 'commonjs',
+        mode: 'production',
+        path: './index.js',
+        sourceFile: ['/project/src/index.js'],
+        outputFile: '/project/index.js',
+        platform: 'browser',
+      },
+      {
+        key: 'exports.import',
+        module: 'esmodule',
+        mode: 'production',
+        path: './index.js',
+        sourceFile: ['/project/src/index.js'],
+        outputFile: '/project/index.js',
+        platform: 'browser',
+      },
+    ]);
+
+    expect(entriesFromConfig({
+      name: 'my-package',
+      exports: {
+        '.': './lib/index.js',
+        './index': './lib/index.js',
+        './index.js': './lib/index.js',
+        './feature': './lib/feature/index.js',
+        './feature/index.js': './lib/feature/index.js',
+        './package.json': './package.json',
+      },
+    })).toEqual<Entry[]>([
+      {
+        key: 'exports["."]',
+        module: 'commonjs',
+        mode: 'production',
+        path: './lib/index.js',
+        sourceFile: ['/project/src/index.js'],
+        outputFile: '/project/lib/index.js',
+        platform: 'browser',
+      },
+      {
+        key: 'exports["./feature"]',
+        module: 'commonjs',
+        mode: 'production',
+        path: './feature/index.js',
+        sourceFile: ['/project/src/feature/index.js'],
+        outputFile: '/project/lib/feature/index.js',
+        platform: 'browser',
+      },
+    ]);
+  });
+
+  test('nested conditional exports', () => {
+  });
+
+  test('conditional exports community definitions', () => {
+  });
+
+  describe.todo('in TypeScript project');
+
+  describe.todo('when rootDir=./src, outDir=.');
+  describe.todo('when rootDir=., outDir=./lib');
+  describe.todo('when rootDir=outDir=.');
+  describe.todo('when rootDir=outDir=./lib');
+  describe.todo('when rootDir=outDir=./lib & TypeScript sources');
 });
