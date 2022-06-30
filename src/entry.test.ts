@@ -40,10 +40,13 @@ describe('getEntriesFromConfig', test => {
       {
         key: 'main',
         module: 'commonjs',
-        path: './lib/index.js',
         mode: 'production',
         platform: 'browser',
-        sourceFile: ['/project/src/index.js'],
+        path: './lib/index.js',
+        sourceFile: [
+          '/project/src/index.cjs',
+          '/project/src/index.js',
+        ],
         outputFile: '/project/lib/index.js',
       },
     ]);
@@ -58,10 +61,13 @@ describe('getEntriesFromConfig', test => {
       {
         key: 'main',
         module: 'commonjs',
-        path: './lib/index.js',
         mode: 'production',
         platform: 'browser',
-        sourceFile: ['/project/src/index.js'],
+        path: './lib/index.js',
+        sourceFile: [
+          '/project/src/index.cjs',
+          '/project/src/index.js',
+        ],
         outputFile: '/project/lib/index.js',
       },
     ]);
@@ -76,10 +82,13 @@ describe('getEntriesFromConfig', test => {
       {
         key: 'main',
         module: 'esmodule',
-        path: './lib/index.js',
         mode: 'production',
         platform: 'browser',
-        sourceFile: ['/project/src/index.js'],
+        path: './lib/index.js',
+        sourceFile: [
+          '/project/src/index.mjs',
+          '/project/src/index.js',
+        ],
         outputFile: '/project/lib/index.js',
       },
     ]);
@@ -94,10 +103,13 @@ describe('getEntriesFromConfig', test => {
       {
         key: 'main',
         module: 'commonjs',
-        path: './lib/index.cjs',
         mode: 'production',
         platform: 'browser',
-        sourceFile: ['/project/src/index.cjs'],
+        path: './lib/index.cjs',
+        sourceFile: [
+          '/project/src/index.cjs',
+          '/project/src/index.js',
+        ],
         outputFile: '/project/lib/index.cjs',
       },
     ]);
@@ -110,10 +122,13 @@ describe('getEntriesFromConfig', test => {
       {
         key: 'main',
         module: 'esmodule',
-        path: './lib/index.mjs',
         mode: 'production',
         platform: 'browser',
-        sourceFile: ['/project/src/index.mjs'],
+        path: './lib/index.mjs',
+        sourceFile: [
+          '/project/src/index.mjs',
+          '/project/src/index.js',
+        ],
         outputFile: '/project/lib/index.mjs',
       },
     ]);
@@ -127,10 +142,12 @@ describe('getEntriesFromConfig', test => {
       {
         key: 'main',
         module: 'file',
-        path: './lib/index.json',
         mode: 'production',
         platform: 'browser',
-        sourceFile: ['/project/src/index.json'],
+        path: './lib/index.json',
+        sourceFile: [
+          '/project/src/index.json',
+        ],
         outputFile: '/project/lib/index.json',
       },
     ]);
@@ -142,10 +159,12 @@ describe('getEntriesFromConfig', test => {
       {
         key: 'main',
         module: 'file',
-        path: './lib/index.node',
         mode: 'production',
+        path: './lib/index.node',
         platform: 'node',
-        sourceFile: ['/project/src/index.node'],
+        sourceFile: [
+          '/project/src/index.node',
+        ],
         outputFile: '/project/lib/index.node',
       },
     ]);
@@ -158,10 +177,14 @@ describe('getEntriesFromConfig', test => {
       {
         key: 'main',
         module: 'commonjs',
-        path: './lib/index.css',
         mode: 'production',
+        path: './lib/index.css',
         platform: 'browser',
-        sourceFile: ['/project/src/index.css'],
+        sourceFile: [
+          '/project/src/index.css.cjs',
+          '/project/src/index.css.js',
+          '/project/src/index.css',
+        ],
         outputFile: '/project/lib/index.css',
       },
     ]);
@@ -177,19 +200,25 @@ describe('getEntriesFromConfig', test => {
         key: 'main',
         module: 'commonjs',
         mode: 'production',
-        path: './lib/main.js',
-        sourceFile: ['/project/src/main.js'],
-        outputFile: '/project/lib/main.js',
         platform: 'browser',
+        path: './lib/main.js',
+        sourceFile: [
+          '/project/src/main.cjs',
+          '/project/src/main.js',
+        ],
+        outputFile: '/project/lib/main.js',
       },
       {
         key: 'module',
         module: 'esmodule',
         mode: 'production',
-        path: './lib/module.js',
-        sourceFile: ['/project/src/module.js'],
-        outputFile: '/project/lib/module.js',
         platform: 'browser',
+        path: './lib/module.js',
+        sourceFile: [
+          '/project/src/module.mjs',
+          '/project/src/module.js',
+        ],
+        outputFile: '/project/lib/module.js',
       },
     ]);
   });
@@ -204,10 +233,13 @@ describe('getEntriesFromConfig', test => {
         key: 'main',
         module: 'commonjs',
         mode: 'production',
-        path: './lib/index.js',
-        sourceFile: ['/project/src/index.js'],
-        outputFile: '/project/lib/index.js',
         platform: 'browser',
+        path: './lib/index.js',
+        sourceFile: [
+          '/project/src/index.cjs',
+          '/project/src/index.js',
+        ],
+        outputFile: '/project/lib/index.js',
       },
     ]);
 
@@ -220,10 +252,13 @@ describe('getEntriesFromConfig', test => {
         key: 'main',
         module: 'commonjs',
         mode: 'production',
-        path: './lib/index.js',
-        sourceFile: ['/project/src/index.js'],
-        outputFile: '/project/lib/index.js',
         platform: 'browser',
+        path: './lib/index.js',
+        sourceFile: [
+          '/project/src/index.cjs',
+          '/project/src/index.js',
+        ],
+        outputFile: '/project/lib/index.js',
       },
     ]);
   });
@@ -238,10 +273,13 @@ describe('getEntriesFromConfig', test => {
         key: 'exports',
         module: 'commonjs',
         mode: 'production',
-        path: './lib/index.js',
-        sourceFile: ['/project/src/index.js'],
-        outputFile: '/project/lib/index.js',
         platform: 'browser',
+        path: './lib/index.js',
+        sourceFile: [
+          '/project/src/index.cjs',
+          '/project/src/index.js',
+        ],
+        outputFile: '/project/lib/index.js',
       },
     ]);
 
@@ -254,10 +292,13 @@ describe('getEntriesFromConfig', test => {
         key: 'exports',
         module: 'commonjs',
         mode: 'production',
-        path: './lib/index.js',
-        sourceFile: ['/project/src/index.js'],
-        outputFile: '/project/lib/index.js',
         platform: 'browser',
+        path: './lib/index.js',
+        sourceFile: [
+          '/project/src/index.cjs',
+          '/project/src/index.js',
+        ],
+        outputFile: '/project/lib/index.js',
       },
     ]);
   });
@@ -265,16 +306,19 @@ describe('getEntriesFromConfig', test => {
   test('exports field', () => {
     expect(entriesFromConfig({
       name: 'my-package',
-      exports: './index.js',
+      exports: './lib/index.js',
     })).toEqual<Entry[]>([
       {
         key: 'exports',
         module: 'commonjs',
         mode: 'production',
-        path: './index.js',
-        sourceFile: ['/project/src/index.js'],
-        outputFile: '/project/index.js',
         platform: 'browser',
+        path: './lib/index.js',
+        sourceFile: [
+          '/project/src/index.cjs',
+          '/project/src/index.js',
+        ],
+        outputFile: '/project/lib/index.js',
       },
     ]);
   });
@@ -282,17 +326,42 @@ describe('getEntriesFromConfig', test => {
   test('exports field always precedense over main', () => {
     expect(entriesFromConfig({
       name: 'my-package',
-      main: './index.js',
-      exports: './index.js',
+      main: './lib/index.js',
+      exports: './lib/index.js',
     })).toEqual<Entry[]>([
       {
         key: 'exports',
         module: 'commonjs',
         mode: 'production',
-        path: './index.js',
-        sourceFile: ['/project/src/index.js'],
-        outputFile: '/project/index.js',
         platform: 'browser',
+        path: './lib/index.js',
+        sourceFile: [
+          '/project/src/index.cjs',
+          '/project/src/index.js',
+        ],
+        outputFile: '/project/lib/index.js',
+      },
+    ]);
+
+    expect(entriesFromConfig({
+      name: 'my-package',
+      type: 'module',
+      main: './lib/index.js',
+      exports: {
+        require: './lib/index.js',
+      },
+    })).toEqual<Entry[]>([
+      {
+        key: 'exports',
+        module: 'commonjs',
+        mode: 'production',
+        platform: 'browser',
+        path: './lib/index.js',
+        sourceFile: [
+          '/project/src/index.cjs',
+          '/project/src/index.js',
+        ],
+        outputFile: '/project/lib/index.js',
       },
     ]);
   });
@@ -301,27 +370,33 @@ describe('getEntriesFromConfig', test => {
     expect(entriesFromConfig({
       name: 'my-package',
       exports: {
-        require: './index.js',
-        import: './index.js',
+        require: './lib/require.js',
+        import: './lib/import.js',
       },
     })).toEqual<Entry[]>([
       {
         key: 'exports.require',
         module: 'commonjs',
         mode: 'production',
-        path: './index.js',
-        sourceFile: ['/project/src/index.js'],
-        outputFile: '/project/index.js',
         platform: 'browser',
+        path: './lib/require.js',
+        sourceFile: [
+          '/project/src/require.cjs',
+          '/project/src/require.js',
+        ],
+        outputFile: '/project/lib/require.js',
       },
       {
         key: 'exports.import',
         module: 'esmodule',
         mode: 'production',
-        path: './index.js',
-        sourceFile: ['/project/src/index.js'],
-        outputFile: '/project/index.js',
         platform: 'browser',
+        path: './lib/import.js',
+        sourceFile: [
+          '/project/src/import.mjs',
+          '/project/src/import.js',
+        ],
+        outputFile: '/project/lib/import.js',
       },
     ]);
 
@@ -340,27 +415,175 @@ describe('getEntriesFromConfig', test => {
         key: 'exports["."]',
         module: 'commonjs',
         mode: 'production',
-        path: './lib/index.js',
-        sourceFile: ['/project/src/index.js'],
-        outputFile: '/project/lib/index.js',
         platform: 'browser',
+        path: './lib/index.js',
+        sourceFile: [
+          '/project/src/index.cjs',
+          '/project/src/index.js',
+        ],
+        outputFile: '/project/lib/index.js',
       },
       {
         key: 'exports["./feature"]',
         module: 'commonjs',
         mode: 'production',
-        path: './feature/index.js',
-        sourceFile: ['/project/src/feature/index.js'],
-        outputFile: '/project/lib/feature/index.js',
         platform: 'browser',
+        path: './feature/index.js',
+        sourceFile: [
+          '/project/src/feature/index.cjs',
+          '/project/src/feature/index.js',
+        ],
+        outputFile: '/project/lib/feature/index.js',
       },
     ]);
   });
 
   test('nested conditional exports', () => {
+    expect(entriesFromConfig({
+      name: 'my-package',
+      exports: {
+        '.': {
+          require: './lib/index.cjs',
+          import: './lib/index.js',
+        },
+      },
+    })).toEqual<Entry[]>([
+      {
+        key: 'exports["."].require',
+        module: 'commonjs',
+        mode: 'production',
+        platform: 'browser',
+        path: './lib/index.cjs',
+        sourceFile: [
+          '/project/src/index.cjs',
+          '/project/src/index.js',
+        ],
+        outputFile: '/project/lib/index.cjs',
+      },
+      {
+        key: 'exports["."].import',
+        module: 'esmodule',
+        mode: 'production',
+        platform: 'browser',
+        path: './lib/index.js',
+        sourceFile: [
+          '/project/src/index.mjs',
+          '/project/src/index.js',
+        ],
+        outputFile: '/project/lib/index.js',
+      },
+    ]);
   });
 
   test('conditional exports community definitions', () => {
+    expect(entriesFromConfig({
+      name: 'my-package',
+      exports: {
+        '.': {
+          node: {
+            require: './lib/index.cjs',
+            import: {
+              development: './lib/index.mjs',
+              production: './lib/index.min.mjs',
+            },
+          },
+          browser: {
+            development: './lib/browser.js',
+            production: './lib/browser.min.js',
+          },
+        },
+
+        // can be reversed.
+        deno: {
+          './deno': './lib/deno.js',
+        },
+      },
+    })).toEqual<Entry[]>([
+      {
+        key: 'exports["."].node.require',
+        module: 'commonjs',
+        mode: 'production',
+        platform: 'node',
+        path: './lib/index.cjs',
+        sourceFile: [
+          '/project/src/index.cjs',
+          '/project/src/index.js',
+        ],
+        outputFile: '/project/lib/index.cjs',
+      },
+      {
+        key: 'exports["."].node.import.development',
+        module: 'esmodule',
+        mode: 'development',
+        platform: 'node',
+        path: './lib/index.mjs',
+        sourceFile: [
+          '/project/src/index.mjs',
+          '/project/src/index.js',
+        ],
+        outputFile: '/project/lib/index.mjs',
+      },
+      {
+        key: 'exports["."].node.import.production',
+        module: 'esmodule',
+        mode: 'production',
+        platform: 'node',
+        path: './lib/index.min.mjs',
+        sourceFile: [
+          '/project/src/index.mjs',
+          '/project/src/index.js',
+        ],
+        outputFile: '/project/lib/index.min.mjs',
+      },
+
+      // Browsers don't support CommonJS.
+      // However, Node.js tool users may have their own bundler.
+      //
+      // It shouldn't be recommended
+      {
+        key: 'exports["."].browser.development',
+
+        module: 'commonjs',
+        mode: 'development',
+        platform: 'browser',
+        path: './lib/browser.js',
+        sourceFile: [
+          '/project/src/browser.mjs',
+          '/project/src/browser.js',
+        ],
+        outputFile: '/project/lib/browser.js',
+      },
+      {
+        key: 'exports["."].browser.production',
+        module: 'commonjs',
+        mode: 'production',
+        platform: 'browser',
+        path: './lib/browser.min.js',
+        sourceFile: [
+          '/project/src/browser.mjs',
+          '/project/src/browser.js',
+        ],
+        outputFile: '/project/lib/browser.min.js',
+      },
+
+      // Deno only supports ESM.
+      // However, Deno users can load CommonJS module using compat API (https://deno.land/std/node/module.ts) if they really want.
+      // See https://deno.land/manual/npm_nodejs/std_node
+      //
+      // It shouldn't be recommended
+      {
+        key: 'exports.deno["./deno"]',
+        module: 'commonjs',
+        mode: 'production',
+        platform: 'deno',
+        path: './lib/deno.js',
+        sourceFile: [
+          '/project/src/deno.cjs',
+          '/project/src/deno.js',
+        ],
+        outputFile: '/project/lib/deno.js',
+      },
+    ]);
   });
 
   describe.todo('in TypeScript project');
