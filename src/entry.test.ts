@@ -41,8 +41,8 @@ describe('getEntriesFromConfig', test => {
         key: 'main',
         module: 'commonjs',
         mode: 'production',
-        platform: 'browser',
-        path: './lib/index.js',
+        platform: 'netural',
+        entryPath: './lib/index.js',
         sourceFile: [
           '/project/src/index.cjs',
           '/project/src/index.js',
@@ -62,8 +62,8 @@ describe('getEntriesFromConfig', test => {
         key: 'main',
         module: 'commonjs',
         mode: 'production',
-        platform: 'browser',
-        path: './lib/index.js',
+        platform: 'netural',
+        entryPath: './lib/index.js',
         sourceFile: [
           '/project/src/index.cjs',
           '/project/src/index.js',
@@ -83,8 +83,8 @@ describe('getEntriesFromConfig', test => {
         key: 'main',
         module: 'esmodule',
         mode: 'production',
-        platform: 'browser',
-        path: './lib/index.js',
+        platform: 'netural',
+        entryPath: './lib/index.js',
         sourceFile: [
           '/project/src/index.mjs',
           '/project/src/index.js',
@@ -104,8 +104,8 @@ describe('getEntriesFromConfig', test => {
         key: 'main',
         module: 'commonjs',
         mode: 'production',
-        platform: 'browser',
-        path: './lib/index.cjs',
+        platform: 'netural',
+        entryPath: './lib/index.cjs',
         sourceFile: [
           '/project/src/index.cjs',
           '/project/src/index.js',
@@ -123,8 +123,8 @@ describe('getEntriesFromConfig', test => {
         key: 'main',
         module: 'esmodule',
         mode: 'production',
-        platform: 'browser',
-        path: './lib/index.mjs',
+        platform: 'netural',
+        entryPath: './lib/index.mjs',
         sourceFile: [
           '/project/src/index.mjs',
           '/project/src/index.js',
@@ -134,7 +134,7 @@ describe('getEntriesFromConfig', test => {
     ]);
   });
 
-  test('main field accepts js, json, node addon paths', () => {
+  test('main field accepts js, json, node addon entryPaths', () => {
     expect(entriesFromConfig({
       name: 'my-package',
       main: './lib/index.json',
@@ -143,8 +143,8 @@ describe('getEntriesFromConfig', test => {
         key: 'main',
         module: 'file',
         mode: 'production',
-        platform: 'browser',
-        path: './lib/index.json',
+        platform: 'netural',
+        entryPath: './lib/index.json',
         sourceFile: [
           '/project/src/index.json',
         ],
@@ -160,7 +160,7 @@ describe('getEntriesFromConfig', test => {
         key: 'main',
         module: 'file',
         mode: 'production',
-        path: './lib/index.node',
+        entryPath: './lib/index.node',
         platform: 'node',
         sourceFile: [
           '/project/src/index.node',
@@ -178,8 +178,8 @@ describe('getEntriesFromConfig', test => {
         key: 'main',
         module: 'commonjs',
         mode: 'production',
-        path: './lib/index.css',
-        platform: 'browser',
+        entryPath: './lib/index.css',
+        platform: 'netural',
         sourceFile: [
           '/project/src/index.css.cjs',
           '/project/src/index.css.js',
@@ -200,8 +200,8 @@ describe('getEntriesFromConfig', test => {
         key: 'main',
         module: 'commonjs',
         mode: 'production',
-        platform: 'browser',
-        path: './lib/main.js',
+        platform: 'netural',
+        entryPath: './lib/main.js',
         sourceFile: [
           '/project/src/main.cjs',
           '/project/src/main.js',
@@ -212,8 +212,8 @@ describe('getEntriesFromConfig', test => {
         key: 'module',
         module: 'esmodule',
         mode: 'production',
-        platform: 'browser',
-        path: './lib/module.js',
+        platform: 'netural',
+        entryPath: './lib/module.js',
         sourceFile: [
           '/project/src/module.mjs',
           '/project/src/module.js',
@@ -233,8 +233,8 @@ describe('getEntriesFromConfig', test => {
         key: 'main',
         module: 'commonjs',
         mode: 'production',
-        platform: 'browser',
-        path: './lib/index.js',
+        platform: 'netural',
+        entryPath: './lib/index.js',
         sourceFile: [
           '/project/src/index.cjs',
           '/project/src/index.js',
@@ -252,8 +252,8 @@ describe('getEntriesFromConfig', test => {
         key: 'main',
         module: 'commonjs',
         mode: 'production',
-        platform: 'browser',
-        path: './lib/index.js',
+        platform: 'netural',
+        entryPath: './lib/index.js',
         sourceFile: [
           '/project/src/index.cjs',
           '/project/src/index.js',
@@ -273,8 +273,8 @@ describe('getEntriesFromConfig', test => {
         key: 'exports',
         module: 'commonjs',
         mode: 'production',
-        platform: 'browser',
-        path: './lib/index.js',
+        platform: 'netural',
+        entryPath: './lib/index.js',
         sourceFile: [
           '/project/src/index.cjs',
           '/project/src/index.js',
@@ -292,8 +292,8 @@ describe('getEntriesFromConfig', test => {
         key: 'exports',
         module: 'commonjs',
         mode: 'production',
-        platform: 'browser',
-        path: './lib/index.js',
+        platform: 'netural',
+        entryPath: './lib/index.js',
         sourceFile: [
           '/project/src/index.cjs',
           '/project/src/index.js',
@@ -312,8 +312,8 @@ describe('getEntriesFromConfig', test => {
         key: 'exports',
         module: 'commonjs',
         mode: 'production',
-        platform: 'browser',
-        path: './lib/index.js',
+        platform: 'netural',
+        entryPath: './lib/index.js',
         sourceFile: [
           '/project/src/index.cjs',
           '/project/src/index.js',
@@ -333,8 +333,8 @@ describe('getEntriesFromConfig', test => {
         key: 'exports',
         module: 'commonjs',
         mode: 'production',
-        platform: 'browser',
-        path: './lib/index.js',
+        platform: 'netural',
+        entryPath: './lib/index.js',
         sourceFile: [
           '/project/src/index.cjs',
           '/project/src/index.js',
@@ -355,8 +355,8 @@ describe('getEntriesFromConfig', test => {
         key: 'exports',
         module: 'commonjs',
         mode: 'production',
-        platform: 'browser',
-        path: './lib/index.js',
+        platform: 'netural',
+        entryPath: './lib/index.js',
         sourceFile: [
           '/project/src/index.cjs',
           '/project/src/index.js',
@@ -378,8 +378,8 @@ describe('getEntriesFromConfig', test => {
         key: 'exports.require',
         module: 'commonjs',
         mode: 'production',
-        platform: 'browser',
-        path: './lib/require.js',
+        platform: 'netural',
+        entryPath: './lib/require.js',
         sourceFile: [
           '/project/src/require.cjs',
           '/project/src/require.js',
@@ -390,8 +390,8 @@ describe('getEntriesFromConfig', test => {
         key: 'exports.import',
         module: 'esmodule',
         mode: 'production',
-        platform: 'browser',
-        path: './lib/import.js',
+        platform: 'netural',
+        entryPath: './lib/import.js',
         sourceFile: [
           '/project/src/import.mjs',
           '/project/src/import.js',
@@ -415,8 +415,8 @@ describe('getEntriesFromConfig', test => {
         key: 'exports["."]',
         module: 'commonjs',
         mode: 'production',
-        platform: 'browser',
-        path: './lib/index.js',
+        platform: 'netural',
+        entryPath: './lib/index.js',
         sourceFile: [
           '/project/src/index.cjs',
           '/project/src/index.js',
@@ -427,8 +427,8 @@ describe('getEntriesFromConfig', test => {
         key: 'exports["./feature"]',
         module: 'commonjs',
         mode: 'production',
-        platform: 'browser',
-        path: './feature/index.js',
+        platform: 'netural',
+        entryPath: './feature/index.js',
         sourceFile: [
           '/project/src/feature/index.cjs',
           '/project/src/feature/index.js',
@@ -452,8 +452,8 @@ describe('getEntriesFromConfig', test => {
         key: 'exports["."].require',
         module: 'commonjs',
         mode: 'production',
-        platform: 'browser',
-        path: './lib/index.cjs',
+        platform: 'netural',
+        entryPath: './lib/index.cjs',
         sourceFile: [
           '/project/src/index.cjs',
           '/project/src/index.js',
@@ -464,8 +464,8 @@ describe('getEntriesFromConfig', test => {
         key: 'exports["."].import',
         module: 'esmodule',
         mode: 'production',
-        platform: 'browser',
-        path: './lib/index.js',
+        platform: 'netural',
+        entryPath: './lib/index.js',
         sourceFile: [
           '/project/src/index.mjs',
           '/project/src/index.js',
@@ -493,7 +493,7 @@ describe('getEntriesFromConfig', test => {
           },
         },
 
-        // can be reversed.
+        // reversed exports map
         deno: {
           './deno': './lib/deno.js',
         },
@@ -504,7 +504,7 @@ describe('getEntriesFromConfig', test => {
         module: 'commonjs',
         mode: 'production',
         platform: 'node',
-        path: './lib/index.cjs',
+        entryPath: './lib/index.cjs',
         sourceFile: [
           '/project/src/index.cjs',
           '/project/src/index.js',
@@ -516,7 +516,7 @@ describe('getEntriesFromConfig', test => {
         module: 'esmodule',
         mode: 'development',
         platform: 'node',
-        path: './lib/index.mjs',
+        entryPath: './lib/index.mjs',
         sourceFile: [
           '/project/src/index.mjs',
           '/project/src/index.js',
@@ -528,7 +528,7 @@ describe('getEntriesFromConfig', test => {
         module: 'esmodule',
         mode: 'production',
         platform: 'node',
-        path: './lib/index.min.mjs',
+        entryPath: './lib/index.min.mjs',
         sourceFile: [
           '/project/src/index.mjs',
           '/project/src/index.js',
@@ -546,19 +546,21 @@ describe('getEntriesFromConfig', test => {
         module: 'commonjs',
         mode: 'development',
         platform: 'browser',
-        path: './lib/browser.js',
+        entryPath: './lib/browser.js',
         sourceFile: [
           '/project/src/browser.mjs',
           '/project/src/browser.js',
         ],
         outputFile: '/project/lib/browser.js',
       },
+
+      // Using some popular extension patterns like `*.min.js` can be inferred as regular extension.
       {
         key: 'exports["."].browser.production',
         module: 'commonjs',
         mode: 'production',
         platform: 'browser',
-        path: './lib/browser.min.js',
+        entryPath: './lib/browser.min.js',
         sourceFile: [
           '/project/src/browser.mjs',
           '/project/src/browser.js',
@@ -570,13 +572,13 @@ describe('getEntriesFromConfig', test => {
       // However, Deno users can load CommonJS module using compat API (https://deno.land/std/node/module.ts) if they really want.
       // See https://deno.land/manual/npm_nodejs/std_node
       //
-      // It shouldn't be recommended
+      // It shouldn't be recommended anyway
       {
         key: 'exports.deno["./deno"]',
         module: 'commonjs',
         mode: 'production',
         platform: 'deno',
-        path: './lib/deno.js',
+        entryPath: './lib/deno.js',
         sourceFile: [
           '/project/src/deno.cjs',
           '/project/src/deno.js',

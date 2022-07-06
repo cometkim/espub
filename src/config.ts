@@ -44,7 +44,7 @@ export type Config = {
 
 // See https://nodejs.org/api/packages.html#packages_nested_conditions
 // What a mess :/
-type ConditionalExport = (
+export type ConditionalExport = (
   | string
   | {
     [module: string]: ConditionalExport,
