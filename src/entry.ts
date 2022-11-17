@@ -62,38 +62,97 @@ export const getEntriesFromConfig: GetEntriesFromConfig = ({
     }
 
     const entry = entryMap.get(entryPath);
-    if (entry && (entry.platform !== platform || entry.module !== module)) {
-      reporter.warn(`
-Conflict found for ${path}
+    if (entry) {
+      if (entry.key.startsWith('exports') && !key.startsWith('exports')) {
+        // exports should be prioritized
+        reporter.warn(`
+  Entry ${key} will be ignored since
 
-  ${entry.key}
-  { module: "${entry.module}", platform: "${entry.platform}" }
+    ${entry.key}
+    { module: "${entry.module}", platform: "${entry.platform}" }
 
-  vs
+    precedense over
 
-  (ignored) ${key}
-  { module: "${module}", platform: "${platform}" }
+    (ignored) ${key}
+    { module: "${module}", platform: "${platform}" }
+  `);
+        return;
+      }
 
-Did you forget to specify the Node.js version in the "engines" field?
-Or you may not need to specify "require" or "node" entries.
-`);
+      if (entry.platform !== platform || entry.module !== module) {
+        reporter.warn(`
+  Conflict found for ${path}
+
+    ${entry.key}
+    { module: "${entry.module}", platform: "${entry.platform}" }
+
+    vs
+
+    (ignored) ${key}
+    { module: "${module}", platform: "${platform}" }
+
+  Did you forget to specify the Node.js version in the "engines" field?
+  Or you may not need to specify "require" or "node" entries.
+  `);
+      }
       return;
     }
 
-    const resolvedEntryPath = resolvePath(entryPath);
+    const resolvedOutputFile = resolvePath(entryPath);
+
+    let resolvedSourceFile = resolvedOutputFile.replace(
+      resolvedOutDir,
+      resolvedRootDir,
+    );
+    if (mode === 'production') {
+      const pattern = /\.min(?<ext>\.(m|c)?js)$/;
+      const match = resolvedSourceFile.match(pattern);
+      const ext = match?.groups?.ext;
+      if (ext) {
+        resolvedSourceFile = resolvedSourceFile.replace(pattern, ext);
+      }
+    }
+
+    const sourceFileCandidates = new Set<string>();
+
+    if (!resolvedOutputFile.endsWith('js')) {
+      switch (module) {
+        case 'commonjs': {
+          sourceFileCandidates.add(resolvedSourceFile + '.cjs');
+          sourceFileCandidates.add(resolvedSourceFile + '.js');
+          break;
+        }
+        case 'esmodule': {
+          sourceFileCandidates.add(resolvedSourceFile + '.mjs');
+          sourceFileCandidates.add(resolvedSourceFile + '.js');
+          break;
+        }
+      }
+    }
+
+    switch (module) {
+      case 'commonjs': {
+        sourceFileCandidates.add(resolvedSourceFile.replace(/\.js$/, '.cjs'));
+        sourceFileCandidates.add(resolvedSourceFile.replace(/\.cjs$/, '.js'));
+        break;
+      }
+      case 'esmodule': {
+        sourceFileCandidates.add(resolvedSourceFile.replace(/\.js$/, '.mjs'));
+        sourceFileCandidates.add(resolvedSourceFile.replace(/\.mjs$/, '.js'));
+        break;
+      }
+    }
+
+    sourceFileCandidates.add(resolvedSourceFile);
+
     entryMap.set(entryPath, {
       key,
       entryPath,
       mode,
       platform,
       module,
-      sourceFile: [
-        resolvedEntryPath.replace(
-          resolvedOutDir,
-          resolvedRootDir,
-        ),
-      ],
-      outputFile: resolvedEntryPath,
+      sourceFile: [...sourceFileCandidates],
+      outputFile: resolvedOutputFile,
     });
   }
 
@@ -183,93 +242,183 @@ Or you may not need to specify "require" or "node" entries.
     key, parentKey, platform, mode, module, entryPath,
   }: {
     key: string,
-    parentKey: string | null,
+    parentKey: string,
     platform: Entry['platform'],
     mode: Entry['mode'],
     module: Entry['module'],
     entryPath: ConditionalExport,
   }) {
     if (typeof entryPath === 'string') {
-      addEntry({
-        key,
-        mode,
-        entryPath,
-      });
+      const ext = path.extname(entryPath);
+      switch (ext) {
+        case '.cjs': {
+          addEntry({
+            key,
+            platform,
+            mode,
+            module: 'commonjs',
+            entryPath,
+          });
+          break;
+        }
+        case '.mjs': {
+          addEntry({
+            key,
+            platform,
+            mode,
+            module: 'esmodule',
+            entryPath,
+          });
+          break;
+        }
+        case '.node': {
+          addEntry({
+            key,
+            platform: 'node',
+            mode,
+            module: 'file',
+            entryPath,
+          });
+          break;
+        }
+        case '.json': {
+          addEntry({
+            key,
+            platform,
+            mode,
+            module: 'file',
+            entryPath,
+          });
+          break;
+        }
+        // case '.js':
+        default: {
+          addEntry({
+            key,
+            platform,
+            mode,
+            module,
+            entryPath,
+          });
+          break;
+        }
+      }
     } else if (typeof entryPath === 'object') {
       for (const [currentKey, output] of Object.entries(entryPath)) {
         // See https://nodejs.org/api/packages.html#packages_community_conditions_definitions
         switch (currentKey) {
           case 'import': {
             addConditionalEntry({
-              key: `${parentKey}.import`,
-              parentKey: 'import',
+              key: `${parentKey}.${currentKey}`,
+              parentKey: `${parentKey}.${currentKey}`,
               platform,
               mode,
               module: 'esmodule',
               entryPath: output,
             });
+            break;
           }
           case 'require': {
             addConditionalEntry({
-              key: `${parentKey}.require`,
-              parentKey: 'require',
+              key: `${parentKey}.${currentKey}`,
+              parentKey: `${parentKey}.${currentKey}`,
               platform,
               mode,
               module: 'commonjs',
               entryPath: output,
             });
+            break;
           }
           case 'types': {
             addConditionalEntry({
-              key: `${parentKey}.types`,
-              parentKey: 'types',
+              key: `${parentKey}.${currentKey}`,
+              parentKey: `${parentKey}.${currentKey}`,
               platform,
               mode,
               module: 'dts',
               entryPath: output,
             });
+            break;
+          }
+          case 'node': {
+            addConditionalEntry({
+              key: `${parentKey}.${currentKey}`,
+              parentKey: `${parentKey}.${currentKey}`,
+              platform: 'node',
+              mode,
+              module,
+              entryPath: output,
+            });
+            break;
           }
           case 'deno': {
             addConditionalEntry({
-              key: `${parentKey}.deno`,
-              parentKey: 'deno',
+              key: `${parentKey}.${currentKey}`,
+              parentKey: `${parentKey}.${currentKey}`,
               platform: 'deno',
               mode,
               module,
               entryPath: output,
             });
+            break;
           }
           case 'browser': {
             addConditionalEntry({
-              key: `${parentKey}.browser`,
-              parentKey: 'browser',
+              key: `${parentKey}.${currentKey}`,
+              parentKey: `${parentKey}.${currentKey}`,
               platform: 'browser',
               mode,
               module,
               entryPath: output,
             });
+            break;
           }
           case 'development': {
             addConditionalEntry({
-              key: `${parentKey}.development`,
-              parentKey: 'development',
+              key: `${parentKey}.${currentKey}`,
+              parentKey: `${parentKey}.${currentKey}`,
               platform,
               mode: 'development',
               module,
               entryPath: output,
             });
+            break;
           }
           case 'production': {
             addConditionalEntry({
-              key: `${parentKey}.production`,
-              parentKey: 'production',
+              key: `${parentKey}.${currentKey}`,
+              parentKey: `${parentKey}.${currentKey}`,
               platform,
               mode: 'production',
               module,
               entryPath: output,
             });
+            break;
+          }
+          case '.': {
+            addConditionalEntry({
+              key: `${parentKey}[\"${currentKey}\"]`,
+              parentKey: `${parentKey}[\"${currentKey}\"]`,
+              platform,
+              mode,
+              module,
+              entryPath: output,
+            });
+            break;
           }
           default: {
+            if (currentKey.startsWith('./')) {
+              addConditionalEntry({
+                key: `${parentKey}[\"${currentKey}\"]`,
+                parentKey: `${parentKey}[\"${currentKey}\"]`,
+                platform,
+                mode,
+                module,
+                entryPath: output,
+              });
+            } else {
+            }
+            break;
           }
         }
       }
@@ -279,7 +428,7 @@ Or you may not need to specify "require" or "node" entries.
   if (config.exports) {
     addConditionalEntry({
       key: 'exports',
-      parentKey: null,
+      parentKey: 'exports',
       platform: defaultPlatform,
       mode: 'production',
       module: defaultModule,

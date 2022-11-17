@@ -1,12 +1,12 @@
 import * as path from 'node:path';
-import { describe, expect, vi } from 'vitest';
+import { describe, test, expect, vi } from 'vitest';
 
 import type { Config } from './config';
 import type { Reporter } from './report';
 import type { Entry } from './entry';
 import { getEntriesFromConfig } from './entry';
 
-describe('getEntriesFromConfig', test => {
+describe('getEntriesFromConfig', () => {
   const resolvePath = (to: string) => path.join('/project', to);
 
   const reporter: Reporter = {
@@ -352,7 +352,7 @@ describe('getEntriesFromConfig', test => {
       },
     })).toEqual<Entry[]>([
       {
-        key: 'exports',
+        key: 'exports.require',
         module: 'commonjs',
         mode: 'production',
         platform: 'netural',
@@ -428,12 +428,23 @@ describe('getEntriesFromConfig', test => {
         module: 'commonjs',
         mode: 'production',
         platform: 'netural',
-        entryPath: './feature/index.js',
+        entryPath: './lib/feature/index.js',
         sourceFile: [
           '/project/src/feature/index.cjs',
           '/project/src/feature/index.js',
         ],
         outputFile: '/project/lib/feature/index.js',
+      },
+      {
+        key: 'exports["./package.json"]',
+        module: 'file',
+        mode: 'production',
+        platform: 'netural',
+        entryPath: './package.json',
+        sourceFile: [
+          '/project/package.json',
+        ],
+        outputFile: '/project/package.json',
       },
     ]);
   });
@@ -548,7 +559,7 @@ describe('getEntriesFromConfig', test => {
         platform: 'browser',
         entryPath: './lib/browser.js',
         sourceFile: [
-          '/project/src/browser.mjs',
+          '/project/src/browser.cjs',
           '/project/src/browser.js',
         ],
         outputFile: '/project/lib/browser.js',
@@ -562,7 +573,7 @@ describe('getEntriesFromConfig', test => {
         platform: 'browser',
         entryPath: './lib/browser.min.js',
         sourceFile: [
-          '/project/src/browser.mjs',
+          '/project/src/browser.cjs',
           '/project/src/browser.js',
         ],
         outputFile: '/project/lib/browser.min.js',
