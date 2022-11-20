@@ -8,7 +8,6 @@ import type { Flags } from './cli';
 import type { Manifest } from './manifest';
 
 describe('parseConfig', () => {
-  const resolvePath = (cwd: string, path: string) => resolve(cwd, path);
   const defaultFlags: Flags = {
     cwd: '/project',
     platform: undefined,
@@ -19,7 +18,6 @@ describe('parseConfig', () => {
     external: [],
     standalone: false,
     noDts: false,
-    noMinify: false,
     noSourcemap: false,
   };
 
@@ -42,7 +40,6 @@ describe('parseConfig', () => {
       cwd: '/project',
       module: 'commonjs',
       platform: 'netural',
-      minify: true,
       sourcemap: true,
       declaration: false,
       rootDir: 'src',
@@ -65,7 +62,6 @@ describe('parseConfig', () => {
         cwd: '/project',
         module: 'commonjs',
         platform: 'netural',
-        minify: true,
         sourcemap: true,
         declaration: false,
         rootDir: '.',
@@ -87,7 +83,6 @@ describe('parseConfig', () => {
         cwd: '/project',
         module: 'commonjs',
         platform: 'netural',
-        minify: true,
         sourcemap: true,
         declaration: false,
         rootDir: 'src',
@@ -120,7 +115,6 @@ describe('parseConfig', () => {
         cwd: '/project',
         module: 'commonjs',
         platform: 'netural',
-        minify: true,
         sourcemap: true,
         declaration: true,
         rootDir: 'src',
@@ -143,7 +137,6 @@ describe('parseConfig', () => {
         cwd: '/project',
         module: 'commonjs',
         platform: 'netural',
-        minify: true,
         sourcemap: true,
         declaration: false,
         rootDir: 'src',
@@ -166,7 +159,6 @@ describe('parseConfig', () => {
         cwd: '/project',
         module: 'commonjs',
         platform: 'netural',
-        minify: true,
         sourcemap: true,
         declaration: false,
         rootDir: 'src',

@@ -11,7 +11,6 @@ export type ParsedConfig = {
   cwd: string,
   module: Entry['module'],
   platform: Entry['platform'],
-  minify: boolean,
   sourcemap: boolean,
   declaration: boolean,
   rootDir: string,
@@ -53,7 +52,6 @@ export const parseConfig: ParseConfig = ({
     ? 'esmodule'
     : 'commonjs';
 
-  const minify = !flags.noMinify;
   const sourcemap = !flags.noSourcemap;
 
   let platform: Entry['platform'] = 'netural';
@@ -75,7 +73,6 @@ export const parseConfig: ParseConfig = ({
     cwd,
     module,
     platform,
-    minify,
     sourcemap,
     declaration,
     rootDir,

@@ -28,8 +28,6 @@ Options
 
   --external         Specify external dependencies to exclude from the bundle
 
-  --minify           Minify production output (default: true)
-
   --sourcemap        Generate source map (default: true)
 
   --dts              Generate TypeScript .d.ts files (default: true)
@@ -65,10 +63,6 @@ Options
       type: 'string',
     },
     standalone: {
-      type: 'boolean',
-      default: false,
-    },
-    noMinify: {
       type: 'boolean',
       default: false,
     },
