@@ -1,88 +1,85 @@
-import * as fs from 'node:fs/promises';
+import type { CompilerOptions as TSCompilerOptions } from "typescript";
+import type { Flags } from "./cli";
+import type { Manifest } from "./manifest";
+import type { Entry } from "./entry";
+
+export class NanobundleConfigError extends Error {
+  name = 'NanobundleConfigError';
+}
+
+export type ParsedConfig = {
+  cwd: string,
+  module: Entry['module'],
+  platform: Entry['platform'],
+  minify: boolean,
+  sourcemap: boolean,
+  declaration: boolean,
+  rootDir: string,
+  outDir: string,
+  manifest: Manifest,
+};
 
 export type Config = {
-  name?: string,
-
-  type?: 'commonjs' | 'module',
-
-  /**
-   * Source file for the `main`, `module`, and `exports` entry
-   */
-  source?: string,
-
-  // Non-standard entry style for legacy bundlers
-  module?: string,
-
-  // Main entry
-  main?: string,
-
-  // Binary entries
-  bin?: string | {
-    [name: string]: string,
-  },
-
-  // TypeScript declaration for "main" entry
-  types?: string,
-
-  // Export maps
-  exports?: ConditionalExport,
-
-  dependencies?: {
-    [name: string]: string,
-  },
-
-  peerDependencies?: {
-    [name: string]: string,
-  },
-
-  browserslist?: string | string[],
-
-  engines?: {
-    node?: string,
-  },
+  flags: Flags,
+  manifest: Manifest,
+  tsCompilerOptions?: TSCompilerOptions,
 };
 
-// See https://nodejs.org/api/packages.html#packages_nested_conditions
-// What a mess :/
-export type ConditionalExport = (
-  | string
-  | {
-    [module: string]: ConditionalExport,
+interface ParseConfig {
+  (config: Config): ParsedConfig;
+}
+export const parseConfig: ParseConfig = ({
+  flags,
+  manifest,
+  tsCompilerOptions,
+}) => {
+  const cwd = flags.cwd;
+
+  const rootDir = (
+    flags.rootDir ||
+    tsCompilerOptions?.rootDir ||
+    'src'
+  );
+  const outDir = (
+    flags.outDir ||
+    tsCompilerOptions?.outDir ||
+    'lib'
+  );
+  if (rootDir === outDir) {
+    throw new NanobundleConfigError(`Directory rootDir(${rootDir}) and outDir(${outDir}) are conflict! Please specify different directory for one of them.`)
   }
-  | {
-    'import'?: ConditionalExport,
-    'require'?: ConditionalExport,
-    'node'?: ConditionalExport,
-    'node-addons'?: ConditionalExport,
-    'default'?: ConditionalExport,
 
-    // community conditions definitions
-    // See https://nodejs.org/api/packages.html#packages_community_conditions_definitions
-    // See also https://devblogs.microsoft.com/typescript/announcing-typescript-4-7/#package-json-exports-imports-and-self-referencing
-    'types'?: ConditionalExport,
-    'deno'?: ConditionalExport,
-    'browser'?: ConditionalExport,
-    'development'?: ConditionalExport,
-    'production'?: ConditionalExport,
+  const module = manifest.type === 'module'
+    ? 'esmodule'
+    : 'commonjs';
+
+  const minify = !flags.noMinify;
+  const sourcemap = !flags.noSourcemap;
+
+  let platform: Entry['platform'] = 'netural';
+  if (['node', 'deno', 'web'].includes(flags.platform || '')) {
+    platform = flags.platform as Entry['platform'];
+  } else if (manifest.engines?.node) {
+    platform = 'node';
   }
-);
 
-type ConfigWithOverride = Config & {
-  publishConfig?: Config,
-};
-
-type LoadConfigOptions = {
-  resolvePath: (path: string) => string,
-};
-
-export async function loadConfig({ resolvePath }: LoadConfigOptions): Promise<Config> {
-  const configPath = resolvePath('package.json');
-
-  const { publishConfig, ...config } = await fs.readFile(configPath, 'utf-8')
-    .then(JSON.parse) as ConfigWithOverride;
+  let declaration = false;
+  if (tsCompilerOptions) {
+    declaration = (
+      (!flags.noDts) &&
+      (tsCompilerOptions.declaration === true)
+    );
+  }
 
   return {
-    ...config,
-    ...publishConfig,
+    cwd,
+    module,
+    platform,
+    minify,
+    sourcemap,
+    declaration,
+    rootDir,
+    outDir,
+    manifest,
   };
-}
+};

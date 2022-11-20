@@ -1,69 +1,77 @@
 import * as path from 'node:path';
-import type { ConditionalExport, Config } from './config';
+import type { ConditionalExport } from './manifest';
+import type { ParsedConfig } from './config';
 import type { Reporter } from './report';
 
 export type Entry = {
-  key: string,
-  entryPath: string,
-  mode: 'development' | 'production',
-  platform: 'netural' | 'browser' | 'deno' | 'node',
-  module: 'commonjs' | 'esmodule' | 'dts' | 'file',
-  sourceFile: string[],
-  outputFile: string,
+  key: string;
+  entryPath: string;
+  mode: undefined | 'development' | 'production';
+  sourcemap: boolean;
+  platform: "netural" | "browser" | "deno" | "node";
+  module: "commonjs" | "esmodule" | "dts" | "file";
+  sourceFile: string[];
+  outputFile: string;
 };
 
 interface GetEntriesFromConfig {
   (props: {
-    config: Config,
-    rootDir: string,
-    outDir: string,
-    resolvePath: (path: string) => string,
-    reporter: Reporter,
+    config: ParsedConfig;
+    resolvePath: (cwd: string, path: string) => string;
+    reporter: Reporter;
   }): Entry[];
-};
-
+}
 export const getEntriesFromConfig: GetEntriesFromConfig = ({
   config,
-  rootDir,
-  outDir,
   reporter,
-  resolvePath,
+  resolvePath: resolvePathFrom,
 }) => {
-  const resolvedOutDir = resolvePath(outDir);
+  const defaultMode: Entry['mode'] = undefined;
+  const {
+    cwd,
+    rootDir,
+    outDir,
+    platform: defaultPlatform,
+    module: defaultModule,
+    sourcemap,
+    manifest,
+  } = config;
+  const resolvePath = (path: string) => resolvePathFrom(cwd, path);
   const resolvedRootDir = resolvePath(rootDir);
+  const resolvedOutDir = resolvePath(outDir);
 
-  const defaultPlatform: Entry['platform'] = 'netural';
-  const defaultMode: Entry['mode'] = 'production';
-  const defaultModule: Entry['module'] = (
-    (config.type === 'module')
-      ? 'esmodule'
-      : 'commonjs'
-  );
-
-  const entryMap = new Map<Entry['entryPath'], Entry>();
+  const entryMap = new Map<Entry["entryPath"], Entry>();
 
   function addEntry({
-    key, entryPath, platform, module, mode,
+    key,
+    entryPath,
+    platform,
+    module,
+    mode,
   }: {
-    key: string,
-    entryPath: string,
-    platform: Entry['platform'],
-    mode: Entry['mode'],
-    module: Entry['module'],
+    key: string;
+    entryPath: string;
+    platform: Entry["platform"];
+    mode: Entry["mode"];
+    module: Entry["module"];
   }) {
-    if (!entryPath.startsWith('./')) {
-      reporter.error(`Invalid entry "${key}", entry path should starts with \`"./"\``);
-      throw new Error('FIXME');
+    if (!entryPath.startsWith("./")) {
+      reporter.error(
+        `Invalid entry "${key}", entry path should starts with \`"./"\``,
+      );
+      throw new Error("FIXME");
     }
 
-    if (key.includes('*') || entryPath.includes('*')) {
-      reporter.warn(`Ignoring ${key}: subpath pattern(\`*\`) is not supported yet`);
+    if (key.includes("*") || entryPath.includes("*")) {
+      reporter.warn(
+        `Ignoring ${key}: subpath pattern(\`*\`) is not supported yet`,
+      );
       return;
     }
 
     const entry = entryMap.get(entryPath);
     if (entry) {
-      if (entry.key.startsWith('exports') && !key.startsWith('exports')) {
+      if (entry.key.startsWith("exports") && !key.startsWith("exports")) {
         // exports should be prioritized
         reporter.warn(`
   Entry ${key} will be ignored since
@@ -99,46 +107,44 @@ export const getEntriesFromConfig: GetEntriesFromConfig = ({
     }
 
     const resolvedOutputFile = resolvePath(entryPath);
-
     let resolvedSourceFile = resolvedOutputFile.replace(
       resolvedOutDir,
       resolvedRootDir,
     );
-    if (mode === 'production') {
-      const pattern = /\.min(?<ext>\.(m|c)?js)$/;
-      const match = resolvedSourceFile.match(pattern);
-      const ext = match?.groups?.ext;
-      if (ext) {
-        resolvedSourceFile = resolvedSourceFile.replace(pattern, ext);
-      }
+
+    const pattern = /\.min(?<ext>\.(m|c)?js)$/;
+    const match = resolvedSourceFile.match(pattern);
+    const ext = match?.groups?.ext;
+    if (ext) {
+      resolvedSourceFile = resolvedSourceFile.replace(pattern, ext);
     }
 
     const sourceFileCandidates = new Set<string>();
 
-    if (!resolvedOutputFile.endsWith('js')) {
+    if (!resolvedOutputFile.endsWith("js")) {
       switch (module) {
-        case 'commonjs': {
-          sourceFileCandidates.add(resolvedSourceFile + '.cjs');
-          sourceFileCandidates.add(resolvedSourceFile + '.js');
+        case "commonjs": {
+          sourceFileCandidates.add(`${resolvedSourceFile}.cjs`);
+          sourceFileCandidates.add(`${resolvedSourceFile}.js`);
           break;
         }
-        case 'esmodule': {
-          sourceFileCandidates.add(resolvedSourceFile + '.mjs');
-          sourceFileCandidates.add(resolvedSourceFile + '.js');
+        case "esmodule": {
+          sourceFileCandidates.add(`${resolvedSourceFile}.mjs`);
+          sourceFileCandidates.add(`${resolvedSourceFile}.js`);
           break;
         }
       }
     }
 
     switch (module) {
-      case 'commonjs': {
-        sourceFileCandidates.add(resolvedSourceFile.replace(/\.js$/, '.cjs'));
-        sourceFileCandidates.add(resolvedSourceFile.replace(/\.cjs$/, '.js'));
+      case "commonjs": {
+        sourceFileCandidates.add(resolvedSourceFile.replace(/\.js$/, ".cjs"));
+        sourceFileCandidates.add(resolvedSourceFile.replace(/\.cjs$/, ".js"));
         break;
       }
-      case 'esmodule': {
-        sourceFileCandidates.add(resolvedSourceFile.replace(/\.js$/, '.mjs'));
-        sourceFileCandidates.add(resolvedSourceFile.replace(/\.mjs$/, '.js'));
+      case "esmodule": {
+        sourceFileCandidates.add(resolvedSourceFile.replace(/\.js$/, ".mjs"));
+        sourceFileCandidates.add(resolvedSourceFile.replace(/\.mjs$/, ".js"));
         break;
       }
     }
@@ -149,6 +155,7 @@ export const getEntriesFromConfig: GetEntriesFromConfig = ({
       key,
       entryPath,
       mode,
+      sourcemap,
       platform,
       module,
       sourceFile: [...sourceFileCandidates],
@@ -157,49 +164,50 @@ export const getEntriesFromConfig: GetEntriesFromConfig = ({
   }
 
   function addMainEntry({
-    key, entryPath,
+    key,
+    entryPath,
   }: {
-    key: string,
-    entryPath: string,
+    key: string;
+    entryPath: string;
   }) {
     const ext = path.extname(entryPath);
     switch (ext) {
-      case '.cjs': {
+      case ".cjs": {
         addEntry({
           key,
           platform: defaultPlatform,
           mode: defaultMode,
-          module: 'commonjs',
+          module: "commonjs",
           entryPath,
         });
         break;
       }
-      case '.mjs': {
+      case ".mjs": {
         addEntry({
           key,
           platform: defaultPlatform,
           mode: defaultMode,
-          module: 'esmodule',
+          module: "esmodule",
           entryPath,
         });
         break;
       }
-      case '.node': {
+      case ".node": {
         addEntry({
           key,
-          platform: 'node',
+          platform: "node",
           mode: defaultMode,
-          module: 'file',
+          module: "file",
           entryPath,
         });
         break;
       }
-      case '.json': {
+      case ".json": {
         addEntry({
           key,
           platform: defaultPlatform,
           mode: defaultMode,
-          module: 'file',
+          module: "file",
           entryPath,
         });
         break;
@@ -219,18 +227,19 @@ export const getEntriesFromConfig: GetEntriesFromConfig = ({
   }
 
   function addModuleEntry({
-    key, entryPath,
+    key,
+    entryPath,
   }: {
-    key: string,
-    entryPath: string,
+    key: string;
+    entryPath: string;
   }) {
     const ext = path.extname(entryPath);
-    if (ext === '.js' || ext === '.mjs') {
+    if (ext === ".js" || ext === ".mjs") {
       addEntry({
         key,
         platform: defaultPlatform,
         mode: defaultMode,
-        module: 'esmodule',
+        module: "esmodule",
         entryPath,
       });
     } else {
@@ -239,54 +248,59 @@ export const getEntriesFromConfig: GetEntriesFromConfig = ({
   }
 
   function addConditionalEntry({
-    key, parentKey, platform, mode, module, entryPath,
+    key,
+    parentKey,
+    platform,
+    mode,
+    module,
+    entryPath,
   }: {
-    key: string,
-    parentKey: string,
-    platform: Entry['platform'],
-    mode: Entry['mode'],
-    module: Entry['module'],
-    entryPath: ConditionalExport,
+    key: string;
+    parentKey: string;
+    platform: Entry["platform"];
+    mode: Entry["mode"];
+    module: Entry["module"];
+    entryPath: ConditionalExport;
   }) {
-    if (typeof entryPath === 'string') {
+    if (typeof entryPath === "string") {
       const ext = path.extname(entryPath);
       switch (ext) {
-        case '.cjs': {
+        case ".cjs": {
           addEntry({
             key,
             platform,
             mode,
-            module: 'commonjs',
+            module: "commonjs",
             entryPath,
           });
           break;
         }
-        case '.mjs': {
+        case ".mjs": {
           addEntry({
             key,
             platform,
             mode,
-            module: 'esmodule',
+            module: "esmodule",
             entryPath,
           });
           break;
         }
-        case '.node': {
+        case ".node": {
           addEntry({
             key,
-            platform: 'node',
+            platform: "node",
             mode,
-            module: 'file',
+            module: "file",
             entryPath,
           });
           break;
         }
-        case '.json': {
+        case ".json": {
           addEntry({
             key,
             platform,
             mode,
-            module: 'file',
+            module: "file",
             entryPath,
           });
           break;
@@ -303,99 +317,99 @@ export const getEntriesFromConfig: GetEntriesFromConfig = ({
           break;
         }
       }
-    } else if (typeof entryPath === 'object') {
+    } else if (typeof entryPath === "object") {
       for (const [currentKey, output] of Object.entries(entryPath)) {
         // See https://nodejs.org/api/packages.html#packages_community_conditions_definitions
         switch (currentKey) {
-          case 'import': {
+          case "import": {
             addConditionalEntry({
               key: `${parentKey}.${currentKey}`,
               parentKey: `${parentKey}.${currentKey}`,
               platform,
               mode,
-              module: 'esmodule',
+              module: "esmodule",
               entryPath: output,
             });
             break;
           }
-          case 'require': {
+          case "require": {
             addConditionalEntry({
               key: `${parentKey}.${currentKey}`,
               parentKey: `${parentKey}.${currentKey}`,
               platform,
               mode,
-              module: 'commonjs',
+              module: "commonjs",
               entryPath: output,
             });
             break;
           }
-          case 'types': {
+          case "types": {
             addConditionalEntry({
               key: `${parentKey}.${currentKey}`,
               parentKey: `${parentKey}.${currentKey}`,
               platform,
               mode,
-              module: 'dts',
+              module: "dts",
               entryPath: output,
             });
             break;
           }
-          case 'node': {
+          case "node": {
             addConditionalEntry({
               key: `${parentKey}.${currentKey}`,
               parentKey: `${parentKey}.${currentKey}`,
-              platform: 'node',
+              platform: "node",
               mode,
               module,
               entryPath: output,
             });
             break;
           }
-          case 'deno': {
+          case "deno": {
             addConditionalEntry({
               key: `${parentKey}.${currentKey}`,
               parentKey: `${parentKey}.${currentKey}`,
-              platform: 'deno',
+              platform: "deno",
               mode,
               module,
               entryPath: output,
             });
             break;
           }
-          case 'browser': {
+          case "browser": {
             addConditionalEntry({
               key: `${parentKey}.${currentKey}`,
               parentKey: `${parentKey}.${currentKey}`,
-              platform: 'browser',
+              platform: "browser",
               mode,
               module,
               entryPath: output,
             });
             break;
           }
-          case 'development': {
+          case "development": {
             addConditionalEntry({
               key: `${parentKey}.${currentKey}`,
               parentKey: `${parentKey}.${currentKey}`,
               platform,
-              mode: 'development',
+              mode: "development",
               module,
               entryPath: output,
             });
             break;
           }
-          case 'production': {
+          case "production": {
             addConditionalEntry({
               key: `${parentKey}.${currentKey}`,
               parentKey: `${parentKey}.${currentKey}`,
               platform,
-              mode: 'production',
+              mode: "production",
               module,
               entryPath: output,
             });
             break;
           }
-          case '.': {
+          case ".": {
             addConditionalEntry({
               key: `${parentKey}[\"${currentKey}\"]`,
               parentKey: `${parentKey}[\"${currentKey}\"]`,
@@ -407,7 +421,7 @@ export const getEntriesFromConfig: GetEntriesFromConfig = ({
             break;
           }
           default: {
-            if (currentKey.startsWith('./')) {
+            if (currentKey.startsWith("./")) {
               addConditionalEntry({
                 key: `${parentKey}[\"${currentKey}\"]`,
                 parentKey: `${parentKey}[\"${currentKey}\"]`,
@@ -425,14 +439,14 @@ export const getEntriesFromConfig: GetEntriesFromConfig = ({
     }
   }
 
-  if (config.exports) {
+  if (manifest.exports) {
     addConditionalEntry({
-      key: 'exports',
-      parentKey: 'exports',
+      key: "exports",
+      parentKey: "exports",
       platform: defaultPlatform,
-      mode: 'production',
+      mode: "production",
       module: defaultModule,
-      entryPath: config.exports,
+      entryPath: manifest.exports,
     });
   } else {
     reporter.warn(`Using "exports" field is highly recommended.
@@ -440,17 +454,17 @@ See https://nodejs.org/api/packages.html for more detail.
 `);
   }
 
-  if (typeof config.main === 'string') {
+  if (typeof manifest.main === "string") {
     addMainEntry({
-      key: 'main',
-      entryPath: config.main,
+      key: "main",
+      entryPath: manifest.main,
     });
   }
 
-  if (typeof config.module === 'string') {
+  if (typeof manifest.module === "string") {
     addModuleEntry({
-      key: 'module',
-      entryPath: config.module,
+      key: "module",
+      entryPath: manifest.module,
     });
 
     reporter.warn(`"module" field is not standard and may works in only legacy bundlers. Consider using "exports" instead.
@@ -459,4 +473,4 @@ See https://nodejs.org/api/packages.html for more detail.
   }
 
   return Array.from(entryMap.values());
-}
+};

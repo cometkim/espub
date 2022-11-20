@@ -44,11 +44,9 @@ Options
     },
     rootDir: {
       type: 'string',
-      default: 'src',
     },
     outDir: {
       type: 'string',
-      default: '.',
     },
     tsconfig: {
       type: 'string',
@@ -63,21 +61,24 @@ Options
       isMultiple: true,
       default: [],
     },
+    platform: {
+      type: 'string',
+    },
     standalone: {
       type: 'boolean',
       default: false,
     },
-    minify: {
+    noMinify: {
       type: 'boolean',
-      default: true,
+      default: false,
     },
-    sourcemap: {
+    noSourcemap: {
       type: 'boolean',
-      default: true,
+      default: false,
     },
-    dts: {
+    noDts: {
       type: 'boolean',
-      default: true,
+      default: false,
     },
   },
 });
