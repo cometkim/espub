@@ -3,7 +3,7 @@ import { test, expect } from "vitest";
 import type { Entry } from './entry';
 import { EntryGroup, groupEntries, hashOptions } from './entryGroup';
 
-test('groupEntries', () => {
+test('groupEntries should split different option set', () => {
   const entries: Entry[] = [
     {
       key: 'exports["."].node.require',
@@ -129,4 +129,80 @@ test('groupEntries', () => {
       },
     ],
   })
+});
+
+test('groupEntries should merge same option set', () => {
+  const entries: Entry[] = [
+    {
+      key: 'exports["."].require',
+      module: "commonjs",
+      mode: undefined,
+      minify: false,
+      sourcemap: true,
+      platform: "neutral",
+      entryPath: "./lib/index.cjs",
+      sourceFile: ["/project/src/index.cjs", "/project/src/index.js"],
+      outputFile: "/project/lib/index.cjs",
+    },
+    {
+      key: 'exports["."].default.require',
+      module: "commonjs",
+      mode: undefined,
+      minify: false,
+      sourcemap: true,
+      platform: "neutral",
+      entryPath: "./lib/index.cjs",
+      sourceFile: ["/project/src/index.cjs", "/project/src/index.js"],
+      outputFile: "/project/lib/index.cjs",
+    },
+    {
+      key: 'exports["."].default.default.require',
+      module: "commonjs",
+      mode: undefined,
+      minify: false,
+      sourcemap: true,
+      platform: "neutral",
+      entryPath: "./lib/index.cjs",
+      sourceFile: ["/project/src/index.cjs", "/project/src/index.js"],
+      outputFile: "/project/lib/index.cjs",
+    },
+  ];
+
+  expect(groupEntries(entries)).toEqual<EntryGroup>({
+    [hashOptions({ mode: undefined, module: 'commonjs', platform: 'neutral', sourcemap: true, minify: false })]: [
+      {
+        key: 'exports["."].require',
+        module: "commonjs",
+        mode: undefined,
+        minify: false,
+        sourcemap: true,
+        platform: "neutral",
+        entryPath: "./lib/index.cjs",
+        sourceFile: ["/project/src/index.cjs", "/project/src/index.js"],
+        outputFile: "/project/lib/index.cjs",
+      },
+      {
+        key: 'exports["."].default.require',
+        module: "commonjs",
+        mode: undefined,
+        minify: false,
+        sourcemap: true,
+        platform: "neutral",
+        entryPath: "./lib/index.cjs",
+        sourceFile: ["/project/src/index.cjs", "/project/src/index.js"],
+        outputFile: "/project/lib/index.cjs",
+      },
+      {
+        key: 'exports["."].default.default.require',
+        module: "commonjs",
+        mode: undefined,
+        minify: false,
+        sourcemap: true,
+        platform: "neutral",
+        entryPath: "./lib/index.cjs",
+        sourceFile: ["/project/src/index.cjs", "/project/src/index.js"],
+        outputFile: "/project/lib/index.cjs",
+      },
+    ],
+  });
 });
