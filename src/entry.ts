@@ -9,7 +9,7 @@ export type Entry = {
   minify: boolean;
   mode: undefined | 'development' | 'production';
   sourcemap: boolean;
-  platform: "netural" | "browser" | "deno" | "node";
+  platform: "neutral" | "browser" | "deno" | "node";
   module: "commonjs" | "esmodule" | "dts" | "file";
   sourceFile: string[];
   outputFile: string;

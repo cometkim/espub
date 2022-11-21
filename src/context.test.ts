@@ -40,7 +40,7 @@ describe('parseConfig', () => {
     expect(result).toEqual<Context>({
       cwd: '/project',
       module: 'commonjs',
-      platform: 'netural',
+      platform: 'neutral',
       sourcemap: true,
       declaration: false,
       rootDir: 'src',
@@ -63,7 +63,7 @@ describe('parseConfig', () => {
       expect(result).toEqual<Context>({
         cwd: '/project',
         module: 'commonjs',
-        platform: 'netural',
+        platform: 'neutral',
         sourcemap: true,
         declaration: false,
         rootDir: '.',
@@ -85,7 +85,7 @@ describe('parseConfig', () => {
       expect(result).toEqual<Context>({
         cwd: '/project',
         module: 'commonjs',
-        platform: 'netural',
+        platform: 'neutral',
         sourcemap: true,
         declaration: false,
         rootDir: 'src',
@@ -118,7 +118,7 @@ describe('parseConfig', () => {
       expect(result).toEqual<Context>({
         cwd: '/project',
         module: 'commonjs',
-        platform: 'netural',
+        platform: 'neutral',
         sourcemap: true,
         declaration: true,
         rootDir: 'src',
@@ -143,7 +143,7 @@ describe('parseConfig', () => {
       expect(result).toEqual<Context>({
         cwd: '/project',
         module: 'commonjs',
-        platform: 'netural',
+        platform: 'neutral',
         sourcemap: true,
         declaration: false,
         rootDir: 'src',
@@ -166,7 +166,7 @@ describe('parseConfig', () => {
       expect(result).toEqual<Context>({
         cwd: '/project',
         module: 'commonjs',
-        platform: 'netural',
+        platform: 'neutral',
         sourcemap: true,
         declaration: false,
         rootDir: 'src',

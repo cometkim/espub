@@ -59,7 +59,7 @@ export const parseConfig: ParseConfig = ({
       : 'commonjs'
   );
 
-  let platform: Entry['platform'] = 'netural';
+  let platform: Entry['platform'] = 'neutral';
   if (['node', 'deno', 'web'].includes(flags.platform || '')) {
     platform = flags.platform as Entry['platform'];
   } else if (manifest.engines?.node) {
