@@ -1,6 +1,7 @@
 import type { Plugin } from 'esbuild';
+
 import type { Reporter } from '../report';
-import { isFileSystemReference } from '../utils';
+import * as fsUtils from '../fsUtils';
 
 type PluginOptions = {
   reporter: Reporter,
@@ -39,7 +40,7 @@ export function makePlugin({
       let dependOnNode = false;
 
       build.onResolve({ filter: /.*/ }, async args => {
-        if (isFileSystemReference(args.path)) {
+        if (fsUtils.isFileSystemReference(args.path)) {
           return;
         }
 

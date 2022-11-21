@@ -1,7 +1,11 @@
-export function formatModule(module: 'esmodule' | 'commonjs'): string {
+import { Entry } from './entry';
+
+export function formatModule(module: Entry['module']): string {
   return {
     esmodule: 'ESM',
     commonjs: 'CommonJS',
+    file: 'File',
+    dts: 'TypeScript declaration',
   }[module];
 }
 
@@ -10,9 +14,4 @@ export function formatPlatform(platform: 'web' | 'node'): string {
     web: 'Web',
     node: 'Node.js',
   }[platform];
-}
-
-export function isFileSystemReference(path: string): boolean {
-  const fileSystemReferencePattern = /^(\.{0,2}\/).*/;
-  return fileSystemReferencePattern.test(path);
 }

@@ -1,5 +1,6 @@
 import type { Plugin } from 'esbuild';
-import { isFileSystemReference } from '../utils';
+
+import * as fsUtils from '../fsUtils';
 
 type Imports = Record<string, string>;
 
@@ -14,7 +15,7 @@ export function makePlugin({
   imports,
   resolvePath,
 }: PluginOptions): Plugin {
-  const isExternalPath = (path: string) => !isFileSystemReference(path);
+  const isExternalPath = (path: string) => !fsUtils.isFileSystemReference(path);
   return {
     name: 'nanobundle/import-maps/' + name,
     setup(build) {

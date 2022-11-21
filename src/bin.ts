@@ -3,7 +3,7 @@
 import { performance } from 'node:perf_hooks';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import { parseNative } from 'tsconfck';
+import { parse as parseTsConfig } from 'tsconfck';
 import type {
   Program as TSProgram,
   CompilerOptions as TSCompilerOptions,
@@ -11,26 +11,19 @@ import type {
 
 import type { Reporter } from './report';
 import { cli } from './cli';
-import { loadConfig } from './config';
 import { loadTargets } from './target';
 import { loadImportMaps, normalizeImportMaps, validateImportMaps } from './importMaps';
 import { getEntriesFromConfig } from './entry';
 import { buildCommand } from './commands/build';
 import { makePlugin as makeEmbedPlugin } from './plugins/esbuildEmbedPlugin';
 import { makePlugin as makeImportMapsPlugin } from './plugins/esbuildImportMapsPlugin';
+import { loadManifest } from './manifest';
+import { parseConfig } from './config';
 
 const { flags, input } = cli;
 const [command] = input;
-const noop = () => {};
+const noop = () => { };
 const debugEnabled = process.env.DEBUG === 'true';
-
-const {
-  cwd: basePath,
-  external: forceExternalDependencies,
-  minify,
-  sourcemap,
-  standalone,
-} = flags;
 
 const reporter: Reporter = {
   debug: debugEnabled ? console.debug : noop,
@@ -39,7 +32,7 @@ const reporter: Reporter = {
   error: console.error,
 };
 
-const resolvePath = (file: string) => path.resolve(basePath, file);
+const resolvePath = (cwd: string, subpath: string) => path.resolve(cwd, subpath);
 
 try {
   switch (command) {
@@ -50,14 +43,33 @@ try {
     case 'build': {
       const startedAt = performance.now();
 
-      const config = await loadConfig({ resolvePath });
-      const sourceFile = config.source && resolvePath(config.source);
-      if (!sourceFile || !fs.existsSync(sourceFile)) {
-        throw new Error('`"source"` field must be specified in the package.json');
+      const manifest = await loadManifest({
+        cwd: flags.cwd,
+        resolvePath,
+      });
+      reporter.debug(`build ${manifest.name || 'unnamed'} package`);
+
+      const tsconfigResult = await parseTsConfig(flags.tsconfig, { resolveWithEmptyIfConfigNotFound: true });
+      const tsconfigPath = (
+        tsconfigResult.tsconfigFile !== 'no_tsconfig_file_found'
+          ? tsconfigResult.tsconfigFile
+          : undefined
+      );
+      const tsconfig = (
+        tsconfigResult.tsconfigFile !== 'no_tsconfig_file_found'
+          ? tsconfigResult.tsconfig
+          : undefined
+      );
+      if (tsconfigPath) {
+        reporter.debug(`load tsconfig from ${tsconfigPath}`);
       }
 
-      reporter.debug(`build ${config.name || 'unnamed'} package`);
-      reporter.debug(`load source from ${sourceFile}`);
+      const config = parseConfig({
+        flags,
+        manifest,
+        tsconfig,
+        tsconfigPath,
+      });
 
       const externalDependencies = [
         ...(config.dependencies ? Object.keys(config.dependencies) : []),
@@ -68,8 +80,8 @@ try {
         flags.importMaps,
         { resolvePath },
       );
-      const webImportMaps = validateImportMaps(
-        normalizeImportMaps(importMaps, 'web'),
+      const defaultImportMaps = validateImportMaps(
+        normalizeImportMaps(importMaps, 'natural'),
         { resolvePath },
       );
       const nodeImportMaps = validateImportMaps(
@@ -82,9 +94,9 @@ try {
         externalDependencies,
         forceExternalDependencies,
       });
-      const webImportMapsPlugin = makeImportMapsPlugin({
-        name: 'web',
-        imports: webImportMaps.imports,
+      const defaultImportMapsPlugin = makeImportMapsPlugin({
+        name: 'default',
+        imports: defaultImportMaps.imports,
         resolvePath,
       });
       const nodeImportMapsPlugin = makeImportMapsPlugin({
@@ -92,8 +104,8 @@ try {
         imports: nodeImportMaps.imports,
         resolvePath,
       });
-      const webPlugins = [
-        webImportMapsPlugin,
+      const defaultPlugins = [
+        defaultImportMapsPlugin,
         embedPlugin,
       ];
       const nodePlugins = [
@@ -101,7 +113,6 @@ try {
         embedPlugin,
       ];
 
-      let tsconfig: string | undefined;
       let tsProgram: TSProgram | undefined;
       if (flags.dts && config.types) {
         const ts = await import('typescript').then(mod => mod.default);
@@ -122,7 +133,7 @@ try {
 
         if (compilerOptions.noEmit) {
           reporter.warn('Ignored `compilerOptions.noEmit` since the package required `types` entry.');
-          reporter.warn('You can still disable emitting declaration via `--dts=false` option');
+          reporter.warn('You can still disable emitting declaration via `--no-dts` option');
           compilerOptions.noEmit = false;
         }
 

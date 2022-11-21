@@ -1,6 +1,5 @@
-import { resolve } from 'node:path';
 import { describe, test, expect } from 'vitest';
-import type { CompilerOptions as TSCompilerOptions } from 'typescript';
+import type { TSConfig } from 'pkg-types';
 
 import { parseConfig } from './config';
 import type { ParsedConfig } from './config';
@@ -25,9 +24,11 @@ describe('parseConfig', () => {
     name: 'package'
   };
 
-  const defaultTsCompilerOptions: TSCompilerOptions = {
-    target: 99, // ESNext,
-    declaration: true,
+  const defaultTsConfig: TSConfig = {
+    compilerOptions: {
+      target: 'ESNext', // ESNext,
+      declaration: true,
+    },
   };
 
   test('validate manifest', () => {
@@ -44,6 +45,7 @@ describe('parseConfig', () => {
       declaration: false,
       rootDir: 'src',
       outDir: 'lib',
+      tsconfigPath: 'tsconfig.json',
       manifest: defaultManifest,
     });
   });
@@ -66,6 +68,7 @@ describe('parseConfig', () => {
         declaration: false,
         rootDir: '.',
         outDir: 'lib',
+        tsconfigPath: 'tsconfig.json',
         manifest: defaultManifest,
       });
     });
@@ -87,6 +90,7 @@ describe('parseConfig', () => {
         declaration: false,
         rootDir: 'src',
         outDir: '.',
+        tsconfigPath: 'tsconfig.json',
         manifest: defaultManifest,
       });
     });
@@ -108,7 +112,7 @@ describe('parseConfig', () => {
       const result = parseConfig({
         flags: defaultFlags,
         manifest: defaultManifest,
-        tsCompilerOptions: defaultTsCompilerOptions,
+        tsconfig: defaultTsConfig,
       });
 
       expect(result).toEqual<ParsedConfig>({
@@ -119,6 +123,7 @@ describe('parseConfig', () => {
         declaration: true,
         rootDir: 'src',
         outDir: 'lib',
+        tsconfigPath: 'tsconfig.json',
         manifest: defaultManifest,
       });
     });
@@ -127,9 +132,11 @@ describe('parseConfig', () => {
       const result = parseConfig({
         flags: defaultFlags,
         manifest: defaultManifest,
-        tsCompilerOptions: {
-          ...defaultTsCompilerOptions,
-          declaration: false,
+        tsconfig: {
+          compilerOptions: {
+            ...defaultTsConfig.compilerOptions,
+            declaration: false,
+          },
         },
       });
 
@@ -141,6 +148,7 @@ describe('parseConfig', () => {
         declaration: false,
         rootDir: 'src',
         outDir: 'lib',
+        tsconfigPath: 'tsconfig.json',
         manifest: defaultManifest,
       });
     });
@@ -152,7 +160,7 @@ describe('parseConfig', () => {
           noDts: true,
         },
         manifest: defaultManifest,
-        tsCompilerOptions: defaultTsCompilerOptions,
+        tsconfig: defaultTsConfig,
       });
 
       expect(result).toEqual<ParsedConfig>({
@@ -163,6 +171,7 @@ describe('parseConfig', () => {
         declaration: false,
         rootDir: 'src',
         outDir: 'lib',
+        tsconfigPath: 'tsconfig.json',
         manifest: defaultManifest,
       });
     });

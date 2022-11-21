@@ -1,4 +1,4 @@
-import type { CompilerOptions as TSCompilerOptions } from "typescript";
+import type { TSConfig } from 'pkg-types';
 import type { Flags } from "./cli";
 import type { Manifest } from "./manifest";
 import type { Entry } from "./entry";
@@ -15,13 +15,15 @@ export type ParsedConfig = {
   declaration: boolean,
   rootDir: string,
   outDir: string,
+  tsconfigPath: string,
   manifest: Manifest,
 };
 
 export type Config = {
   flags: Flags,
   manifest: Manifest,
-  tsCompilerOptions?: TSCompilerOptions,
+  tsconfig?: TSConfig,
+  tsconfigPath?: string,
 };
 
 interface ParseConfig {
@@ -30,29 +32,32 @@ interface ParseConfig {
 export const parseConfig: ParseConfig = ({
   flags,
   manifest,
-  tsCompilerOptions,
+  tsconfig,
+  tsconfigPath: resolvedTsConfigPath,
 }) => {
   const cwd = flags.cwd;
+  const sourcemap = !flags.noSourcemap;
+  const tsconfigPath = resolvedTsConfigPath || flags.tsconfig;
 
   const rootDir = (
     flags.rootDir ||
-    tsCompilerOptions?.rootDir ||
+    tsconfig?.compilerOptions?.rootDir ||
     'src'
   );
   const outDir = (
     flags.outDir ||
-    tsCompilerOptions?.outDir ||
+    tsconfig?.compilerOptions?.outDir ||
     'lib'
   );
   if (rootDir === outDir) {
     throw new NanobundleConfigError(`Directory rootDir(${rootDir}) and outDir(${outDir}) are conflict! Please specify different directory for one of them.`)
   }
 
-  const module = manifest.type === 'module'
-    ? 'esmodule'
-    : 'commonjs';
-
-  const sourcemap = !flags.noSourcemap;
+  const module = (
+    manifest.type === 'module'
+      ? 'esmodule'
+      : 'commonjs'
+  );
 
   let platform: Entry['platform'] = 'netural';
   if (['node', 'deno', 'web'].includes(flags.platform || '')) {
@@ -62,10 +67,10 @@ export const parseConfig: ParseConfig = ({
   }
 
   let declaration = false;
-  if (tsCompilerOptions) {
+  if (tsconfig?.compilerOptions) {
     declaration = (
       (!flags.noDts) &&
-      (tsCompilerOptions.declaration === true)
+      (tsconfig.compilerOptions.declaration === true)
     );
   }
 
@@ -77,6 +82,7 @@ export const parseConfig: ParseConfig = ({
     declaration,
     rootDir,
     outDir,
+    tsconfigPath,
     manifest,
   };
 };

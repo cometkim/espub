@@ -9,21 +9,16 @@ import prettyBytes from 'pretty-bytes';
 import type { Entry } from '../entry';
 import type { Reporter } from '../report';
 import { formatModule } from '../utils';
+import type { PathResolver } from '../common';
+import type { ParsedConfig } from '../config';
 
 const gzip = promisify(zlib.gzip);
 const brotli = promisify(zlib.brotliCompress);
 
 type BuildCommandOptions = {
+  config: ParsedConfig,
   reporter: Reporter,
-  sourceFile: string,
-  entries: Entry[],
-  targets: string[],
-  minify: boolean,
-  sourcemap: boolean,
-  resolvePath: (path: string) => string,
-  tsconfig?: string,
-  webPlugins?: Plugin[],
-  nodePlugins?: Plugin[],
+  resolvePath: PathResolver,
 };
 
 export async function buildCommand({

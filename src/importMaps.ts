@@ -1,6 +1,8 @@
 import * as fs from 'node:fs/promises';
 import { existsSync } from 'node:fs';
-import { formatPlatform, isFileSystemReference } from './utils';
+
+import { formatPlatform } from './utils';
+import * as fsUtils from './fsUtils';
 
 type NodeImportMaps = {
   imports: Record<string, string | {
@@ -17,7 +19,7 @@ type ValidImportMaps = ImportMaps & { __BRAND__: 'ValidImportMaps' };
 
 export function normalizeImportMaps(
   importMaps: NodeImportMaps,
-  platform: 'web' | 'node'
+  platform: 'natural' | 'node'
 ): ImportMaps {
   const result: ImportMaps = {
     imports: {},
@@ -26,7 +28,7 @@ export function normalizeImportMaps(
     if (typeof value === 'string') {
       result.imports[key] = value;
     } else if (typeof value === 'object') {
-      if (platform === 'web') {
+      if (platform === 'natural') {
         if (value.default) {
           result.imports[key] = value.default;
         }
@@ -67,7 +69,7 @@ export function validateImportMaps(importMaps: ImportMaps, {
   resolvePath,
 }: ValidateImportMapsOptions): ValidImportMaps {
   for (const path of Object.values(importMaps.imports)) {
-    if (!isFileSystemReference(path)) {
+    if (!fsUtils.isFileSystemReference(path)) {
       // Loosen validation if path doesn't seems to be a file system reference
       // Instead, expecting it can be resolved as a Node.js module later
       continue;

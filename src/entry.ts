@@ -6,6 +6,7 @@ import type { Reporter } from './report';
 export type Entry = {
   key: string;
   entryPath: string;
+  minify: boolean;
   mode: undefined | 'development' | 'production';
   sourcemap: boolean;
   platform: "netural" | "browser" | "deno" | "node";
@@ -26,6 +27,7 @@ export const getEntriesFromConfig: GetEntriesFromConfig = ({
   reporter,
   resolvePath: resolvePathFrom,
 }) => {
+  const defaultMinify: Entry['minify'] = false;
   const defaultMode: Entry['mode'] = undefined;
   const {
     cwd,
@@ -113,14 +115,14 @@ export const getEntriesFromConfig: GetEntriesFromConfig = ({
     );
 
     const pattern = /\.min(?<ext>\.(m|c)?js)$/;
-    const match = resolvedSourceFile.match(pattern);
-    const ext = match?.groups?.ext;
+    const minifyMatch = resolvedSourceFile.match(pattern);
+    const minify = defaultMinify || Boolean(minifyMatch);
+    const ext = minifyMatch?.groups?.ext;
     if (ext) {
       resolvedSourceFile = resolvedSourceFile.replace(pattern, ext);
     }
 
     const sourceFileCandidates = new Set<string>();
-
     if (!resolvedOutputFile.endsWith("js")) {
       switch (module) {
         case "commonjs": {
@@ -135,7 +137,6 @@ export const getEntriesFromConfig: GetEntriesFromConfig = ({
         }
       }
     }
-
     switch (module) {
       case "commonjs": {
         sourceFileCandidates.add(resolvedSourceFile.replace(/\.js$/, ".cjs"));
@@ -148,13 +149,13 @@ export const getEntriesFromConfig: GetEntriesFromConfig = ({
         break;
       }
     }
-
     sourceFileCandidates.add(resolvedSourceFile);
 
     entryMap.set(entryPath, {
       key,
       entryPath,
       mode,
+      minify,
       sourcemap,
       platform,
       module,
