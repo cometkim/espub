@@ -1,6 +1,6 @@
 import * as path from 'node:path';
 import type { ConditionalExport } from './manifest';
-import type { ParsedConfig } from './config';
+import type { Context } from './context';
 import type { Reporter } from './report';
 
 export type Entry = {
@@ -15,15 +15,15 @@ export type Entry = {
   outputFile: string;
 };
 
-interface GetEntriesFromConfig {
+interface GetEntriesFromContext {
   (props: {
-    config: ParsedConfig;
+    context: Context;
     resolvePath: (cwd: string, path: string) => string;
     reporter: Reporter;
   }): Entry[];
 }
-export const getEntriesFromConfig: GetEntriesFromConfig = ({
-  config,
+export const getEntriesFromContext: GetEntriesFromContext = ({
+  context,
   reporter,
   resolvePath: resolvePathFrom,
 }) => {
@@ -37,7 +37,7 @@ export const getEntriesFromConfig: GetEntriesFromConfig = ({
     module: defaultModule,
     sourcemap,
     manifest,
-  } = config;
+  } = context;
   const resolvePath = (path: string) => resolvePathFrom(cwd, path);
   const resolvedRootDir = resolvePath(rootDir);
   const resolvedOutDir = resolvePath(outDir);

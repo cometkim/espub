@@ -13,7 +13,7 @@ import type { Reporter } from './report';
 import { cli } from './cli';
 import { loadTargets } from './target';
 import { loadImportMaps, normalizeImportMaps, validateImportMaps } from './importMaps';
-import { getEntriesFromConfig } from './entry';
+import { getEntriesFromContext } from './entry';
 import { buildCommand } from './commands/build';
 import { makePlugin as makeEmbedPlugin } from './plugins/esbuildEmbedPlugin';
 import { makePlugin as makeImportMapsPlugin } from './plugins/esbuildImportMapsPlugin';
@@ -144,7 +144,7 @@ try {
       const targets = await loadTargets({ basePath });
       reporter.debug(`targets to ${targets.join(', ')}`);
 
-      const entries = getEntriesFromConfig({
+      const entries = getEntriesFromContext({
         config,
         reporter,
         resolvePath,

@@ -5,7 +5,7 @@ import type {
 } from 'esbuild';
 
 import type { PathResolver } from './common';
-import type { ParsedConfig } from './config';
+import type { Context } from './context';
 import type { Entry } from './entry';
 import type { EntryGroup } from './entryGroup';
 import type { Reporter } from './report';
@@ -32,7 +32,7 @@ interface MakeBuildOptions {
   (props: {
     resolvePath: PathResolver;
     reporter: Reporter,
-    config: ParsedConfig,
+    config: Context,
     entryGroup: EntryGroup,
     targets: string[],
   }): Promise<BuildOptions[]>;
@@ -105,7 +105,7 @@ export const makeBuildOptions: MakeBuildOptions = async ({
 interface EnsureSourceFile {
   (props: {
     entry: Entry,
-    config: ParsedConfig,
+    config: Context,
     resolvePath: PathResolver,
   }): Promise<[string, string]>;
 }

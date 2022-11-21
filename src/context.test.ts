@@ -1,8 +1,8 @@
 import { describe, test, expect } from 'vitest';
 import type { TSConfig } from 'pkg-types';
 
-import { parseConfig } from './config';
-import type { ParsedConfig } from './config';
+import { parseConfig } from './context';
+import type { Context } from './context';
 import type { Flags } from './cli';
 import type { Manifest } from './manifest';
 
@@ -37,7 +37,7 @@ describe('parseConfig', () => {
       manifest: defaultManifest,
     });
 
-    expect(result).toEqual<ParsedConfig>({
+    expect(result).toEqual<Context>({
       cwd: '/project',
       module: 'commonjs',
       platform: 'netural',
@@ -60,7 +60,7 @@ describe('parseConfig', () => {
         manifest: defaultManifest,
       });
 
-      expect(result).toEqual<ParsedConfig>({
+      expect(result).toEqual<Context>({
         cwd: '/project',
         module: 'commonjs',
         platform: 'netural',
@@ -82,7 +82,7 @@ describe('parseConfig', () => {
         manifest: defaultManifest,
       });
 
-      expect(result).toEqual<ParsedConfig>({
+      expect(result).toEqual<Context>({
         cwd: '/project',
         module: 'commonjs',
         platform: 'netural',
@@ -115,7 +115,7 @@ describe('parseConfig', () => {
         tsconfig: defaultTsConfig,
       });
 
-      expect(result).toEqual<ParsedConfig>({
+      expect(result).toEqual<Context>({
         cwd: '/project',
         module: 'commonjs',
         platform: 'netural',
@@ -140,7 +140,7 @@ describe('parseConfig', () => {
         },
       });
 
-      expect(result).toEqual<ParsedConfig>({
+      expect(result).toEqual<Context>({
         cwd: '/project',
         module: 'commonjs',
         platform: 'netural',
@@ -163,7 +163,7 @@ describe('parseConfig', () => {
         tsconfig: defaultTsConfig,
       });
 
-      expect(result).toEqual<ParsedConfig>({
+      expect(result).toEqual<Context>({
         cwd: '/project',
         module: 'commonjs',
         platform: 'netural',

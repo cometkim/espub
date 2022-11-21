@@ -2,13 +2,13 @@ import * as path from "node:path";
 import { describe, test, expect, vi } from "vitest";
 
 import type { Flags } from './cli';
-import { parseConfig } from "./config";
+import { parseConfig } from './context';
 import type { Manifest } from "./manifest";
 import type { Reporter } from "./report";
 import type { Entry } from "./entry";
-import { getEntriesFromConfig } from "./entry";
+import { getEntriesFromContext } from "./entry";
 
-describe("getEntriesFromConfig", () => {
+describe("getEntriesFromContext", () => {
   const resolvePath = (cwd: string, to: string) => path.join(cwd, to);
 
   const reporter: Reporter = {
@@ -33,13 +33,13 @@ describe("getEntriesFromConfig", () => {
   };
 
   const getEntriesFromManifest = (manifest: Manifest) => {
-    const config = parseConfig({
+    const context = parseConfig({
       flags: defaultFlags,
       manifest,
     });
 
-    return getEntriesFromConfig({
-      config,
+    return getEntriesFromContext({
+      context,
       resolvePath,
       reporter,
     });

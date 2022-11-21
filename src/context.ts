@@ -7,7 +7,7 @@ export class NanobundleConfigError extends Error {
   name = 'NanobundleConfigError';
 }
 
-export type ParsedConfig = {
+export type Context = {
   cwd: string,
   module: Entry['module'],
   platform: Entry['platform'],
@@ -27,7 +27,7 @@ export type Config = {
 };
 
 interface ParseConfig {
-  (config: Config): ParsedConfig;
+  (config: Config): Context;
 }
 export const parseConfig: ParseConfig = ({
   flags,
