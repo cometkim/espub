@@ -1,7 +1,11 @@
-import type { TSConfig } from 'pkg-types';
-import type { Flags } from "./cli";
-import type { Manifest } from "./manifest";
-import type { Entry } from "./entry";
+import { type TSConfig } from 'pkg-types';
+import * as semver from 'semver';
+
+import { type Flags } from './cli';
+import { type Manifest } from './manifest';
+import { type Entry } from './entry';
+import { type Reporter } from './report';
+import { type PathResolver } from './common';
 
 export class NanobundleConfigError extends Error {
   name = 'NanobundleConfigError';
@@ -13,31 +17,49 @@ export type Context = {
   platform: Entry['platform'],
   sourcemap: boolean,
   declaration: boolean,
+  standalone: boolean,
   rootDir: string,
   outDir: string,
   tsconfigPath: string,
+  importMapsPath: string,
+  externalDependencies: string[],
+  forceExternalDependencies: string[],
   manifest: Manifest,
+  targets: string[],
+  reporter: Reporter,
+  resolve: PathResolver,
 };
 
 export type Config = {
   flags: Flags,
   manifest: Manifest,
+  targets: string[],
+  reporter: Reporter,
+  resolve: PathResolver,
   tsconfig?: TSConfig,
   tsconfigPath?: string,
 };
 
-interface ParseConfig {
-  (config: Config): Context;
-}
-export const parseConfig: ParseConfig = ({
+export function parseConfig({
   flags,
   manifest,
+  targets: inputTargets,
+  reporter,
+  resolve,
   tsconfig,
   tsconfigPath: resolvedTsConfigPath,
-}) => {
+}: Config): Context {
   const cwd = flags.cwd;
   const sourcemap = !flags.noSourcemap;
+  const standalone = flags.standalone;
   const tsconfigPath = resolvedTsConfigPath || flags.tsconfig;
+  const importMapsPath = flags.importMaps;
+  const forceExternalDependencies = flags.external;
+  const externalDependencies = [
+    ...(manifest.dependencies ? Object.keys(manifest.dependencies) : []),
+    ...(manifest.peerDependencies ? Object.keys(manifest.peerDependencies) : []),
+    ...forceExternalDependencies,
+  ];
 
   const rootDir = (
     flags.rootDir ||
@@ -66,6 +88,17 @@ export const parseConfig: ParseConfig = ({
     platform = 'node';
   }
 
+  const targets = [...inputTargets];
+  if (manifest.engines?.node) {
+    const version = semver.minVersion(manifest.engines.node);
+    if (version) {
+      targets.push(`node${version.major}`);
+    }
+  }
+  if (platform === 'node' && !targets.some(target => target.startsWith('node'))) {
+    targets.push('node14');
+  }
+
   let declaration = false;
   if (tsconfig?.compilerOptions) {
     declaration = (
@@ -80,9 +113,16 @@ export const parseConfig: ParseConfig = ({
     platform,
     sourcemap,
     declaration,
+    standalone,
     rootDir,
     outDir,
     tsconfigPath,
+    importMapsPath,
+    externalDependencies,
+    forceExternalDependencies,
     manifest,
+    targets,
+    reporter,
+    resolve,
   };
 };

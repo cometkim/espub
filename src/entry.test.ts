@@ -1,14 +1,15 @@
-import * as path from "node:path";
-import { describe, test, expect, vi } from "vitest";
+import * as path from 'node:path';
+import { describe, test, expect, vi } from 'vitest';
 
 import type { Flags } from './cli';
+import type { PathResolver } from './common';
+import type { Manifest } from './manifest';
+import type { Reporter } from './report';
+import type { Entry } from './entry';
 import { parseConfig } from './context';
-import type { Manifest } from "./manifest";
-import type { Reporter } from "./report";
-import type { Entry } from "./entry";
 import { getEntriesFromContext } from "./entry";
 
-describe("getEntriesFromContext", () => {
+describe('getEntriesFromContext', () => {
   const resolvePath = (cwd: string, to: string) => path.join(cwd, to);
 
   const reporter: Reporter = {
@@ -17,6 +18,8 @@ describe("getEntriesFromContext", () => {
     warn: vi.fn(),
     error: vi.fn(),
   };
+
+  const resolve: PathResolver = vi.fn();
 
   const defaultFlags: Flags = {
     cwd: '/project',
@@ -32,10 +35,19 @@ describe("getEntriesFromContext", () => {
     platform: undefined,
   };
 
+  const defaultTargets: string[] = [
+    'chrome',
+    'firefox',
+    'safari',
+  ];
+
   const getEntriesFromManifest = (manifest: Manifest) => {
     const context = parseConfig({
       flags: defaultFlags,
+      targets: defaultTargets,
       manifest,
+      reporter,
+      resolve,
     });
 
     return getEntriesFromContext({

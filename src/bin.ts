@@ -15,8 +15,8 @@ import { loadTargets } from './target';
 import { loadImportMaps, normalizeImportMaps, validateImportMaps } from './importMaps';
 import { getEntriesFromContext } from './entry';
 import { buildCommand } from './commands/build';
-import { makePlugin as makeEmbedPlugin } from './plugins/esbuildEmbedPlugin';
-import { makePlugin as makeImportMapsPlugin } from './plugins/esbuildImportMapsPlugin';
+import { makePlugin as makeEmbedPlugin } from './commands/build/plugins/esbuildEmbedPlugin';
+import { makePlugin as makeImportMapsPlugin } from './commands/build/plugins/esbuildImportMapsPlugin';
 import { loadManifest } from './manifest';
 import { parseConfig } from './config';
 

@@ -1,20 +1,17 @@
-import type { Plugin } from 'esbuild';
+import { type Plugin } from 'esbuild';
 
-import type { Reporter } from '../report';
-import * as fsUtils from '../fsUtils';
+import { type Context } from '../../../context';
+import * as fsUtils from '../../../fsUtils';
 
 type PluginOptions = {
-  reporter: Reporter,
-  standalone: boolean,
-  externalDependencies: string[],
-  forceExternalDependencies: string[],
+  context: Context,
 };
 
 export function makePlugin({
-  reporter,
-  standalone,
-  externalDependencies,
-  forceExternalDependencies,
+  context: {
+    externalDependencies,
+    forceExternalDependencies,
+  },
 }: PluginOptions): Plugin {
   const ownedModule = (packageName: string, modulePath: string) => {
     return packageName === modulePath || modulePath.startsWith(packageName + '/');

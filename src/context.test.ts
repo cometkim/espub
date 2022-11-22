@@ -1,10 +1,12 @@
-import { describe, test, expect } from 'vitest';
+import { describe, test, expect, vi } from 'vitest';
 import type { TSConfig } from 'pkg-types';
 
+import type { PathResolver } from './common';
 import { parseConfig } from './context';
 import type { Context } from './context';
 import type { Flags } from './cli';
 import type { Manifest } from './manifest';
+import type { Reporter } from './report';
 
 describe('parseConfig', () => {
   const defaultFlags: Flags = {
@@ -31,10 +33,28 @@ describe('parseConfig', () => {
     },
   };
 
+  const defaultTargets: string[] = [
+    'chrome',
+    'firefox',
+    'safari',
+  ];
+
+  const reporter: Reporter = {
+    debug: console.debug,
+    info: console.info,
+    warn: console.warn,
+    error: console.error,
+  };
+
+  const resolve: PathResolver = vi.fn();
+
   test('validate manifest', () => {
     const result = parseConfig({
       flags: defaultFlags,
       manifest: defaultManifest,
+      targets: defaultTargets,
+      reporter,
+      resolve,
     });
 
     expect(result).toEqual<Context>({
@@ -43,10 +63,17 @@ describe('parseConfig', () => {
       platform: 'neutral',
       sourcemap: true,
       declaration: false,
+      standalone: false,
       rootDir: 'src',
       outDir: 'lib',
       tsconfigPath: 'tsconfig.json',
+      importMapsPath: 'package.json',
+      externalDependencies: [],
+      forceExternalDependencies: [],
       manifest: defaultManifest,
+      targets: defaultTargets,
+      reporter,
+      resolve,
     });
   });
 
@@ -58,6 +85,9 @@ describe('parseConfig', () => {
           rootDir: '.',
         },
         manifest: defaultManifest,
+        targets: defaultTargets,
+        reporter,
+        resolve,
       });
 
       expect(result).toEqual<Context>({
@@ -66,10 +96,17 @@ describe('parseConfig', () => {
         platform: 'neutral',
         sourcemap: true,
         declaration: false,
+        standalone: false,
         rootDir: '.',
         outDir: 'lib',
         tsconfigPath: 'tsconfig.json',
+        importMapsPath: 'package.json',
+        externalDependencies: [],
+        forceExternalDependencies: [],
         manifest: defaultManifest,
+        targets: defaultTargets,
+        reporter,
+        resolve,
       });
     });
 
@@ -80,6 +117,9 @@ describe('parseConfig', () => {
           outDir: '.',
         },
         manifest: defaultManifest,
+        targets: defaultTargets,
+        reporter,
+        resolve,
       });
 
       expect(result).toEqual<Context>({
@@ -88,10 +128,17 @@ describe('parseConfig', () => {
         platform: 'neutral',
         sourcemap: true,
         declaration: false,
+        standalone: false,
         rootDir: 'src',
         outDir: '.',
         tsconfigPath: 'tsconfig.json',
+        importMapsPath: 'package.json',
+        externalDependencies: [],
+        forceExternalDependencies: [],
         manifest: defaultManifest,
+        targets: defaultTargets,
+        reporter,
+        resolve,
       });
     });
 
@@ -103,8 +150,93 @@ describe('parseConfig', () => {
           outDir: '.',
         },
         manifest: defaultManifest,
+        targets: defaultTargets,
+        reporter,
+        resolve,
       })).toThrowErrorMatchingSnapshot();
     });
+  });
+
+  describe('node platform', () => {
+    test('platform should be node when engines.node exist', () => {
+      const manifest = {
+        ...defaultManifest,
+        engines: {
+          node: '>=16.0.0',
+        },
+      };
+
+      const result = parseConfig({
+        flags: defaultFlags,
+        targets: defaultTargets,
+        manifest,
+        reporter,
+        resolve,
+      });
+
+      expect(result).toEqual<Context>({
+        cwd: '/project',
+        module: 'commonjs',
+        platform: 'node',
+        sourcemap: true,
+        declaration: false,
+        standalone: false,
+        rootDir: 'src',
+        outDir: 'lib',
+        tsconfigPath: 'tsconfig.json',
+        importMapsPath: 'package.json',
+        externalDependencies: [],
+        forceExternalDependencies: [],
+        manifest,
+        targets: [
+          ...defaultTargets,
+          'node16',
+        ],
+        reporter,
+        resolve,
+      });
+    });
+
+    test('default node version is 14', () => {
+      const result = parseConfig({
+        flags: {
+          ...defaultFlags,
+          platform: 'node',
+        },
+        targets: defaultTargets,
+        manifest: defaultManifest,
+        reporter,
+        resolve,
+      });
+
+      expect(result).toEqual<Context>({
+        cwd: '/project',
+        module: 'commonjs',
+        platform: 'node',
+        sourcemap: true,
+        declaration: false,
+        standalone: false,
+        rootDir: 'src',
+        outDir: 'lib',
+        tsconfigPath: 'tsconfig.json',
+        importMapsPath: 'package.json',
+        externalDependencies: [],
+        forceExternalDependencies: [],
+        manifest: defaultManifest,
+        targets: [
+          ...defaultTargets,
+          'node14',
+        ],
+        reporter,
+        resolve,
+      });
+    });
+  });
+
+  describe('externalDependencies', () => {
+    test.todo('externalDependencies has manifest dependencies')
+    test.todo('forceExternalDependencies always include --external flag list')
+    test.todo('externalDependencies always include --external flag list')
   });
 
   describe('tsCompilerOptions', () => {
@@ -112,6 +244,9 @@ describe('parseConfig', () => {
       const result = parseConfig({
         flags: defaultFlags,
         manifest: defaultManifest,
+        targets: defaultTargets,
+        reporter,
+        resolve,
         tsconfig: defaultTsConfig,
       });
 
@@ -121,10 +256,17 @@ describe('parseConfig', () => {
         platform: 'neutral',
         sourcemap: true,
         declaration: true,
+        standalone: false,
         rootDir: 'src',
         outDir: 'lib',
         tsconfigPath: 'tsconfig.json',
+        importMapsPath: 'package.json',
+        externalDependencies: [],
+        forceExternalDependencies: [],
         manifest: defaultManifest,
+        targets: defaultTargets,
+        reporter,
+        resolve,
       });
     });
 
@@ -132,10 +274,14 @@ describe('parseConfig', () => {
       const result = parseConfig({
         flags: defaultFlags,
         manifest: defaultManifest,
+        targets: defaultTargets,
+        reporter,
+        resolve,
         tsconfig: {
           compilerOptions: {
             ...defaultTsConfig.compilerOptions,
             declaration: false,
+            standalone: false,
           },
         },
       });
@@ -146,10 +292,17 @@ describe('parseConfig', () => {
         platform: 'neutral',
         sourcemap: true,
         declaration: false,
+        standalone: false,
         rootDir: 'src',
         outDir: 'lib',
         tsconfigPath: 'tsconfig.json',
+        importMapsPath: 'package.json',
+        externalDependencies: [],
+        forceExternalDependencies: [],
         manifest: defaultManifest,
+        targets: defaultTargets,
+        reporter,
+        resolve,
       });
     });
 
@@ -160,6 +313,9 @@ describe('parseConfig', () => {
           noDts: true,
         },
         manifest: defaultManifest,
+        targets: defaultTargets,
+        reporter,
+        resolve,
         tsconfig: defaultTsConfig,
       });
 
@@ -169,10 +325,17 @@ describe('parseConfig', () => {
         platform: 'neutral',
         sourcemap: true,
         declaration: false,
+        standalone: false,
         rootDir: 'src',
         outDir: 'lib',
         tsconfigPath: 'tsconfig.json',
+        importMapsPath: 'package.json',
+        externalDependencies: [],
+        forceExternalDependencies: [],
         manifest: defaultManifest,
+        targets: defaultTargets,
+        reporter,
+        resolve,
       });
     });
   });

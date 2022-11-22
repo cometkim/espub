@@ -1,10 +1,10 @@
 import { test, expect } from "vitest";
 
-import type { Entry } from './entry';
-import { EntryGroup, groupEntries, hashOptions } from './entryGroup';
+import type { BundleEntry, BundleEntryGroup } from './entryGroup';
+import { groupBundleEntries, hashBundleOptions } from './entryGroup';
 
 test('groupEntries should split different option set', () => {
-  const entries: Entry[] = [
+  const entries: BundleEntry[] = [
     {
       key: 'exports["."].node.require',
       module: "commonjs",
@@ -62,8 +62,8 @@ test('groupEntries should split different option set', () => {
     },
   ];
 
-  expect(groupEntries(entries)).toEqual<EntryGroup>({
-    [hashOptions({ mode: undefined, module: 'commonjs', platform: 'node', sourcemap: true, minify: false })]: [
+  expect(groupBundleEntries(entries)).toEqual<BundleEntryGroup>({
+    [hashBundleOptions({ mode: undefined, module: 'commonjs', platform: 'node', sourcemap: true, minify: false })]: [
       {
         key: 'exports["."].node.require',
         module: "commonjs",
@@ -76,7 +76,7 @@ test('groupEntries should split different option set', () => {
         outputFile: "/project/lib/index.cjs",
       },
     ],
-    [hashOptions({ mode: 'development', module: 'esmodule', platform: 'node', sourcemap: true, minify: false })]: [
+    [hashBundleOptions({ mode: 'development', module: 'esmodule', platform: 'node', sourcemap: true, minify: false })]: [
       {
         key: 'exports["."].node.import.development',
         module: "esmodule",
@@ -89,7 +89,7 @@ test('groupEntries should split different option set', () => {
         outputFile: "/project/lib/index.mjs",
       },
     ],
-    [hashOptions({ mode: 'production', module: 'esmodule', platform: 'node', sourcemap: true, minify: true })]: [
+    [hashBundleOptions({ mode: 'production', module: 'esmodule', platform: 'node', sourcemap: true, minify: true })]: [
       {
         key: 'exports["."].node.import.production',
         module: "esmodule",
@@ -102,7 +102,7 @@ test('groupEntries should split different option set', () => {
         outputFile: "/project/lib/index.min.mjs",
       },
     ],
-    [hashOptions({ mode: 'development', module: 'commonjs', platform: 'browser', sourcemap: true, minify: false })]: [
+    [hashBundleOptions({ mode: 'development', module: 'commonjs', platform: 'browser', sourcemap: true, minify: false })]: [
       {
         key: 'exports["."].browser.development',
         module: "commonjs",
@@ -115,7 +115,7 @@ test('groupEntries should split different option set', () => {
         outputFile: "/project/lib/browser.js",
       },
     ],
-    [hashOptions({ mode: 'production', module: 'commonjs', platform: 'browser', sourcemap: true, minify: true })]: [
+    [hashBundleOptions({ mode: 'production', module: 'commonjs', platform: 'browser', sourcemap: true, minify: true })]: [
       {
         key: 'exports["."].browser.production',
         module: "commonjs",
@@ -132,7 +132,7 @@ test('groupEntries should split different option set', () => {
 });
 
 test('groupEntries should merge same option set', () => {
-  const entries: Entry[] = [
+  const entries: BundleEntry[] = [
     {
       key: 'exports["."].require',
       module: "commonjs",
@@ -168,8 +168,8 @@ test('groupEntries should merge same option set', () => {
     },
   ];
 
-  expect(groupEntries(entries)).toEqual<EntryGroup>({
-    [hashOptions({ mode: undefined, module: 'commonjs', platform: 'neutral', sourcemap: true, minify: false })]: [
+  expect(groupBundleEntries(entries)).toEqual<BundleEntryGroup>({
+    [hashBundleOptions({ mode: undefined, module: 'commonjs', platform: 'neutral', sourcemap: true, minify: false })]: [
       {
         key: 'exports["."].require',
         module: "commonjs",

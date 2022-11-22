@@ -1,6 +1,6 @@
 import * as fs from 'node:fs/promises';
 
-import { PathResolver } from './common';
+import type { PathResolver } from './common';
 
 export type Manifest = {
   name?: string,
@@ -76,14 +76,14 @@ type ManifestWithOverride = Manifest & {
 interface LoadManifest {
   (props: {
     cwd: string,
-    resolvePath: PathResolver,
+    resolve: PathResolver,
   }): Promise<Manifest>;
 }
 export const loadManifest: LoadManifest = async ({
   cwd,
-  resolvePath,
+  resolve,
 }) => {
-  const configPath = resolvePath(cwd, 'package.json');
+  const configPath = resolve(cwd, 'package.json');
 
   const { publishConfig, ...config } = await fs.readFile(configPath, 'utf-8')
     .then(JSON.parse) as ManifestWithOverride;

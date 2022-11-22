@@ -6,31 +6,20 @@ import type { BuildOptions, Plugin } from 'esbuild';
 import * as esbuild from 'esbuild';
 import prettyBytes from 'pretty-bytes';
 
+import type { Context } from '../context';
 import type { Entry } from '../entry';
-import type { Reporter } from '../report';
-import { formatModule } from '../utils';
-import type { PathResolver } from '../common';
-import type { ParsedConfig } from '../config';
 
 const gzip = promisify(zlib.gzip);
 const brotli = promisify(zlib.brotliCompress);
 
 type BuildCommandOptions = {
-  config: ParsedConfig,
-  reporter: Reporter,
-  resolvePath: PathResolver,
+  context: Context,
+  entries: Entry[],
 };
 
 export async function buildCommand({
-  reporter,
-  sourceFile,
+  context,
   entries,
-  targets,
-  minify,
-  sourcemap,
-  tsconfig,
-  webPlugins = [],
-  nodePlugins = [],
 }: BuildCommandOptions): Promise<void> {
   const defaultBuildOptions: BuildOptions = {
     bundle: true,
