@@ -80,7 +80,7 @@ export function normalizeImportMaps(
       } else if (platform === 'node' && value.default) {
         result.imports[key] = value.default;
       } else {
-        throw new Error(`Couldn't resolve import maps entry "${key}" for "${formatUtils.formatPlatform(platform)}" platform condition`);
+        throw new Error(`Couldn't resolve import maps entry "${key}" for "${formatUtils.platform(platform)}" platform condition`);
       }
     }
   }

@@ -9,6 +9,8 @@ type PluginOptions = {
 
 export function makePlugin({
   context: {
+    reporter,
+    standalone,
     externalDependencies,
     forceExternalDependencies,
   },

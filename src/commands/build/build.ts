@@ -1,16 +1,9 @@
-import * as fs from 'node:fs/promises';
-import * as path from 'node:path';
-import * as zlib from 'node:zlib';
-import { promisify } from 'node:util';
-import type { BuildOptions, Plugin } from 'esbuild';
-import * as esbuild from 'esbuild';
-import prettyBytes from 'pretty-bytes';
+import { interpret } from 'xstate';
 
-import type { Context } from '../context';
-import type { Entry } from '../entry';
+import { type Context } from '../../context';
+import { type Entry } from '../../entry';
 
-const gzip = promisify(zlib.gzip);
-const brotli = promisify(zlib.brotliCompress);
+import { buildMachine } from './build.machine';
 
 type BuildCommandOptions = {
   context: Context,
@@ -21,85 +14,33 @@ export async function buildCommand({
   context,
   entries,
 }: BuildCommandOptions): Promise<void> {
-  const defaultBuildOptions: BuildOptions = {
-    bundle: true,
-    write: false,
-    entryPoints: [sourceFile],
-    define: {
-      'process.env.NODE_ENV': '"production"',
-    },
-    tsconfig,
-    minify,
-    sourcemap: sourcemap && 'external',
-  };
+  const service = interpret(
+    buildMachine
+      .withContext({
+        root: context,
+        outputFiles: [],
+        buildStartedAt: 0,
+      })
+      .withConfig({
+        actions: {
 
-  const build = entries.map(async entry => {
-    const outfile = entry.outputFile;
-    const format = entry.module === 'commonjs' ? 'cjs' : 'esm';
-    if (entry.platform === 'node') {
-      const nodeTargets = targets
-        .filter(target => target.startsWith('node'));
-      if (nodeTargets.length === 0) {
-        nodeTargets.push('node14');
-      }
-      return [entry, await esbuild.build({
-        ...defaultBuildOptions,
-        outfile,
-        format,
-        platform: 'node',
-        target: nodeTargets,
-        plugins: nodePlugins,
-      })] as const;
+        },
+        services: {
 
-    } else {
-      const webTargets = targets
-        .filter(target => !target.startsWith('node'));
-      return [entry, await esbuild.build({
-        ...defaultBuildOptions,
-        outfile,
-        format,
-        platform: 'neutral',
-        target: webTargets,
-        plugins: webPlugins,
-      })] as const;
-    }
+        },
+        guards: {
+
+        },
+      }),
+  );
+
+  service.onTransition(state => {
   });
 
-  const results = await Promise.all(build);
-  reporter.info('📦 Build info:\n');
+  service.start();
 
-  for (const [entry, result] of results) {
-    for (const error of result.errors) {
-      reporter.error(error.text);
-    }
-    if (result.errors.length > 0) {
-      throw new Error('Failed to build');
-    }
-
-    for (const warning of result.warnings) {
-      reporter.warn(warning.text);
-    }
-
-    for (const outputFile of result.outputFiles || []) {
-      const dirname = path.dirname(outputFile.path);
-      await fs.mkdir(dirname, { recursive: true });
-
-      await fs.writeFile(outputFile.path, outputFile.contents, 'utf8');
-
-      if (!outputFile.path.endsWith('.map')) {
-        const [
-          gzipped,
-          brotlied,
-        ] = await Promise.all([
-          gzip(outputFile.contents),
-          brotli(outputFile.contents),
-        ]);
-        reporter.info(`${formatModule(entry.module)} entry ${entry.path}${entry.platform === 'node' ? ' for Node.js' : ''}
-    size      : ${prettyBytes(outputFile.contents.length)}
-    size (gz) : ${prettyBytes(gzipped.byteLength)}
-    size (br) : ${prettyBytes(brotlied.byteLength)}
-`);
-      }
-    }
-  }
+  service.send({
+    type: 'BUILD',
+    entries,
+  });
 }

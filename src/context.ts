@@ -4,7 +4,7 @@ import * as semver from 'semver';
 import { type Flags } from './cli';
 import { type Manifest } from './manifest';
 import { type Entry } from './entry';
-import { type Reporter } from './report';
+import { type Reporter } from './reporter';
 import { type PathResolver } from './common';
 
 export class NanobundleConfigError extends Error {

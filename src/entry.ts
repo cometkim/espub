@@ -1,7 +1,11 @@
 import * as path from 'node:path';
-import type { ConditionalExport } from './manifest';
-import type { Context } from './context';
-import type { Reporter } from './report';
+import dedent from 'string-dedent';
+import kleur from 'kleur';
+
+import { type ConditionalExport } from './manifest';
+import { type Context } from './context';
+import { type Reporter } from './reporter';
+import * as formatUtils from './formatUtils';
 
 export type Entry = {
   key: string;
@@ -18,14 +22,14 @@ export type Entry = {
 interface GetEntriesFromContext {
   (props: {
     context: Context;
-    resolvePath: (cwd: string, path: string) => string;
+    resolve: (cwd: string, path: string) => string;
     reporter: Reporter;
   }): Entry[];
 }
 export const getEntriesFromContext: GetEntriesFromContext = ({
   context,
   reporter,
-  resolvePath: resolvePathFrom,
+  resolve: resolvePathFrom,
 }) => {
   const defaultMinify: Entry['minify'] = false;
   const defaultMode: Entry['mode'] = undefined;
@@ -59,51 +63,88 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
   }) {
     if (!entryPath.startsWith("./")) {
       reporter.error(
-        `Invalid entry "${key}", entry path should starts with \`"./"\``,
+        `Invalid entry ${formatUtils.key(key)}, entry path should starts with ${formatUtils.literal('./')}`,
       );
       throw new Error("FIXME");
     }
 
     if (key.includes("*") || entryPath.includes("*")) {
-      reporter.warn(
-        `Ignoring ${key}: subpath pattern(\`*\`) is not supported yet`,
+      reporter.error(
+        `Ignoring ${formatUtils.key(key)}: subpath pattern(\`*\`) is not supported yet`,
       );
       return;
     }
 
     const entry = entryMap.get(entryPath);
     if (entry) {
+      // exports should be prioritized
       if (entry.key.startsWith("exports") && !key.startsWith("exports")) {
-        // exports should be prioritized
-        reporter.warn(`
-  Entry ${key} will be ignored since
+        if (entry.platform !== platform || entry.module !== module) {
+          reporter.warn(
+            dedent`
+              Entry ${formatUtils.key(key)} will be ignored since
 
-    ${entry.key}
-    { module: "${entry.module}", platform: "${entry.platform}" }
+                  %s
+                  %s
 
-    precedense over
+                precedense over
 
-    (ignored) ${key}
-    { module: "${module}", platform: "${platform}" }
-  `);
+                  %s ${kleur.bold('(ignored)')}
+                  %s
+
+            `,
+            formatUtils.key(entry.key),
+            formatUtils.object({ module: entry.module, platform: entry.platform }),
+            formatUtils.key(key),
+            formatUtils.object({ module, platform }),
+          );
+        }
         return;
       }
 
       if (entry.platform !== platform || entry.module !== module) {
-        reporter.warn(`
-  Conflict found for ${path}
+        let msg = formatUtils.format(
+          dedent`
+            Conflict found for ${formatUtils.path(entryPath)}
 
-    ${entry.key}
-    { module: "${entry.module}", platform: "${entry.platform}" }
+                %s
+                %s
 
-    vs
+              vs
 
-    (ignored) ${key}
-    { module: "${module}", platform: "${platform}" }
-
-  Did you forget to specify the Node.js version in the "engines" field?
-  Or you may not need to specify "require" or "node" entries.
-  `);
+                %s ${kleur.bold('(conflited)')}
+                %s
+          `,
+          formatUtils.key(entry.key),
+          formatUtils.object({ module: entry.module, platform: entry.platform }),
+          formatUtils.key(key),
+          formatUtils.object({ module, platform }),
+        );
+        let hint = '';
+        if (
+          (entry.key === 'main' && key === 'module') ||
+          (entry.key === 'module' && key === 'main')
+        ) {
+          hint = dedent`
+            Did you forgot to set ${formatUtils.key('type')} to ${formatUtils.literal('module')} for ESM-first approach?
+          `;
+        }
+        if (
+          entry.module === module &&
+          entry.platform !== platform
+        ) {
+          hint = dedent`
+            Did you forget to specify the Node.js version in the ${formatUtils.key('engines')} field?
+            Or you may not need to specify ${formatUtils.key('require')} or ${formatUtils.key('node')} entries.
+          `;
+        }
+        if (hint) {
+          msg += '\n\n';
+          msg += hint;
+          msg += '\n';
+        }
+        reporter.error(msg);
+        throw new Error("FIXME");
       }
       return;
     }
@@ -449,10 +490,12 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
       module: defaultModule,
       entryPath: manifest.exports,
     });
-  } else {
-    reporter.warn(`Using "exports" field is highly recommended.
-See https://nodejs.org/api/packages.html for more detail.
-`);
+  } else if (manifest.main || manifest.module) {
+    reporter.warn(dedent`
+      Using ${formatUtils.key('exports')} field is highly recommended.
+        See ${formatUtils.hyperlink('https://nodejs.org/api/packages.html')} for more detail.
+
+    `);
   }
 
   if (typeof manifest.main === "string") {
@@ -468,9 +511,11 @@ See https://nodejs.org/api/packages.html for more detail.
       entryPath: manifest.module,
     });
 
-    reporter.warn(`"module" field is not standard and may works in only legacy bundlers. Consider using "exports" instead.
-See https://nodejs.org/api/packages.html for more detail.
-`);
+    reporter.warn(dedent`
+      ${formatUtils.key("module")} field is not standard and may works in only legacy bundlers. Consider using ${formatUtils.key('exports')} instead.
+        See ${formatUtils.hyperlink('https://nodejs.org/api/packages.html')} for more detail.
+
+    `);
   }
 
   return Array.from(entryMap.values());

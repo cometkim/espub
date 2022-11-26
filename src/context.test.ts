@@ -1,14 +1,16 @@
 import { describe, test, expect, vi } from 'vitest';
-import type { TSConfig } from 'pkg-types';
+import { type TSConfig } from 'pkg-types';
 
-import type { PathResolver } from './common';
+import { type PathResolver } from './common';
+import { type Context } from './context';
+import { type Flags } from './cli';
+import { type Manifest } from './manifest';
+import { Reporter } from './reporter';
 import { parseConfig } from './context';
-import type { Context } from './context';
-import type { Flags } from './cli';
-import type { Manifest } from './manifest';
-import type { Reporter } from './report';
 
 describe('parseConfig', () => {
+  const reporter = new Reporter(console);
+  const resolve: PathResolver = vi.fn();
   const defaultFlags: Flags = {
     cwd: '/project',
     platform: undefined,
@@ -21,32 +23,20 @@ describe('parseConfig', () => {
     noDts: false,
     noSourcemap: false,
   };
-
   const defaultManifest: Manifest = {
     name: 'package'
   };
-
   const defaultTsConfig: TSConfig = {
     compilerOptions: {
       target: 'ESNext', // ESNext,
       declaration: true,
     },
   };
-
   const defaultTargets: string[] = [
     'chrome',
     'firefox',
     'safari',
   ];
-
-  const reporter: Reporter = {
-    debug: console.debug,
-    info: console.info,
-    warn: console.warn,
-    error: console.error,
-  };
-
-  const resolve: PathResolver = vi.fn();
 
   test('validate manifest', () => {
     const result = parseConfig({
