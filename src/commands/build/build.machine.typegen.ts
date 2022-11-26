@@ -59,28 +59,20 @@ export interface Typegen0 {
       | "reportPerformance"
       | "reportErrors"
       | "cleanup";
-    services:
-      | "buildBundleTask"
-      | "buildFileTask"
-      | "buildTypeTask"
-      | "emitTask";
+    services: "buildTypeTask" | "emitTask";
     guards: "hasErrors";
     delays: never;
   };
   eventsCausingActions: {
     assignBuildBundleErrors: "error.platform.buildMachine.buildEntries.buildBundleEntries.build:invocation[0]";
     assignBuildFileErrors: "error.platform.buildMachine.buildEntries.buildFileEntries.build:invocation[0]";
-    assignBuildStartedAt: "BUILD";
     assignBuildTypeErrors: "error.platform.buildMachine.buildEntries.buildTypeEntries.build:invocation[0]";
-    assignBundleEntries: "BUILD";
     assignEmitErrors: "error.platform.buildMachine.emitEntries:invocation[0]";
     assignErrorCode: "error.platform.buildMachine.emitEntries:invocation[0]";
-    assignFileEntries: "BUILD";
     assignOutputFiles:
       | "done.invoke.buildMachine.buildEntries.buildBundleEntries.build:invocation[0]"
       | "done.invoke.buildMachine.buildEntries.buildFileEntries.build:invocation[0]"
       | "done.invoke.buildMachine.buildEntries.buildTypeEntries.build:invocation[0]";
-    assignTypeEntries: "BUILD";
     cleanup:
       | "done.state.buildMachine.buildEntries"
       | "error.platform.buildMachine.emitEntries:invocation[0]";

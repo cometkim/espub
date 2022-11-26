@@ -1,12 +1,9 @@
-import * as fs from 'node:fs/promises';
-import * as path from 'node:path';
 import * as esbuild from 'esbuild';
 
 import {
   type Context,
 } from '../../../context';
 import * as fsUtils from '../../../fsUtils';
-
 import {
   groupBundleEntries,
   optionsFromHash,
@@ -19,73 +16,77 @@ import {
   validateImportMaps,
   type ValidNodeImportMaps,
 } from '../importMaps';
-import { makePlugin as makeImportMapsPlugin } from '../plugins/esbuildImportMapsPlugin';
-import { makePlugin as makeEmbedPlugin } from '../plugins/esbuildEmbedPlugin';
+import {
+  type OutputFile,
+} from '../outputFile';
+import {
+  makePlugin as makeImportMapsPlugin,
+} from '../plugins/esbuildImportMapsPlugin';
+import {
+  makePlugin as makeEmbedPlugin,
+} from '../plugins/esbuildEmbedPlugin';
 
-class EsbuildTaskError extends Error {
-  name = 'EsbuildTaskError';
-  esbuildErrors: esbuild.Message[],
+export class NanobundleBuildBundleError extends Error {
+  name = 'NanobundleBuildBundleError';
+
+  esbuildErrors: esbuild.Message[];
+
   constructor(errors: esbuild.Message[]) {
     super();
     this.esbuildErrors = errors;
   }
 }
 
-type BuildBundleOptions = {
+type BuildBundleTaskOptions = {
   context: Context,
   bundleEntries: BundleEntry[],
 }
 
-type BuildBundleResult = {
-
+type BuildBundleTaskResult = {
+  outputFiles: OutputFile[],
 };
 
-export async function buildBundle({
+export async function buildBundleTask({
   context,
   bundleEntries,
-}: BuildBundleOptions): Promise<BuildBundleResult> {
+}: BuildBundleTaskOptions): Promise<BuildBundleTaskResult> {
   const importMaps = await loadImportMaps(context);
   const validImportMaps = await validateImportMaps({ context, importMaps });
-
   const bundleGroup = groupBundleEntries(bundleEntries);
-
-  const buildTasks: Array<ReturnType<typeof buildTask>> = [];
+  const subtasks: Array<Promise<BuildBundleGroupResult>> = [];
   for (const [optionsHash, entries] of Object.entries(bundleGroup)) {
     const options = optionsFromHash(optionsHash);
-    buildTasks.push(
-      buildTask({
+    subtasks.push(
+      buildBundleGroup({
         context,
         options,
-        entries,
+        bundleEntries: entries,
         validImportMaps,
         defaultPlugins: [],
       }),
     );
   }
-  try {
-    const buildResults = await Promise.all(buildTasks);
-    const buildErrors = buildResults.flatMap(buildResult => buildResult.errors);
-    if (buildErrors.length > 0) {
-      throw new EsbuildTaskError(buildErrors);
-    }
-    const emitResults = await Promise.all(buildResults.map(emitTask));
-
-    // TODO: report success
-
-    // TODO: report errors
-
-  } catch (error) {
-    // TODO: report errors
-
-    // TODO: cleanup outdir
+  const results = await Promise.all(subtasks);
+  const errors = results.flatMap(result => result.errors);
+  if (errors.length > 0) {
+    throw new NanobundleBuildBundleError(errors);
   }
+
+  const outputFiles = results
+    .flatMap(result => result.outputFiles)
+    .map(outputFile => ({
+      path: outputFile.path,
+      content: outputFile.contents,
+    }));
+
+  return { outputFiles };
 }
 
 type BuildBundleGroupOptions = {
   context: Context,
   defaultPlugins: esbuild.Plugin[],
   validImportMaps: ValidNodeImportMaps,
-  entries: BundleEntry[],
+  bundleEntries: BundleEntry[],
   options: BundleOptions,
 };
 
@@ -94,15 +95,15 @@ type BuildBundleGroupResult = {
   outputFiles: esbuild.OutputFile[],
 };
 
-async function buildTask({
+async function buildBundleGroup({
   context,
   defaultPlugins,
   validImportMaps,
-  entries,
+  bundleEntries,
   options,
 }: BuildBundleGroupOptions): Promise<BuildBundleGroupResult> {
   const entryPointsEntries: [string, string][] = [];
-  for (const entry of entries) {
+  for (const entry of bundleEntries) {
     let sourceFile: string | null = null;
     for (const candidate of entry.sourceFile) {
       const path = context.resolve(context.cwd, candidate);
@@ -161,32 +162,4 @@ async function buildTask({
     errors: result.errors,
     outputFiles: result.outputFiles,
   };
-}
-
-type EmitTaskOptions = {
-  outputFiles: esbuild.OutputFile[],
-};
-
-type EmitTaskResult = {
-  errors: EmitTaskError,
-  outputFiles: esbuild.OutputFile[],
-};
-
-type EmitTaskError = {
-  message: string,
-};
-
-async function emitTask({
-  outputFiles,
-}: EmitTaskOptions): Promise<EmitTaskResult> {
-  type EmitSubtask = {
-    outputFile: esbuild.OutputFile,
-  };
-  async function subtask(outputFile: esbuild.OutputFile): Promise<EmitSubtask> {
-    const dirname = path.dirname(outputFile.path);
-    await fs.mkdir(dirname, { recursive: true });
-    await fs.writeFile(outputFile.path, outputFile.contents);
-    return { outputFile };
-  };
-  return Promise.allSettled(outputFiles.map(subtask));
 }

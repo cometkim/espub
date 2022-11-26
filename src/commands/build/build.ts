@@ -1,3 +1,4 @@
+import { performance } from 'node:perf_hooks';
 import { interpret } from 'xstate';
 
 import { type Context } from '../../context';
@@ -18,14 +19,12 @@ export async function buildCommand({
     buildMachine
       .withContext({
         root: context,
+        entries,
         outputFiles: [],
-        buildStartedAt: 0,
+        buildStartedAt: performance.now(),
       })
       .withConfig({
         actions: {
-
-        },
-        services: {
 
         },
         guards: {
@@ -38,9 +37,5 @@ export async function buildCommand({
   });
 
   service.start();
-
-  service.send({
-    type: 'BUILD',
-    entries,
-  });
+  service.send('BUILD');
 }

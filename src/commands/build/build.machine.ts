@@ -1,33 +1,27 @@
-import { performance } from 'node:perf_hooks';
-import { assign, createMachine } from 'xstate';
+import { createMachine } from 'xstate';
 
 import { type Context } from '../../context';
 import { type Entry } from '../../entry';
 import {
   filterBundleEntry,
   filterFileEntry,
-  filterTypeEntry,
-  type BundleEntry,
-  type FileEntry,
-  type TypeEntry,
 } from './entryGroup';
 import { type OutputFile } from './outputFile';
+import { buildBundleTask } from './tasks/buildBundleTask';
+import { buildFileTask } from './tasks/buildFileTask';
 
 export const buildMachine =
-  /** @xstate-layout N4IgpgJg5mDOIC5QCMCuBLANhAsgQwGMALdAOzADpkB7agF1joCc8AHAYgCEBVASQBkAIgG0ADAF1EoVtVjo66aqSkgAHogCMANi0UAnFtF6AzAHYArABoQAT0TmATLtOnRADgeitG01otuAXwDrNCxcQhJyKgxsAFFSZnQ4dgglSkY8OkpQ7HxiMmyYiHjEuDFJJBAZOQUlFXUENwAWPQpjPVEHPQ1RJt9-azsEDU8miiaHc3NTDQ9jB2NjJqCQorzIwrCSpiTYFLSKDKzosPWCk7iEnbKNCulZeUVlSob5jTaHCeNzQw09Bbcg00o3Gk3MTS0ExM5m+KxAOXC+SiCO2uwuEE4qFIEEwYFRcHR+yiZAAbtQANabXIRc4oq5ohGY7G4-GwdEIUnUAiZJ7lcoqaqPOovRA6UQUSHmZrfURS8x6JpAhAw96dQzGDQtJqarxwhFnZFFVnopk4vH0gkI9hgJhMahMCisTCZABm9oAtuiDVTiha2YysWbjQiOaQydzaqQ+RIBQ9I-VRYYJU0pU0ZXKFUqtA43BQMw4C9qHD09Hq1jTDVs-eiAGJYc2lf1FImUTmUr0Vn3Bop1lnVkOciO8iT8yqC+MihBadoSrT-Nw9WVueWK2yINxmCgjBYWJpuDwLhxl06d9HdsK9hvXJtha22+2O510N1MT36090xu1+vn7Ch8M8ko0Z3FUcZPAmU4zjo86Lhmq5DCYYxaB4TjZt83zaMe1JIl2-ZFAAKjYrBXgyzapMSYYUj63pnnhYSEcRv4QP+XKAVGI4xmOYHCqADTTrmphNHuIyiBoPizICa4IIW+hdMhFhYYiGy0V+CIMSRlrNjadoOk6roeh2OEqde6LqUxLFDkBHEgeO4GTvxFCCcJnhiTM+5KvMDjjG4ejTB4fSiK4xiKTRYDuvIrIthQbbUaeYURX6FlscBsY1HZvGiqI4p6G4FguGmrg9BoSoaFKuYOKYiGanO7TBcE8LlkZ8V0JF2kPnpz4Ge+TXhS1iWDsl1mpUKzwZcqBiOchxjuL8JizCV3ymBQnQbp8TS9D5yxwqQ1AQHAKjdRsw0TmNAC0WhKqd2r6Hot0VflPimEe9WHbStAMMwbDHelaiIBMSo-F53hSjMUJCUsIUfkafrfTxv0IIsXl6JVsyFeJuVWFJEL6L4PzaPuC7NFokNGZ+JkBsyGnwFxaVw68bjZSjuWiejFhKkJXm9AqpjGDoPOTG4xMvY1ylk6RYSmn2qlFLDo3wxMubI90zOuajmNDOC5gfNoomC-0Uok6L0PSxLgZSyZsCoAQBBwNT9y03LDQdO8nn-D4jj-MjAMwhQC6+L53j64EwsnqTxvk0UktUxQLp4FgqBMGAssQc7HxdMWFjp17UlaOYLsuFK06QoJ3iG7S4fi9gl6ssnk7GAzOPK2jbls1Jgm5pqUojFKTgdOYZeVpcJtVz+dHYLXY0K43qMsy36vrnn4w+AqhezNoW2rKHRtVsPEDV9WlvW7bE-w8uYxTJ40JLiuSrLq03Tre03hr5CA+4bv+9frH8eJyfDRn3mRwRh0x33gogXyS0+i1VEN8Amfg37GUrhAMyMMaYjQgvXRmTdZ5qwWlrXyGoviFUmHVTe2Ft5DwjvRIi0cER-z+jmaeKtWbz2kjOAsjg-I8xhHnIWZClLlx3lQ7AKCvyHxtrAO2oEHYQWXF5YSpgFxZTgkqT4S0noaAwmhHhmEQ7kMEZQpBoiTLf0wAnJOaCTqn0cN5HwSjr6ZikksLWOYRhEK8LKPoCDmo10sT9V4KY2gzRzPXcwXhkJ4KWjlGYvQNSzGRgg8Rx8-F03XDoNo-xHAtGLDlQWJUpjvC6LzSEJClYINMeY+hjRIRBJ+K4RCyEFh4N0JqEwD9e4TC2kEIAA */
+  /** @xstate-layout N4IgpgJg5mDOIC5QCMCuBLANhAsgQwGMALdAOzADpkB7agF1joCc8AHAYgCEBVASQBkAIgG0ADAF1EoVtVjo66aqSkgAHogCMANi0UAnFtF6AzAHYArABoQAT0TmATLtOnRADgeitG01otuAXwDrNCxcQhJyKgxsAFFSZnQ4dgglSkY8OkpQ7HxiMmyYiHjEuDFJJBAZOQUlFXUENwAWPQpjPVEHPQ1RJt9-azsEDU8miiaHc3NTDQ9jB2NjJqCQorzIwrCSpiTYFLSKDKzosPWCk7iEnbKNCulZeUVlSob5jTaHCeNzQw09Bbcg00o3Gk3MTS0ExM5m+KxAOXC+SiCO2uwuEE4qFIEEwYFRcHR+yiZAAbtQANabXIRc4oq5ohGY7G4-GwdEIUnUAiZJ7lcoqaqPOovRA6UQUSHmZrfURS8x6JpAhAw96dQzGDQtJqarxwhFnZFFVnopk4vH0gkI9hgJhMahMCisTCZABm9oAtuiDVTiha2YysWbjQiOaQydzaqQ+RIBQ9I-VRYYJU0pU0ZXKFUqtA43BQMw4C9qHD09Hq1jTDVs-eiAGJYc2lf1FImUTmUr0Vn3Bop1lnVkOciO8iT8yqC+MihBadoSrT-Nw9WVueWK2yINxmCgjBYWJpuDwLhxl06d9HdsK9hvXJtha22+2O510N1MT36090xu1+vn7Ch8M8ko0Z3FUcZPAmU4zjo86Lhmq5DCYYxaB4TjZt83zaMe1JIl2-ZFAAKjYrBXgyzapMSYYUj63pnnhYSEcRv4QP+XKAVGI4xmOYHCqADTTrmphNHuIyiBoPizICa4IIW+hdMhFhYYiGy0V+CIMSRlrNjadoOk6roeh2OEqde6LqUxLFDkBHEgeO4GTvxFCCcJnhiTM+5KvMDjjG4ejTB4fSiK4xiKTRYDuvIrIthQbbUaeYURX6FlscBsY1HZvGiqI4p6G4FguGmrg9BoSoaFKuYOKYiGanO7TBcE8LlkZ8V0JF2kPnpz4Ge+TXhS1iWDsl1mpUKzwZcqBiOchxjuL8JizCV3ymBQnQbp8TS9D5yxwqQ1AQHAKjdRsw0TmNAC0m4TIFhULKJfRLEqp3avoegvTlLiGKY6EhR+tAMMwbDHelaiaOK0z-F0uVzsuqFKo4uhZd0vS9BCPRaN9RmftegM8cDCCLF5eiVbMhXiblVhSRC+i+D8haGJCBbo8pmOkWEpp9o22OjbjxhuNlRO5aJpMWEqQleb0Crgl8hVTIztJGnR2BsxpN7YJzEETLmhPdALrnE+TQzguYHzaKJbh+H4Uqy5WlyqUUSvGrAqAEAQcDwFxaU4w0HTvJ5-w+I4-yE7DMIUAuvi+d4-SW-Vh1y1Wtus4G7MmS6eBYKgTBgGrk7ex8XTFhY+dB1JWjmD7LhStOkKCd4Vu4Qn2CXqy2djTzfPayTbnC1Jgm5pqYPND4zQMzHjVM-LDcQE3CsQC3uMa1THeC13+vrmX4w+BLZuzNoW2rCeGMTyZCLT1+jvO67c8NMuYxTJ40JLiuSrLq03Tre03g75CdfGSzjc-tWVO6dM5XzXrfRwRh0wv3gogXyS07omFEN8fcZtTA-2ZppeiRFlagLxrzRexNl56wWkbXyGoFhOA8KJHK6Cj5-wgGZGeuCF5a0IbrMmSoFitALI4Pyn0YRlzRqPA+4947HwItgh2TsXawDdvcD2XNr6OG8kPWC0DOF9EcsWDCaEBGYWEdhURNtxFYMYoAtOmAM5Z3diNCC0MVGmAXFlOCHkUwUBzCMKWXhZR9B-s1ZuNiTrczcdNM2OYebmC8MhEhS03o9DTGJHyaCDFKXOOfGRcjQIKLsToNo-xHAtGLDlM2JUpjvC6MYHQEwYRax-kAyxIDAlA2vpCNoso-CQIhHMEhuhNQmDfk4BUnwghBCAA */
   createMachine({
     tsTypes: {} as import("./build.machine.typegen").Typegen0,
     schema: {
       events: {} as {
         type: "BUILD";
-        entries: Entry[];
       },
       context: {} as {
         root: Context;
         buildStartedAt: number;
-        bundleEntries: BundleEntry[];
-        typeEntries: TypeEntry[];
-        fileEntries: FileEntry[];
+        entries: Entry[];
         outputFiles: OutputFile[];
       },
     },
@@ -38,12 +32,6 @@ export const buildMachine =
         on: {
           BUILD: {
             target: "buildEntries",
-            actions: [
-              "assignBuildStartedAt",
-              "assignBundleEntries",
-              "assignTypeEntries",
-              "assignFileEntries",
-            ],
           },
         },
       },
@@ -171,24 +159,14 @@ export const buildMachine =
       },
     },
   }, {
-    actions: {
-      assignBuildStartedAt: assign({
-        buildStartedAt: (_ctx) => performance.now(),
+    services: {
+      buildBundleTask: ctx => buildBundleTask({
+        context: ctx.root,
+        bundleEntries: ctx.entries.filter(filterBundleEntry),
       }),
-      assignBundleEntries: assign({
-        bundleEntries: (_ctx, event) => {
-          return event.entries.filter(filterBundleEntry);
-        },
-      }),
-      assignTypeEntries: assign({
-        typeEntries: (_ctx, event) => {
-          return event.entries.filter(filterTypeEntry);
-        },
-      }),
-      assignFileEntries: assign({
-        fileEntries: (_ctx, event) => {
-          return event.entries.filter(filterFileEntry);
-        },
+      buildFileTask: ctx => buildFileTask({
+        context: ctx.root,
+        fileEntries: ctx.entries.filter(filterFileEntry),
       }),
     },
   });
