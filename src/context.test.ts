@@ -328,5 +328,83 @@ describe('parseConfig', () => {
         resolve,
       });
     });
+
+    test('respect rootDir and outDir in compilerOptions', () => {
+      const result = parseConfig({
+        flags: defaultFlags,
+        manifest: defaultManifest,
+        targets: defaultTargets,
+        reporter,
+        resolve,
+        tsconfig: {
+          ...defaultTsConfig,
+          compilerOptions: {
+            ...defaultTsConfig.compilerOptions,
+            rootDir: 'tsconfig-src',
+            outDir: 'tsconfig-lib',
+          },
+        },
+      });
+
+      expect(result).toEqual<Context>({
+        cwd: '/project',
+        module: 'commonjs',
+        platform: 'neutral',
+        sourcemap: true,
+        declaration: true,
+        standalone: false,
+        rootDir: 'tsconfig-src',
+        outDir: 'tsconfig-lib',
+        tsconfigPath: 'tsconfig.json',
+        importMapsPath: 'package.json',
+        externalDependencies: [],
+        forceExternalDependencies: [],
+        manifest: defaultManifest,
+        targets: defaultTargets,
+        reporter,
+        resolve,
+      });
+    });
+
+    test('flags precedense over tsconfig', () => {
+      const result = parseConfig({
+        flags: {
+          ...defaultFlags,
+          rootDir: 'flags-src',
+          outDir: 'flags-lib',
+        },
+        manifest: defaultManifest,
+        targets: defaultTargets,
+        reporter,
+        resolve,
+        tsconfig: {
+          ...defaultTsConfig,
+          compilerOptions: {
+            ...defaultTsConfig.compilerOptions,
+            rootDir: 'tsconfig-src',
+            outDir: 'tsconfig-lib',
+          },
+        },
+      });
+
+      expect(result).toEqual<Context>({
+        cwd: '/project',
+        module: 'commonjs',
+        platform: 'neutral',
+        sourcemap: true,
+        declaration: true,
+        standalone: false,
+        rootDir: 'flags-src',
+        outDir: 'flags-lib',
+        tsconfigPath: 'tsconfig.json',
+        importMapsPath: 'package.json',
+        externalDependencies: [],
+        forceExternalDependencies: [],
+        manifest: defaultManifest,
+        targets: defaultTargets,
+        reporter,
+        resolve,
+      });
+    });
   });
 });
