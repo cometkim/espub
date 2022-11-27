@@ -100,11 +100,8 @@ export function parseConfig({
   }
 
   let declaration = false;
-  if (tsconfig?.compilerOptions) {
-    declaration = (
-      (!flags.noDts) &&
-      (tsconfig.compilerOptions.declaration === true)
-    );
+  if (!flags.noDts) {
+    declaration = tsconfig?.compilerOptions?.declaration !== false;
   }
 
   return {
