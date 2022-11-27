@@ -41,6 +41,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
     module: defaultModule,
     sourcemap,
     manifest,
+    declaration: useTs,
   } = context;
   const resolvePath = (path: string) => resolvePathFrom(cwd, path);
   const resolvedRootDir = resolvePath(rootDir);
@@ -72,7 +73,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
       reporter.error(
         `Ignoring ${formatUtils.key(key)}: subpath pattern(\`*\`) is not supported yet`,
       );
-      return;
+      throw new Error("FIXME");
     }
 
     const entry = entryMap.get(entryPath);
@@ -149,48 +150,77 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
       return;
     }
 
+    const sourceFileCandidates = new Set<string>();
+
     const resolvedOutputFile = resolvePath(entryPath);
     let resolvedSourceFile = resolvedOutputFile.replace(
       resolvedOutDir,
       resolvedRootDir,
     );
 
-    const pattern = /\.min(?<ext>\.(m|c)?js)$/;
-    const minifyMatch = resolvedSourceFile.match(pattern);
+    const minifyPattern = /\.min(?<ext>\.(m|c)?js)$/;
+    const minifyMatch = resolvedSourceFile.match(minifyPattern);
     const minify = defaultMinify || Boolean(minifyMatch);
     const ext = minifyMatch?.groups?.ext;
     if (ext) {
-      resolvedSourceFile = resolvedSourceFile.replace(pattern, ext);
+      resolvedSourceFile = resolvedSourceFile.replace(minifyPattern, ext);
     }
 
-    const sourceFileCandidates = new Set<string>();
-    if (!resolvedOutputFile.endsWith("js")) {
+    if (!resolvedOutputFile.endsWith('js')) {
       switch (module) {
-        case "commonjs": {
+        case 'commonjs': {
+          useTs && sourceFileCandidates.add(`${resolvedSourceFile}.cts`);
           sourceFileCandidates.add(`${resolvedSourceFile}.cjs`);
+          useTs && sourceFileCandidates.add(`${resolvedSourceFile}.ts`);
           sourceFileCandidates.add(`${resolvedSourceFile}.js`);
           break;
         }
-        case "esmodule": {
+        case 'esmodule': {
+          useTs && sourceFileCandidates.add(`${resolvedSourceFile}.mts`);
           sourceFileCandidates.add(`${resolvedSourceFile}.mjs`);
+          useTs && sourceFileCandidates.add(`${resolvedSourceFile}.ts`);
           sourceFileCandidates.add(`${resolvedSourceFile}.js`);
           break;
         }
       }
     }
+
     switch (module) {
-      case "commonjs": {
-        sourceFileCandidates.add(resolvedSourceFile.replace(/\.js$/, ".cjs"));
-        sourceFileCandidates.add(resolvedSourceFile.replace(/\.cjs$/, ".js"));
+      case 'commonjs': {
+        useTs && sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?js$/, ".cts"));
+        sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?js$/, ".cjs"));
+        useTs && sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?js$/, ".ts"));
+        sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?js$/, ".js"));
         break;
       }
-      case "esmodule": {
-        sourceFileCandidates.add(resolvedSourceFile.replace(/\.js$/, ".mjs"));
-        sourceFileCandidates.add(resolvedSourceFile.replace(/\.mjs$/, ".js"));
+      case 'esmodule': {
+        useTs && sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?js$/, ".mts"));
+        sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?js$/, ".mjs"));
+        useTs && sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?js$/, ".ts"));
+        sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?js$/, ".js"));
+        break;
+      }
+      case 'dts': {
+        if (!useTs) break;
+        if (manifest.type === 'module') {
+          sourceFileCandidates.add(resolvedSourceFile.replace(/\.d\.ts$/, '.mts'));
+          sourceFileCandidates.add(resolvedSourceFile.replace(/\.d\.ts$/, '.cts'));
+        } else {
+          sourceFileCandidates.add(resolvedSourceFile.replace(/\.d\.ts$/, '.cts'));
+          sourceFileCandidates.add(resolvedSourceFile.replace(/\.d\.ts$/, '.mts'));
+        }
+        sourceFileCandidates.add(resolvedSourceFile.replace(/\.d\.ts$/, '.ts'));
         break;
       }
     }
-    sourceFileCandidates.add(resolvedSourceFile);
+
+    switch (module) {
+      case 'commonjs':
+      case 'esmodule':
+      case 'file':
+        sourceFileCandidates.add(resolvedSourceFile);
+        break;
+    }
 
     entryMap.set(entryPath, {
       key,
@@ -276,16 +306,36 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
     entryPath: string;
   }) {
     const ext = path.extname(entryPath);
-    if (ext === ".js" || ext === ".mjs") {
+    if (ext === '.js' || ext === '.mjs') {
       addEntry({
         key,
         platform: defaultPlatform,
         mode: defaultMode,
-        module: "esmodule",
+        module: 'esmodule',
         entryPath,
       });
     } else {
       // FIXME: warn
+    }
+  }
+
+  function addTypesEntry({
+    key,
+    entryPath,
+  }: {
+    key: string;
+    entryPath: string;
+  }) {
+    if (/\.d\.ts$/.test(entryPath)) {
+      addEntry({
+        key,
+        platform: defaultPlatform,
+        mode: defaultMode,
+        module: 'dts',
+        entryPath,
+      });
+    } else {
+      // FIXME: error
     }
   }
 
@@ -498,24 +548,31 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
     `);
   }
 
-  if (typeof manifest.main === "string") {
+  if (typeof manifest.main === 'string') {
     addMainEntry({
-      key: "main",
+      key: 'main',
       entryPath: manifest.main,
     });
   }
 
-  if (typeof manifest.module === "string") {
+  if (typeof manifest.module === 'string') {
     addModuleEntry({
-      key: "module",
+      key: 'module',
       entryPath: manifest.module,
     });
 
     reporter.warn(dedent`
-      ${formatUtils.key("module")} field is not standard and may works in only legacy bundlers. Consider using ${formatUtils.key('exports')} instead.
+      ${formatUtils.key('module')} field is not standard and may works in only legacy bundlers. Consider using ${formatUtils.key('exports')} instead.
         See ${formatUtils.hyperlink('https://nodejs.org/api/packages.html')} for more detail.
 
     `);
+  }
+
+  if (typeof manifest.types === 'string') {
+    addTypesEntry({
+      key: 'types',
+      entryPath: manifest.types,
+    });
   }
 
   return Array.from(entryMap.values());

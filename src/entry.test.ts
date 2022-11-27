@@ -15,9 +15,15 @@ import { parseConfig } from './context';
 import { getEntriesFromContext } from "./entry";
 import * as formatUtils from './formatUtils';
 
+const resolve = (cwd: string, to: string) => path.join(cwd, to);
+
+const defaultTargets: string[] = [
+  'chrome',
+  'firefox',
+  'safari',
+];
+
 describe('getEntriesFromContext', () => {
-  const resolve = (cwd: string, to: string) => path.join(cwd, to);
-  const reporter = new Reporter(console);
   const defaultFlags: Flags = {
     cwd: '/project',
     rootDir: undefined,
@@ -31,11 +37,8 @@ describe('getEntriesFromContext', () => {
     noDts: true,
     platform: undefined,
   };
-  const defaultTargets: string[] = [
-    'chrome',
-    'firefox',
-    'safari',
-  ];
+
+  const reporter = new Reporter(console);
 
   const info = vi.spyOn(reporter, 'info');
   const warn = vi.spyOn(reporter, 'warn');
@@ -52,7 +55,6 @@ describe('getEntriesFromContext', () => {
       reporter,
       resolve,
     });
-
     return getEntriesFromContext({
       context,
       resolve,
@@ -700,11 +702,148 @@ describe('getEntriesFromContext', () => {
     ]);
   });
 
-  describe.todo("in TypeScript project");
-
   describe.todo("when rootDir=./src, outDir=.");
   describe.todo("when rootDir=., outDir=./lib");
   describe.todo("when rootDir=outDir=.");
   describe.todo("when rootDir=outDir=./lib");
   describe.todo("when rootDir=outDir=./lib & TypeScript sources");
+});
+
+describe('getEntriesFromContext - in TypeScript project', () => {
+  const defaultFlags: Flags = {
+    cwd: '/project',
+    rootDir: undefined,
+    outDir: undefined,
+    tsconfig: 'tsconfig.json',
+    importMaps: 'package.json',
+    external: [],
+    standalone: false,
+    noMinify: false,
+    noSourcemap: false,
+    noDts: false,
+    platform: undefined,
+  };
+
+  const reporter = new Reporter(console);
+
+  const info = vi.spyOn(reporter, 'info');
+  const warn = vi.spyOn(reporter, 'warn');
+  const error = vi.spyOn(reporter, 'error');
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  const getEntriesFromManifest = (manifest: Manifest) => {
+    const context = parseConfig({
+      flags: defaultFlags,
+      targets: defaultTargets,
+      manifest,
+      reporter,
+      resolve,
+      tsconfig: {},
+    });
+    return getEntriesFromContext({
+      context,
+      resolve,
+      reporter,
+    });
+  };
+
+  test('types entry in root manifest', () => {
+    expect(
+      getEntriesFromManifest({
+        name: 'my-package',
+        main: './lib/index.js',
+        module: './lib/index.mjs',
+        types: './lib/index.d.ts',
+      }),
+    ).toEqual<Entry[]>([
+      {
+        key: 'main',
+        module: 'commonjs',
+        mode: undefined,
+        minify: false,
+        sourcemap: true,
+        platform: 'neutral',
+        entryPath: './lib/index.js',
+        sourceFile: [
+          '/project/src/index.cts',
+          '/project/src/index.cjs',
+          '/project/src/index.ts',
+          '/project/src/index.js',
+        ],
+        outputFile: '/project/lib/index.js',
+      },
+      {
+        key: 'module',
+        module: 'esmodule',
+        mode: undefined,
+        minify: false,
+        sourcemap: true,
+        platform: 'neutral',
+        entryPath: './lib/index.mjs',
+        sourceFile: [
+          '/project/src/index.mts',
+          '/project/src/index.mjs',
+          '/project/src/index.ts',
+          '/project/src/index.js',
+        ],
+        outputFile: '/project/lib/index.mjs',
+      },
+      {
+        key: 'types',
+        module: 'dts',
+        mode: undefined,
+        minify: false,
+        sourcemap: true,
+        platform: 'neutral',
+        entryPath: './lib/index.d.ts',
+        sourceFile: [
+          '/project/src/index.cts',
+          '/project/src/index.mts',
+          '/project/src/index.ts',
+        ],
+        outputFile: '/project/lib/index.d.ts',
+      },
+    ]);
+  });
+
+  test('conditional exports', () => {
+    expect(
+      getEntriesFromManifest({
+        name: "my-package",
+      }),
+    ).toEqual<Entry[]>([
+
+    ]);
+  });
+
+  test('types entry must has .d.ts extension', () => {
+    expect(() =>
+      getEntriesFromManifest({
+        name: "my-package",
+        types: './lib/index.ts',
+      }),
+    ).toThrowErrorMatchingSnapshot();
+  });
+
+  test('types entry must occur first in conditional exports', () => {
+    expect(() =>
+      getEntriesFromManifest({
+        name: "my-package",
+        exports: {
+          '.': {
+            require: './lib/index.mjs',
+            // This must occur first.
+            types: './lib/index.d.ts',
+            import: './lib/index.cjs',
+          },
+        },
+      }),
+    ).toThrowErrorMatchingSnapshot();
+  });
+
+  test('nested conditional exports', () => {
+
+  });
 });
