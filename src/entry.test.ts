@@ -811,17 +811,70 @@ describe('getEntriesFromContext - in TypeScript project', () => {
   test('conditional exports', () => {
     expect(
       getEntriesFromManifest({
-        name: "my-package",
+        name: 'my-package',
+        exports: {
+          '.': {
+            types: './lib/index.d.ts',
+            require: './lib/index.cjs',
+            import: './lib/index.mjs',
+          },
+        },
       }),
     ).toEqual<Entry[]>([
-
+      {
+        key: 'main',
+        module: 'commonjs',
+        mode: undefined,
+        minify: false,
+        sourcemap: true,
+        platform: 'neutral',
+        entryPath: './lib/index.js',
+        sourceFile: [
+          '/project/src/index.cts',
+          '/project/src/index.cjs',
+          '/project/src/index.ts',
+          '/project/src/index.js',
+        ],
+        outputFile: '/project/lib/index.js',
+      },
+      {
+        key: 'module',
+        module: 'esmodule',
+        mode: undefined,
+        minify: false,
+        sourcemap: true,
+        platform: 'neutral',
+        entryPath: './lib/index.mjs',
+        sourceFile: [
+          '/project/src/index.mts',
+          '/project/src/index.mjs',
+          '/project/src/index.ts',
+          '/project/src/index.js',
+        ],
+        outputFile: '/project/lib/index.mjs',
+      },
+      {
+        key: 'types',
+        module: 'dts',
+        mode: undefined,
+        minify: false,
+        sourcemap: true,
+        platform: 'neutral',
+        entryPath: './lib/index.d.ts',
+        sourceFile: [
+          '/project/src/index.cts',
+          '/project/src/index.mts',
+          '/project/src/index.ts',
+        ],
+        outputFile: '/project/lib/index.d.ts',
+      },
     ]);
   });
 
   test('types entry must has .d.ts extension', () => {
     expect(() =>
       getEntriesFromManifest({
-        name: "my-package",
+        name: 'my-package',
         types: './lib/index.ts',
       }),
     ).toThrowErrorMatchingSnapshot();
@@ -830,20 +883,307 @@ describe('getEntriesFromContext - in TypeScript project', () => {
   test('types entry must occur first in conditional exports', () => {
     expect(() =>
       getEntriesFromManifest({
-        name: "my-package",
+        name: 'my-package',
         exports: {
           '.': {
-            require: './lib/index.mjs',
+            require: './lib/index.cjs',
             // This must occur first.
             types: './lib/index.d.ts',
-            import: './lib/index.cjs',
+            import: './lib/index.mjs',
           },
         },
       }),
     ).toThrowErrorMatchingSnapshot();
   });
 
-  test('nested conditional exports', () => {
+  test('explicit types entry', () => {
+    expect(
+      getEntriesFromManifest({
+        name: 'my-package',
+        type: 'module',
+        exports: {
+          '.': {
+            types: './lib/index.d.ts',
+            require: {
+              development: './lib/index.cjs',
+              production: './lib/index.min.cjs',
+            },
+          },
+        },
+      }),
+    ).toEqual<Entry[]>([
+      {
+        key: 'exports["."].types',
+        module: 'dts',
+        mode: undefined,
+        minify: false,
+        sourcemap: true,
+        platform: 'neutral',
+        entryPath: './lib/index.d.ts',
+        sourceFile: [
+          '/project/src/index.ts',
+        ],
+        outputFile: '/project/lib/index.js',
+      },
+      {
+        key: 'exports["."].require.development',
+        module: 'commonjs',
+        mode: 'development',
+        minify: false,
+        sourcemap: true,
+        platform: 'neutral',
+        entryPath: './lib/index.cjs',
+        sourceFile: [
+          '/project/src/index.cts',
+          '/project/src/index.cjs',
+          '/project/src/index.ts',
+          '/project/src/index.js',
+        ],
+        outputFile: '/project/lib/index.cjs',
+      },
+      {
+        key: 'exports["."].require.production',
+        module: 'commonjs',
+        mode: 'production',
+        minify: true,
+        sourcemap: true,
+        platform: 'neutral',
+        entryPath: './lib/index.min.cjs',
+        sourceFile: [
+          '/project/src/index.cts',
+          '/project/src/index.cjs',
+          '/project/src/index.ts',
+          '/project/src/index.js',
+        ],
+        outputFile: '/project/lib/index.min.cjs',
+      },
+    ]);
+  });
 
+  test('implicit types from default entry', () => {
+    expect(
+      getEntriesFromManifest({
+        name: 'my-package',
+        type: 'module',
+        exports: {
+          '.': {
+            require: {
+              development: './lib/index.cjs',
+              production: './lib/index.min.cjs',
+            },
+            default: './lib/index.js',
+          },
+        },
+      }),
+    ).toEqual<Entry[]>([
+      {
+        key: 'exports["."].types',
+        module: 'dts',
+        mode: undefined,
+        minify: false,
+        sourcemap: true,
+        platform: 'neutral',
+        entryPath: './lib/index.d.ts',
+        sourceFile: [
+          '/project/src/index.ts',
+        ],
+        outputFile: '/project/lib/index.d.ts',
+      },
+      {
+        key: 'exports["."].require.development',
+        module: 'commonjs',
+        mode: 'development',
+        minify: false,
+        sourcemap: true,
+        platform: 'neutral',
+        entryPath: './lib/index.cjs',
+        sourceFile: [
+          '/project/src/index.cts',
+          '/project/src/index.cjs',
+          '/project/src/index.ts',
+          '/project/src/index.js',
+        ],
+        outputFile: '/project/lib/index.cjs',
+      },
+      {
+        key: 'exports["."].require.production',
+        module: 'commonjs',
+        mode: 'production',
+        minify: true,
+        sourcemap: true,
+        platform: 'neutral',
+        entryPath: './lib/index.min.cjs',
+        sourceFile: [
+          '/project/src/index.cts',
+          '/project/src/index.cjs',
+          '/project/src/index.ts',
+          '/project/src/index.js',
+        ],
+        outputFile: '/project/lib/index.min.cjs',
+      },
+    ]);
+  });
+
+  test('implicit types from other entries', () => {
+    expect(
+      getEntriesFromManifest({
+        name: 'my-package',
+        type: 'module',
+        exports: {
+          '.': {
+            require: {
+              development: './lib/index.cjs',
+              production: './lib/index.min.cjs',
+            },
+            import: {
+              development: './lib/index.mjs',
+              production: './lib/index.min.mjs',
+
+              node: {
+                default: './lib/index.node.js',
+              },
+            },
+          },
+        },
+      }),
+    ).toEqual<Entry[]>([
+      {
+        key: 'exports["."].require.types',
+        module: 'dts',
+        mode: undefined,
+        minify: false,
+        sourcemap: true,
+        platform: 'neutral',
+        entryPath: './lib/index.d.ts',
+        sourceFile: [
+          '/project/src/index.cts',
+          '/project/src/index.ts',
+        ],
+        outputFile: '/project/lib/index.d.ts',
+      },
+      {
+        key: 'exports["."].require.development',
+        module: 'commonjs',
+        mode: 'development',
+        minify: false,
+        sourcemap: true,
+        platform: 'neutral',
+        entryPath: './lib/index.cjs',
+        sourceFile: [
+          '/project/src/index.cts',
+          '/project/src/index.cjs',
+          '/project/src/index.ts',
+          '/project/src/index.js',
+        ],
+        outputFile: '/project/lib/index.cjs',
+      },
+      {
+        key: 'exports["."].require.production',
+        module: 'commonjs',
+        mode: 'production',
+        minify: true,
+        sourcemap: true,
+        platform: 'neutral',
+        entryPath: './lib/index.min.cjs',
+        sourceFile: [
+          '/project/src/index.cts',
+          '/project/src/index.cjs',
+          '/project/src/index.ts',
+          '/project/src/index.js',
+        ],
+        outputFile: '/project/lib/index.min.cjs',
+      },
+      {
+        key: 'exports["."].import.types',
+        module: 'dts',
+        mode: undefined,
+        minify: false,
+        sourcemap: true,
+        platform: 'neutral',
+        entryPath: './lib/index.d.ts',
+        sourceFile: [
+          '/project/src/index.mts',
+          '/project/src/index.ts',
+        ],
+        outputFile: '/project/lib/index.d.ts',
+      },
+      {
+        key: 'exports["."].import.development',
+        module: 'esmodule',
+        mode: 'development',
+        minify: false,
+        sourcemap: true,
+        platform: 'neutral',
+        entryPath: './lib/index.mjs',
+        sourceFile: [
+          '/project/src/index.mts',
+          '/project/src/index.mjs',
+          '/project/src/index.ts',
+          '/project/src/index.js',
+        ],
+        outputFile: '/project/lib/index.mjs',
+      },
+      {
+        key: 'exports["."].import.production',
+        module: 'esmodule',
+        mode: 'production',
+        minify: true,
+        sourcemap: true,
+        platform: 'neutral',
+        entryPath: './lib/index.min.mjs',
+        sourceFile: [
+          '/project/src/index.mts',
+          '/project/src/index.mjs',
+          '/project/src/index.ts',
+          '/project/src/index.js',
+        ],
+        outputFile: '/project/lib/index.min.mjs',
+      },
+      {
+        key: 'exports["."].import.node.types',
+        module: 'dts',
+        mode: undefined,
+        minify: false,
+        sourcemap: true,
+        platform: 'neutral',
+        entryPath: './lib/index.node.d.ts',
+        sourceFile: [
+          '/project/src/index.node.ts',
+          '/project/src/index.node.js',
+        ],
+        outputFile: '/project/lib/index.node.d.ts',
+      },
+      {
+        key: 'exports["."].import.node.default',
+        module: 'esmodule',
+        mode: undefined,
+        minify: false,
+        sourcemap: true,
+        platform: 'neutral',
+        entryPath: './lib/index.node.d.ts',
+        sourceFile: [
+          '/project/src/index.node.ts',
+          '/project/src/index.node.js',
+        ],
+        outputFile: '/project/lib/index.node.d.ts',
+      },
+    ]);
+  });
+
+  test('types entry does not accept nesting', () => {
+    expect(() =>
+      getEntriesFromManifest({
+        name: 'my-package',
+        exports: {
+          '.': {
+            types: {
+              default: './lib/index.d.ts',
+            },
+            require: './lib/index.cjs',
+            import: './lib/index.mjs',
+          },
+        },
+      }),
+    ).toThrowErrorMatchingSnapshot();
   });
 });
