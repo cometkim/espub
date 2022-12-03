@@ -46,7 +46,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
     manifest,
     platform: defaultPlatform,
     module: defaultModule,
-    declaration: useTs,
+    declaration,
   } = context;
 
   const defaultPreferredModule = ({
@@ -59,6 +59,9 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
   const resolvePath = (path: string) => resolvePathFrom(cwd, path);
   const resolvedRootDir = resolvePath(rootDir);
   const resolvedOutDir = resolvePath(outDir);
+
+  const useTsSource = declaration;
+  const useJsSource = !(useTsSource && resolvedRootDir === resolvedOutDir);
 
   const entryMap = new Map<Entry["entryPath"], Entry>();
 
@@ -189,17 +192,17 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
     if (!resolvedOutputFile.endsWith('js')) {
       switch (module) {
         case 'commonjs': {
-          useTs && sourceFileCandidates.add(`${resolvedSourceFile}.cts`);
-          sourceFileCandidates.add(`${resolvedSourceFile}.cjs`);
-          useTs && sourceFileCandidates.add(`${resolvedSourceFile}.ts`);
-          sourceFileCandidates.add(`${resolvedSourceFile}.js`);
+          useTsSource && sourceFileCandidates.add(`${resolvedSourceFile}.cts`);
+          useJsSource && sourceFileCandidates.add(`${resolvedSourceFile}.cjs`);
+          useTsSource && sourceFileCandidates.add(`${resolvedSourceFile}.ts`);
+          useJsSource && sourceFileCandidates.add(`${resolvedSourceFile}.js`);
           break;
         }
         case 'esmodule': {
-          useTs && sourceFileCandidates.add(`${resolvedSourceFile}.mts`);
-          sourceFileCandidates.add(`${resolvedSourceFile}.mjs`);
-          useTs && sourceFileCandidates.add(`${resolvedSourceFile}.ts`);
-          sourceFileCandidates.add(`${resolvedSourceFile}.js`);
+          useTsSource && sourceFileCandidates.add(`${resolvedSourceFile}.mts`);
+          useJsSource && sourceFileCandidates.add(`${resolvedSourceFile}.mjs`);
+          useTsSource && sourceFileCandidates.add(`${resolvedSourceFile}.ts`);
+          useJsSource && sourceFileCandidates.add(`${resolvedSourceFile}.js`);
           break;
         }
       }
@@ -207,21 +210,21 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
 
     switch (module) {
       case 'commonjs': {
-        useTs && sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?js$/, ".cts"));
-        sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?js$/, ".cjs"));
-        useTs && sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?js$/, ".ts"));
-        sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?js$/, ".js"));
+        useTsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?js$/, ".cts"));
+        useJsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?js$/, ".cjs"));
+        useTsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?js$/, ".ts"));
+        useJsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?js$/, ".js"));
         break;
       }
       case 'esmodule': {
-        useTs && sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?js$/, ".mts"));
-        sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?js$/, ".mjs"));
-        useTs && sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?js$/, ".ts"));
-        sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?js$/, ".js"));
+        useTsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?js$/, ".mts"));
+        useJsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?js$/, ".mjs"));
+        useTsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?js$/, ".ts"));
+        useJsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?js$/, ".js"));
         break;
       }
       case 'dts': {
-        if (!useTs) break;
+        if (!useTsSource) break;
         if (preferredModule === 'commonjs') {
           sourceFileCandidates.add(resolvedSourceFile.replace(/\.d\.c?ts$/, '.cts'));
         }
@@ -236,7 +239,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
     switch (module) {
       case 'commonjs':
       case 'esmodule': {
-        sourceFileCandidates.add(resolvedSourceFile);
+        useJsSource && sourceFileCandidates.add(resolvedSourceFile);
         break;
       }
       case 'file': {
@@ -476,7 +479,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
         const isLeaf = firstLeaf !== undefined;
 
         // has leaf default entry
-        if (useTs && isLeaf) {
+        if (useTsSource && isLeaf) {
           if (typeof entryPath.default === 'string') {
             const dtsExport: [string, ConditionalExport] = [
               'types$implicit',

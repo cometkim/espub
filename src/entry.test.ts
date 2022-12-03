@@ -702,10 +702,275 @@ describe('getEntriesFromContext', () => {
     ]);
   });
 
-  describe.todo("when rootDir=., outDir=./lib");
-  describe.todo("when rootDir=outDir=.");
-  describe.todo("when rootDir=outDir=./lib");
-  describe.todo("when rootDir=outDir=./lib & TypeScript sources");
+  describe('getEntriesFromContext - when rootDir=./src, outDir=.', () => {
+    const defaultFlags: Flags = {
+      cwd: '/project',
+      rootDir: 'src',
+      outDir: '.',
+      tsconfig: 'tsconfig.json',
+      importMaps: 'package.json',
+      external: [],
+      standalone: false,
+      noMinify: false,
+      noSourcemap: false,
+      noDts: true,
+      platform: undefined,
+    };
+
+    const reporter = new Reporter(console);
+
+    const info = vi.spyOn(reporter, 'info');
+    const warn = vi.spyOn(reporter, 'warn');
+    const error = vi.spyOn(reporter, 'error');
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    const getEntriesFromManifest = (manifest: Manifest) => {
+      const context = parseConfig({
+        flags: defaultFlags,
+        targets: defaultTargets,
+        manifest,
+        reporter,
+        resolve,
+      });
+      return getEntriesFromContext({
+        context,
+        resolve,
+        reporter,
+      });
+    };
+
+    test('conditional exports', () => {
+      expect(
+        getEntriesFromManifest({
+          name: 'my-package',
+          exports: {
+            require: './require.js',
+            import: './import.js',
+          },
+        }),
+      ).toEqual<Entry[]>([
+        {
+          key: 'exports.require',
+          module: 'commonjs',
+          mode: undefined,
+          minify: false,
+          sourcemap: true,
+          platform: 'neutral',
+          entryPath: './require.js',
+          sourceFile: [
+            '/project/src/require.cjs',
+            '/project/src/require.js',
+          ],
+          outputFile: '/project/require.js',
+        },
+        {
+          key: 'exports.import',
+          module: 'esmodule',
+          mode: undefined,
+          minify: false,
+          sourcemap: true,
+          platform: 'neutral',
+          entryPath: './import.js',
+          sourceFile: [
+            '/project/src/import.mjs',
+            '/project/src/import.js',
+          ],
+          outputFile: '/project/import.js',
+        },
+      ]);
+
+      expect(
+        getEntriesFromManifest({
+          name: 'my-package',
+          exports: {
+            '.': './index.js',
+            './index': './index.js',
+            './index.js': './index.js',
+            './feature': './feature/index.js',
+            './feature/index.js': './feature/index.js',
+            './package.json': './package.json',
+          },
+        }),
+      ).toEqual<Entry[]>([
+        {
+          key: 'exports["."]',
+          module: 'commonjs',
+          mode: undefined,
+          minify: false,
+          sourcemap: true,
+          platform: 'neutral',
+          entryPath: './index.js',
+          sourceFile: [
+            '/project/src/index.cjs',
+            '/project/src/index.js',
+          ],
+          outputFile: '/project/index.js',
+        },
+        {
+          key: 'exports["./feature"]',
+          module: 'commonjs',
+          mode: undefined,
+          minify: false,
+          sourcemap: true,
+          platform: 'neutral',
+          entryPath: './feature/index.js',
+          sourceFile: [
+            '/project/src/feature/index.cjs',
+            '/project/src/feature/index.js',
+          ],
+          outputFile: '/project/feature/index.js',
+        },
+        {
+          key: 'exports["./package.json"]',
+          module: 'file',
+          mode: undefined,
+          minify: false,
+          sourcemap: true,
+          platform: 'neutral',
+          entryPath: './package.json',
+          sourceFile: ['/project/package.json'],
+          outputFile: '/project/package.json',
+        },
+      ]);
+    });
+  });
+
+  describe('getEntriesFromContext - when rootDir=., outDir=./lib', () => {
+    const defaultFlags: Flags = {
+      cwd: '/project',
+      rootDir: '.',
+      outDir: 'lib',
+      tsconfig: 'tsconfig.json',
+      importMaps: 'package.json',
+      external: [],
+      standalone: false,
+      noMinify: false,
+      noSourcemap: false,
+      noDts: true,
+      platform: undefined,
+    };
+
+    const reporter = new Reporter(console);
+
+    const info = vi.spyOn(reporter, 'info');
+    const warn = vi.spyOn(reporter, 'warn');
+    const error = vi.spyOn(reporter, 'error');
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    const getEntriesFromManifest = (manifest: Manifest) => {
+      const context = parseConfig({
+        flags: defaultFlags,
+        targets: defaultTargets,
+        manifest,
+        reporter,
+        resolve,
+      });
+      return getEntriesFromContext({
+        context,
+        resolve,
+        reporter,
+      });
+    };
+
+    test('conditional exports', () => {
+      expect(
+        getEntriesFromManifest({
+          name: 'my-package',
+          exports: {
+            require: './lib/require.js',
+            import: './lib/import.js',
+          },
+        }),
+      ).toEqual<Entry[]>([
+        {
+          key: 'exports.require',
+          module: 'commonjs',
+          mode: undefined,
+          minify: false,
+          sourcemap: true,
+          platform: 'neutral',
+          entryPath: './lib/require.js',
+          sourceFile: [
+            '/project/require.cjs',
+            '/project/require.js',
+          ],
+          outputFile: '/project/lib/require.js',
+        },
+        {
+          key: 'exports.import',
+          module: 'esmodule',
+          mode: undefined,
+          minify: false,
+          sourcemap: true,
+          platform: 'neutral',
+          entryPath: './lib/import.js',
+          sourceFile: [
+            '/project/import.mjs',
+            '/project/import.js',
+          ],
+          outputFile: '/project/lib/import.js',
+        },
+      ]);
+
+      expect(
+        getEntriesFromManifest({
+          name: 'my-package',
+          exports: {
+            '.': './lib/index.js',
+            './index': './lib/index.js',
+            './index.js': './lib/index.js',
+            './feature': './lib/feature/index.js',
+            './feature/index.js': './lib/feature/index.js',
+            './package.json': './package.json',
+          },
+        }),
+      ).toEqual<Entry[]>([
+        {
+          key: 'exports["."]',
+          module: 'commonjs',
+          mode: undefined,
+          minify: false,
+          sourcemap: true,
+          platform: 'neutral',
+          entryPath: './lib/index.js',
+          sourceFile: [
+            '/project/index.cjs',
+            '/project/index.js',
+          ],
+          outputFile: '/project/lib/index.js',
+        },
+        {
+          key: 'exports["./feature"]',
+          module: 'commonjs',
+          mode: undefined,
+          minify: false,
+          sourcemap: true,
+          platform: 'neutral',
+          entryPath: './lib/feature/index.js',
+          sourceFile: [
+            '/project/feature/index.cjs',
+            '/project/feature/index.js',
+          ],
+          outputFile: '/project/lib/feature/index.js',
+        },
+        {
+          key: 'exports["./package.json"]',
+          module: 'file',
+          mode: undefined,
+          minify: false,
+          sourcemap: true,
+          platform: 'neutral',
+          entryPath: './package.json',
+          sourceFile: ['/project/package.json'],
+          outputFile: '/project/package.json',
+        },
+      ]);
+    });
+  });
 });
 
 describe('getEntriesFromContext - in TypeScript project', () => {
@@ -1229,274 +1494,93 @@ describe('getEntriesFromContext - in TypeScript project', () => {
       }),
     ).toThrowErrorMatchingSnapshot();
   });
-});
 
-describe('getEntriesFromContext - when rootDir=./src, outDir=.', () => {
-  const defaultFlags: Flags = {
-    cwd: '/project',
-    rootDir: 'src',
-    outDir: '.',
-    tsconfig: 'tsconfig.json',
-    importMaps: 'package.json',
-    external: [],
-    standalone: false,
-    noMinify: false,
-    noSourcemap: false,
-    noDts: true,
-    platform: undefined,
-  };
+  describe('getEntriesFromContext - when rootDir=outDir=.', () => {
+    const reporter = new Reporter(console);
 
-  const reporter = new Reporter(console);
-
-  const info = vi.spyOn(reporter, 'info');
-  const warn = vi.spyOn(reporter, 'warn');
-  const error = vi.spyOn(reporter, 'error');
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
-
-  const getEntriesFromManifest = (manifest: Manifest) => {
-    const context = parseConfig({
-      flags: defaultFlags,
-      targets: defaultTargets,
-      manifest,
-      reporter,
-      resolve,
+    const info = vi.spyOn(reporter, 'info');
+    const warn = vi.spyOn(reporter, 'warn');
+    const error = vi.spyOn(reporter, 'error');
+    afterEach(() => {
+      vi.restoreAllMocks();
     });
-    return getEntriesFromContext({
-      context,
-      resolve,
-      reporter,
+
+    const getEntriesFromManifest = (manifest: Manifest) => {
+      const context = parseConfig({
+        flags: defaultFlags,
+        targets: defaultTargets,
+        manifest,
+        reporter,
+        resolve,
+        tsconfig: {
+          compilerOptions: {
+            rootDir: '.',
+            outDir: '.',
+          },
+        },
+      });
+      return getEntriesFromContext({
+        context,
+        resolve,
+        reporter,
+      });
+    };
+
+    test('conditional exports', () => {
+      expect(
+        getEntriesFromManifest({
+          name: 'my-package',
+          exports: {
+            '.': {
+              types: './index.d.ts',
+              require: './index.cjs',
+              import: './index.mjs',
+            },
+          },
+        }),
+      ).toEqual<Entry[]>([
+        {
+          key: 'exports["."].types',
+          module: 'dts',
+          mode: undefined,
+          minify: false,
+          sourcemap: true,
+          platform: 'neutral',
+          entryPath: './index.d.ts',
+          sourceFile: [
+            '/project/index.ts',
+          ],
+          outputFile: '/project/index.d.ts',
+        },
+        {
+          key: 'exports["."].require',
+          module: 'commonjs',
+          mode: undefined,
+          minify: false,
+          sourcemap: true,
+          platform: 'neutral',
+          entryPath: './index.cjs',
+          sourceFile: [
+            '/project/index.cts',
+            '/project/index.ts',
+          ],
+          outputFile: '/project/index.cjs',
+        },
+        {
+          key: 'exports["."].import',
+          module: 'esmodule',
+          mode: undefined,
+          minify: false,
+          sourcemap: true,
+          platform: 'neutral',
+          entryPath: './index.mjs',
+          sourceFile: [
+            '/project/index.mts',
+            '/project/index.ts',
+          ],
+          outputFile: '/project/index.mjs',
+        },
+      ]);
     });
-  };
-
-  test('conditional exports', () => {
-    expect(
-      getEntriesFromManifest({
-        name: 'my-package',
-        exports: {
-          require: './require.js',
-          import: './import.js',
-        },
-      }),
-    ).toEqual<Entry[]>([
-      {
-        key: 'exports.require',
-        module: 'commonjs',
-        mode: undefined,
-        minify: false,
-        sourcemap: true,
-        platform: 'neutral',
-        entryPath: './require.js',
-        sourceFile: [
-          '/project/src/require.cjs',
-          '/project/src/require.js',
-        ],
-        outputFile: '/project/require.js',
-      },
-      {
-        key: 'exports.import',
-        module: 'esmodule',
-        mode: undefined,
-        minify: false,
-        sourcemap: true,
-        platform: 'neutral',
-        entryPath: './import.js',
-        sourceFile: [
-          '/project/src/import.mjs',
-          '/project/src/import.js',
-        ],
-        outputFile: '/project/import.js',
-      },
-    ]);
-
-    expect(
-      getEntriesFromManifest({
-        name: 'my-package',
-        exports: {
-          '.': './index.js',
-          './index': './index.js',
-          './index.js': './index.js',
-          './feature': './feature/index.js',
-          './feature/index.js': './feature/index.js',
-          './package.json': './package.json',
-        },
-      }),
-    ).toEqual<Entry[]>([
-      {
-        key: 'exports["."]',
-        module: 'commonjs',
-        mode: undefined,
-        minify: false,
-        sourcemap: true,
-        platform: 'neutral',
-        entryPath: './index.js',
-        sourceFile: [
-          '/project/src/index.cjs',
-          '/project/src/index.js',
-        ],
-        outputFile: '/project/index.js',
-      },
-      {
-        key: 'exports["./feature"]',
-        module: 'commonjs',
-        mode: undefined,
-        minify: false,
-        sourcemap: true,
-        platform: 'neutral',
-        entryPath: './feature/index.js',
-        sourceFile: [
-          '/project/src/feature/index.cjs',
-          '/project/src/feature/index.js',
-        ],
-        outputFile: '/project/feature/index.js',
-      },
-      {
-        key: 'exports["./package.json"]',
-        module: 'file',
-        mode: undefined,
-        minify: false,
-        sourcemap: true,
-        platform: 'neutral',
-        entryPath: './package.json',
-        sourceFile: ['/project/package.json'],
-        outputFile: '/project/package.json',
-      },
-    ]);
-  });
-});
-
-describe('getEntriesFromContext - when rootDir=., outDir=./lib', () => {
-  const defaultFlags: Flags = {
-    cwd: '/project',
-    rootDir: '.',
-    outDir: 'lib',
-    tsconfig: 'tsconfig.json',
-    importMaps: 'package.json',
-    external: [],
-    standalone: false,
-    noMinify: false,
-    noSourcemap: false,
-    noDts: true,
-    platform: undefined,
-  };
-
-  const reporter = new Reporter(console);
-
-  const info = vi.spyOn(reporter, 'info');
-  const warn = vi.spyOn(reporter, 'warn');
-  const error = vi.spyOn(reporter, 'error');
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
-
-  const getEntriesFromManifest = (manifest: Manifest) => {
-    const context = parseConfig({
-      flags: defaultFlags,
-      targets: defaultTargets,
-      manifest,
-      reporter,
-      resolve,
-    });
-    return getEntriesFromContext({
-      context,
-      resolve,
-      reporter,
-    });
-  };
-
-  test('conditional exports', () => {
-    expect(
-      getEntriesFromManifest({
-        name: 'my-package',
-        exports: {
-          require: './lib/require.js',
-          import: './lib/import.js',
-        },
-      }),
-    ).toEqual<Entry[]>([
-      {
-        key: 'exports.require',
-        module: 'commonjs',
-        mode: undefined,
-        minify: false,
-        sourcemap: true,
-        platform: 'neutral',
-        entryPath: './lib/require.js',
-        sourceFile: [
-          '/project/require.cjs',
-          '/project/require.js',
-        ],
-        outputFile: '/project/lib/require.js',
-      },
-      {
-        key: 'exports.import',
-        module: 'esmodule',
-        mode: undefined,
-        minify: false,
-        sourcemap: true,
-        platform: 'neutral',
-        entryPath: './lib/import.js',
-        sourceFile: [
-          '/project/import.mjs',
-          '/project/import.js',
-        ],
-        outputFile: '/project/lib/import.js',
-      },
-    ]);
-
-    expect(
-      getEntriesFromManifest({
-        name: 'my-package',
-        exports: {
-          '.': './lib/index.js',
-          './index': './lib/index.js',
-          './index.js': './lib/index.js',
-          './feature': './lib/feature/index.js',
-          './feature/index.js': './lib/feature/index.js',
-          './package.json': './package.json',
-        },
-      }),
-    ).toEqual<Entry[]>([
-      {
-        key: 'exports["."]',
-        module: 'commonjs',
-        mode: undefined,
-        minify: false,
-        sourcemap: true,
-        platform: 'neutral',
-        entryPath: './lib/index.js',
-        sourceFile: [
-          '/project/index.cjs',
-          '/project/index.js',
-        ],
-        outputFile: '/project/lib/index.js',
-      },
-      {
-        key: 'exports["./feature"]',
-        module: 'commonjs',
-        mode: undefined,
-        minify: false,
-        sourcemap: true,
-        platform: 'neutral',
-        entryPath: './lib/feature/index.js',
-        sourceFile: [
-          '/project/feature/index.cjs',
-          '/project/feature/index.js',
-        ],
-        outputFile: '/project/lib/feature/index.js',
-      },
-      {
-        key: 'exports["./package.json"]',
-        module: 'file',
-        mode: undefined,
-        minify: false,
-        sourcemap: true,
-        platform: 'neutral',
-        entryPath: './package.json',
-        sourceFile: ['/project/package.json'],
-        outputFile: '/project/package.json',
-      },
-    ]);
   });
 });
