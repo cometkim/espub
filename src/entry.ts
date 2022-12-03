@@ -488,12 +488,17 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
               inferDtsEntry(entryPath.import),
             ];
             entries = [dtsExport, ...entries];
-          } else {
+          } else if (preferredModule) {
             const dtsExport: [string, ConditionalExport] = [
               'types$implicit',
               inferDtsEntry(firstLeaf[1] as string),
             ];
             entries = [dtsExport, ...entries];
+          } else {
+            reporter.warn(dedent`
+              ${formatUtils.key(key)} entry may not resolve correctly in TypeScript's Node16 moduleResolution.
+              Consider to specify ${formatUtils.key('types')} entry for it.
+            `);
           }
         }
       }
