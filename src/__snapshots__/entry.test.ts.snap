@@ -1,0 +1,3 @@
+// Vitest Snapshot v1
+
+exports[`getEntriesFromContext - in TypeScript project > types entry must has .d.ts extension 1`] = `"\\"types\\" entry must has .d.ts extension!"`;

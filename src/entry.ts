@@ -76,6 +76,10 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
       throw new Error("FIXME");
     }
 
+    if (module === 'dts' && !entryPath.endsWith('.d.ts')) {
+      throw new Error('"types" entry must has .d.ts extension!');
+    }
+
     const entry = entryMap.get(entryPath);
     if (entry) {
       // exports should be prioritized
@@ -326,7 +330,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
     key: string;
     entryPath: string;
   }) {
-    if (/\.d\.ts$/.test(entryPath)) {
+    if (entryPath.endsWith('.d.ts')) {
       addEntry({
         key,
         platform: defaultPlatform,
@@ -335,7 +339,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
         entryPath,
       });
     } else {
-      // FIXME: error
+      throw new Error('"types" entry must has .d.ts extension!');
     }
   }
 
@@ -355,8 +359,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
     entryPath: ConditionalExport;
   }) {
     if (typeof entryPath === 'string') {
-      console.log(key, parentKey, entryPath);
-      if (parentKey === 'types' && /\.d\.ts$/.test(entryPath)) {
+      if (parentKey === 'types') {
         addEntry({
           key,
           platform,
