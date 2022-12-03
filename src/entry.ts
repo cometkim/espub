@@ -24,6 +24,7 @@ type EntryTarget = {
   key: string,
   entryPath: string,
   platform: Entry['platform'],
+  sourcemap: Entry['sourcemap'],
   mode: Entry['mode'],
   module: Entry['module'],
   preferredModule?: 'esmodule' | 'commonjs',
@@ -49,9 +50,9 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
     outDir,
     sourcemap,
     manifest,
+    declaration,
     platform: defaultPlatform,
     module: defaultModule,
-    declaration,
   } = context;
 
   const defaultPreferredModule = ({
@@ -73,6 +74,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
   function addEntry(target: EntryTarget) {
     const {
       key,
+      sourcemap,
       entryPath,
       platform,
       module,
@@ -240,6 +242,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
       case '.cjs': {
         addEntry({
           key,
+          sourcemap,
           platform: defaultPlatform,
           mode: defaultMode,
           module: 'commonjs',
@@ -251,6 +254,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
       case '.mjs': {
         addEntry({
           key,
+          sourcemap,
           platform: defaultPlatform,
           mode: defaultMode,
           module: 'esmodule',
@@ -262,6 +266,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
       case '.node': {
         addEntry({
           key,
+          sourcemap,
           platform: 'node',
           mode: defaultMode,
           module: 'file',
@@ -272,6 +277,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
       case '.json': {
         addEntry({
           key,
+          sourcemap,
           platform: defaultPlatform,
           mode: defaultMode,
           module: "file",
@@ -283,6 +289,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
       default: {
         addEntry({
           key,
+          sourcemap,
           platform: defaultPlatform,
           mode: defaultMode,
           module: defaultModule,
@@ -304,6 +311,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
     if (ext === '.js' || ext === '.mjs') {
       addEntry({
         key,
+        sourcemap,
         platform: defaultPlatform,
         mode: defaultMode,
         module: 'esmodule',
@@ -322,9 +330,10 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
     key: string;
     entryPath: string;
   }) {
-    if (entryPath.endsWith('.d.ts')) {
+    if (/\.d\.(m|c)?ts$/.test(entryPath)) {
       addEntry({
         key,
+        sourcemap,
         platform: defaultPlatform,
         mode: defaultMode,
         module: 'dts',
@@ -333,6 +342,57 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
       });
     } else {
       throw new NanobundleEntryError(Message.INVALID_TYPES_EXTENSION());
+    }
+  }
+
+  function addBinEntry({
+    key,
+    entryPath,
+  }: {
+    key: string;
+    entryPath: string;
+  }) {
+    const ext = path.extname(entryPath);
+    switch (ext) {
+      case '.js': {
+        addEntry({
+          key,
+          sourcemap: false,
+          platform: 'node',
+          mode: defaultMode,
+          module: defaultModule,
+          preferredModule: defaultPreferredModule,
+          entryPath,
+        });
+        break;
+      }
+      case '.cjs': {
+        addEntry({
+          key,
+          sourcemap: false,
+          platform: 'node',
+          mode: defaultMode,
+          module: 'commonjs',
+          preferredModule: defaultPreferredModule,
+          entryPath,
+        });
+        break;
+      }
+      case '.mjs': {
+        addEntry({
+          key,
+          sourcemap: false,
+          platform: 'node',
+          mode: defaultMode,
+          module: 'esmodule',
+          preferredModule: defaultPreferredModule,
+          entryPath,
+        });
+        break;
+      }
+      default: {
+        throw new NanobundleEntryError(Message.INVALID_BIN_EXTENSION());
+      }
     }
   }
 
@@ -357,6 +417,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
       if (parentKey === 'types') {
         addEntry({
           key,
+          sourcemap,
           platform,
           mode,
           module: 'dts',
@@ -371,6 +432,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
         case '.cjs': {
           addEntry({
             key,
+            sourcemap,
             platform,
             mode,
             module: 'commonjs',
@@ -382,6 +444,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
         case '.mjs': {
           addEntry({
             key,
+            sourcemap,
             platform,
             mode,
             module: 'esmodule',
@@ -393,6 +456,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
         case '.node': {
           addEntry({
             key,
+            sourcemap,
             platform: 'node',
             mode,
             module: 'file',
@@ -404,6 +468,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
         case '.json': {
           addEntry({
             key,
+            sourcemap,
             platform,
             mode,
             module: 'file',
@@ -416,6 +481,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
         default: {
           addEntry({
             key,
+            sourcemap,
             platform,
             mode,
             module,
@@ -668,6 +734,22 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
     });
   }
 
+  if (typeof manifest.bin === 'string') {
+    addBinEntry({
+      key: 'bin',
+      entryPath: manifest.bin,
+    });
+  }
+
+  if (typeof manifest.bin === 'object') {
+    for (const [commandName, entryPath] of Object.entries(manifest.bin)) {
+      addBinEntry({
+        key: `bin["${commandName}"]`,
+        entryPath,
+      });
+    }
+  }
+
   return Array.from(entryMap.values());
 };
 
@@ -686,6 +768,10 @@ export const Message = {
 
   INVALID_TYPES_EXTENSION: () => dedent`
     Only ${formatUtils.path('.d.ts')} or ${formatUtils.path('.d.cts')} or ${formatUtils.path('.d.mts')} allowed for ${formatUtils.key('types')} entry.
+  `,
+
+  INVALID_BIN_EXTENSION: () => dedent`
+    Only JavaScript files are allowed for ${formatUtils.path('bin')} entry.
   `,
 
   INVALID_PATH_KEY: (path: string) => dedent`

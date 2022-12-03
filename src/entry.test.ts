@@ -647,6 +647,93 @@ describe('getEntriesFromContext', () => {
     ]);
   });
 
+  test('bin entry', () => {
+    const { getEntries } = getEntriesFromManifest({
+      name: 'my-package',
+      bin: './lib/bin.js',
+    });
+    expect(getEntries()).toEqual<Entry[]>([
+      {
+        key: 'bin',
+        module: 'commonjs',
+        mode: undefined,
+        minify: false,
+        sourcemap: false,
+        platform: 'node',
+        entryPath: './lib/bin.js',
+        sourceFile: [
+          '/project/src/bin.cjs',
+          '/project/src/bin.js',
+        ],
+        outputFile: '/project/lib/bin.js',
+      },
+    ]);
+  });
+
+  test('bin entry only accepts js', () => {
+    const { getEntries } = getEntriesFromManifest({
+      name: 'my-package',
+      bin: './lib/index.json',
+    });
+    expect(getEntries).toThrowErrorMatchingSnapshot();
+  });
+
+  test('multiple bin entries', () => {
+    const { getEntries } = getEntriesFromManifest({
+      name: 'my-package',
+      type: 'module',
+      bin: {
+        command1: './lib/command.js',
+        command2: './lib/command.cjs',
+        command3: './lib/command.mjs',
+      },
+    });
+    expect(getEntries()).toEqual<Entry[]>([
+      {
+        key: 'bin["command1"]',
+        module: 'esmodule',
+        mode: undefined,
+        minify: false,
+        sourcemap: false,
+        platform: 'node',
+        entryPath: './lib/command.js',
+        sourceFile: [
+          '/project/src/command.mjs',
+          '/project/src/command.js',
+        ],
+        outputFile: '/project/lib/command.js',
+      },
+      {
+        key: 'bin["command2"]',
+        module: 'commonjs',
+        mode: undefined,
+        minify: false,
+        sourcemap: false,
+        platform: 'node',
+        entryPath: './lib/command.cjs',
+        sourceFile: [
+          '/project/src/command.cjs',
+          '/project/src/command.js',
+        ],
+        outputFile: '/project/lib/command.cjs',
+      },
+      {
+        key: 'bin["command3"]',
+        module: 'esmodule',
+        mode: undefined,
+        minify: false,
+        sourcemap: false,
+        platform: 'node',
+        entryPath: './lib/command.mjs',
+        sourceFile: [
+          '/project/src/command.mjs',
+          '/project/src/command.js',
+        ],
+        outputFile: '/project/lib/command.mjs',
+      },
+    ]);
+  });
+
   describe('getEntriesFromContext - when rootDir=./src, outDir=.', () => {
     const getEntriesFromManifest = (manifest: Manifest) => {
       const defaultFlags: Flags = {
