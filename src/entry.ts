@@ -6,11 +6,7 @@ import { type ConditionalExport } from './manifest';
 import { type Context } from './context';
 import { type Reporter } from './reporter';
 import * as formatUtils from './formatUtils';
-import {
-  NanobundleConfusingDtsEntryError,
-  NanobundleInvalidDtsEntryError,
-  NanobundleInvalidDtsEntryOrderError,
-} from './errors';
+import { NanobundleError } from './errors';
 
 export type Entry = {
   key: string;
@@ -22,6 +18,15 @@ export type Entry = {
   module: "commonjs" | "esmodule" | "dts" | "file";
   sourceFile: string[];
   outputFile: string;
+};
+
+type EntryTarget = {
+  key: string,
+  entryPath: string,
+  platform: Entry['platform'],
+  mode: Entry['mode'],
+  module: Entry['module'],
+  preferredModule?: 'esmodule' | 'commonjs',
 };
 
 interface GetEntriesFromContext {
@@ -65,37 +70,32 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
 
   const entryMap = new Map<Entry["entryPath"], Entry>();
 
-  function addEntry({
-    key,
-    entryPath,
-    platform,
-    module,
-    mode,
-    preferredModule,
-  }: {
-    key: string,
-    entryPath: string,
-    platform: Entry['platform'],
-    mode: Entry['mode'],
-    module: Entry['module'],
-    preferredModule?: 'esmodule' | 'commonjs',
-  }) {
+  function addEntry(target: EntryTarget) {
+    const {
+      key,
+      entryPath,
+      platform,
+      module,
+      mode,
+      preferredModule,
+    } = target;
+
     if (!entryPath.startsWith('./')) {
-      reporter.error(
-        `Invalid entry ${formatUtils.key(key)}, entry path should starts with ${formatUtils.literal('./')}`,
+      throw new NanobundleEntryError(
+        Message.INVALID_PATH_KEY(key),
       );
-      throw new Error("FIXME");
     }
 
-    if (key.includes("*") || entryPath.includes("*")) {
-      reporter.error(
-        `Ignoring ${formatUtils.key(key)}: subpath pattern(\`*\`) is not supported yet`,
+    if (entryPath.includes('*')) {
+      throw new NanobundleEntryError(
+        Message.SUBPATH_PATTERN(entryPath)
       );
-      throw new Error("FIXME");
     }
 
     if (module === 'dts' && !/\.d\.(c|m)?ts$/.test(entryPath)) {
-      throw new NanobundleInvalidDtsEntryError();
+      throw new NanobundleEntryError(
+        Message.INVALID_DTS_FORMAT(),
+      );
     }
 
     const entry = entryMap.get(entryPath);
@@ -104,45 +104,12 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
       if (entry.key.startsWith("exports") && !key.startsWith("exports")) {
         if (entry.platform !== platform || entry.module !== module) {
           reporter.warn(
-            dedent`
-              Entry ${formatUtils.key(key)} will be ignored since
-
-                  %s
-                  %s
-
-                precedense over
-
-                  %s ${kleur.bold('(ignored)')}
-                  %s
-
-            `,
-            formatUtils.key(entry.key),
-            formatUtils.object({ module: entry.module, platform: entry.platform }),
-            formatUtils.key(key),
-            formatUtils.object({ module, platform }),
+            Message.PRECEDENSE_ENTRY(entry, target),
           );
         }
         return;
       }
-
       if (entry.platform !== platform || entry.module !== module) {
-        let msg = formatUtils.format(
-          dedent`
-            Conflict found for ${formatUtils.path(entryPath)}
-
-                %s
-                %s
-
-              vs
-
-                %s ${kleur.bold('(conflited)')}
-                %s
-          `,
-          formatUtils.key(entry.key),
-          formatUtils.object({ module: entry.module, platform: entry.platform }),
-          formatUtils.key(key),
-          formatUtils.object({ module, platform }),
-        );
         let hint = '';
         if (
           (entry.key === 'main' && key === 'module') ||
@@ -161,13 +128,9 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
             Or you may not need to specify ${formatUtils.key('require')} or ${formatUtils.key('node')} entries.
           `;
         }
-        if (hint) {
-          msg += '\n\n';
-          msg += hint;
-          msg += '\n';
-        }
-        reporter.error(msg);
-        throw new Error("FIXME");
+        throw new NanobundleEntryError(
+          Message.CONFLICT_ENTRY(entry, target, hint),
+        );
       }
       return;
     }
@@ -348,7 +311,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
         entryPath,
       });
     } else {
-      // FIXME: warn
+      throw new NanobundleEntryError(Message.INVALID_MODULE_EXTENSION());
     }
   }
 
@@ -369,7 +332,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
         entryPath,
       });
     } else {
-      throw new Error('"types" entry must has .d.ts extension!');
+      throw new NanobundleEntryError(Message.INVALID_TYPES_EXTENSION());
     }
   }
 
@@ -464,7 +427,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
       }
     } else if (typeof entryPath === 'object') {
       if (parentKey === 'types') {
-        throw new NanobundleInvalidDtsEntryError();
+        throw new NanobundleEntryError(Message.INVALID_DTS_FORMAT());
       }
 
       let entries = Object.entries(entryPath);
@@ -472,7 +435,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
       if (typeof entryPath.types !== 'undefined') {
         const typesEntryIndex = entries.findIndex(entry => entry[0] === 'types');
         if (typesEntryIndex !== 0) {
-          throw new NanobundleInvalidDtsEntryOrderError();
+          throw new NanobundleEntryError(Message.INVALID_DTS_ORDER());
         }
       } else {
         const firstLeaf = entries.find(entry => typeof entry[1] === 'string');
@@ -487,7 +450,9 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
             ];
             entries = [dtsExport, ...entries];
           } else if (typeof entryPath.require === 'string' && typeof entryPath.import === 'string') {
-            throw new NanobundleConfusingDtsEntryError(key, entryPath.require, entryPath.import);
+            throw new NanobundleEntryError(
+              Message.UNDETEMINED_DTS_SOURCE(key, entryPath.require, entryPath.import),
+            );
           } else if (typeof entryPath.require === 'string') {
             const dtsExport: [string, ConditionalExport] = [
               'types$implicit',
@@ -507,10 +472,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
             ];
             entries = [dtsExport, ...entries];
           } else {
-            reporter.warn(dedent`
-              ${formatUtils.key(key)} entry may not resolve correctly in TypeScript's Node16 moduleResolution.
-              Consider to specify ${formatUtils.key('types')} entry for it.
-            `);
+            reporter.warn(Message.TYPES_MAY_NOT_BE_RESOLVED(key));
           }
         }
       }
@@ -681,11 +643,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
       entryPath: manifest.exports,
     });
   } else if (manifest.main || manifest.module) {
-    reporter.warn(dedent`
-      Using ${formatUtils.key('exports')} field is highly recommended.
-        See ${formatUtils.hyperlink('https://nodejs.org/api/packages.html')} for more detail.
-
-    `);
+    reporter.warn(Message.RECOMMEND_EXPORTS());
   }
 
   if (typeof manifest.main === 'string') {
@@ -700,12 +658,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
       key: 'module',
       entryPath: manifest.module,
     });
-
-    reporter.warn(dedent`
-      ${formatUtils.key('module')} field is not standard and may works in only legacy bundlers. Consider using ${formatUtils.key('exports')} instead.
-        See ${formatUtils.hyperlink('https://nodejs.org/api/packages.html')} for more detail.
-
-    `);
+    reporter.warn(Message.MODULE_NOT_RECOMMENDED());
   }
 
   if (typeof manifest.types === 'string') {
@@ -721,3 +674,119 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
 function inferDtsEntry(entryPath: string): string {
   return entryPath.replace(/(\.min)?\.(m|c)?js$/, '.d.$2ts');
 }
+
+export class NanobundleEntryError extends NanobundleError {
+
+}
+
+export const Message = {
+  INVALID_MODULE_EXTENSION: () => dedent`
+    Only ${formatUtils.path('.js')} or ${formatUtils.path('.mjs')} allowed for ${formatUtils.key('module')} entry.
+  `,
+
+  INVALID_TYPES_EXTENSION: () => dedent`
+    Only ${formatUtils.path('.d.ts')} or ${formatUtils.path('.d.cts')} or ${formatUtils.path('.d.mts')} allowed for ${formatUtils.key('types')} entry.
+  `,
+
+  INVALID_PATH_KEY: (path: string) => dedent`
+    Invalid entry path ${formatUtils.path(path)}, entry path should starts with ${formatUtils.literal('./')}.
+
+  `,
+
+  INVALID_DTS_FORMAT: () => dedent`
+    ${formatUtils.key('types')} entry must be .d.ts file and cannot be nested!
+
+  `,
+
+  INVALID_DTS_ORDER: () => dedent`
+    ${formatUtils.key('types')} entry must occur first in conditional exports for correct type resolution.
+
+  `,
+
+  UNDETEMINED_DTS_SOURCE: (key: string, requirePath: string, importPath: string) => dedent`
+    ${formatUtils.key('types')} entry doesn't set properly for ${formatUtils.key(key)}:
+
+        "require": "${requirePath}",
+        "import": "${importPath}"
+
+    Solution 1. Explicitly set ${formatUtils.key('types')} entry
+
+        "require": {
+          "types": "${requirePath.replace(/\.(m|c)?js$/, '.d.$1ts')}",
+          "default": "${requirePath}"
+        },
+        "import": {
+          "types": "${importPath.replace(/\.(m|c)?js$/, '.d.$1ts')}",
+          "default": "${importPath}"
+        }
+
+    Solution 2. Add ${formatUtils.key('default')} entry
+
+        "require": "${requirePath}",
+        "import": "${importPath}",
+      + "default": "/path/to/entry.js"
+
+  `,
+
+  SUBPATH_PATTERN: (path: string) => dedent`
+    Subpath pattern (${formatUtils.path(path)}) is not supported yet.
+  `,
+
+  CONFLICT_ENTRY: (a: EntryTarget, b: EntryTarget, hint: string) => formatUtils.format(
+    dedent`
+      Conflict found for ${formatUtils.path(a.entryPath)}
+
+          %s
+          %s
+
+        vs
+
+          %s ${kleur.bold('(conflited)')}
+          %s
+
+    `,
+    formatUtils.key(a.key),
+    formatUtils.object({ module: a.module, platform: a.platform }),
+    formatUtils.key(b.key),
+    formatUtils.object({ module: b.module, platform: b.platform }),
+  ) + hint ? `Hint: ${hint}\n` : '',
+
+  PRECEDENSE_ENTRY: (a: EntryTarget, b: EntryTarget) => formatUtils.format(
+    dedent`
+      Entry ${formatUtils.key(b.key)} will be ignored since
+
+          %s
+          %s
+
+        precedense over
+
+          %s ${kleur.bold('(ignored)')}
+          %s
+
+    `,
+    formatUtils.key(a.key),
+    formatUtils.object({ module: a.module, platform: a.platform }),
+    formatUtils.key(b.key),
+    formatUtils.object({ module: b.module, platform: b.platform }),
+  ),
+
+  RECOMMEND_EXPORTS: () => dedent`
+    Using ${formatUtils.key('exports')} field is highly recommended.
+      See ${formatUtils.hyperlink('https://nodejs.org/api/packages.html')} for more detail.
+
+  `,
+
+  MODULE_NOT_RECOMMENDED: () => dedent`
+    ${formatUtils.key('module')} field is not standard and may works in only legacy bundlers. Consider using ${formatUtils.key('exports')} instead.
+      See ${formatUtils.hyperlink('https://nodejs.org/api/packages.html')} for more detail.
+
+  `,
+
+  TYPES_MAY_NOT_BE_RESOLVED: (key: string) => dedent`
+    ${formatUtils.key(key)} entry might not be resolved correctly in ${formatUtils.key('moduleResolution')}: ${formatUtils.literal('Node16')}.
+
+    Consider to specify ${formatUtils.key('types')} entry for it.
+
+  `
+
+} as const;

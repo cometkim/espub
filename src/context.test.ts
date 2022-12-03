@@ -5,11 +5,19 @@ import { type PathResolver } from './common';
 import { type Context } from './context';
 import { type Flags } from './cli';
 import { type Manifest } from './manifest';
-import { Reporter } from './reporter';
+import { type Reporter } from './reporter';
 import { parseConfig } from './context';
 
+class ViReporter implements Reporter {
+  debug = vi.fn();
+  info = vi.fn();
+  warn = vi.fn();
+  error = vi.fn();
+  captureException = vi.fn();
+}
+
 describe('parseConfig', () => {
-  const reporter = new Reporter(console);
+  const reporter = new ViReporter();
   const resolve: PathResolver = vi.fn();
   const defaultFlags: Flags = {
     cwd: '/project',

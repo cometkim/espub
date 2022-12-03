@@ -10,12 +10,20 @@ import {
 import { type Flags } from './cli';
 import { type Manifest } from './manifest';
 import { type Entry } from './entry';
-import { Reporter } from './reporter';
+import { type Reporter } from './reporter';
 import { parseConfig } from './context';
 import { getEntriesFromContext } from "./entry";
 import * as formatUtils from './formatUtils';
 
 const resolve = (cwd: string, to: string) => path.join(cwd, to);
+
+class ViReporter implements Reporter {
+  debug = vi.fn();
+  info = vi.fn();
+  warn = vi.fn();
+  error = vi.fn();
+  captureException = vi.fn();
+}
 
 const defaultTargets: string[] = [
   'chrome',
@@ -38,16 +46,8 @@ describe('getEntriesFromContext', () => {
     platform: undefined,
   };
 
-  const reporter = new Reporter(console);
-
-  const info = vi.spyOn(reporter, 'info');
-  const warn = vi.spyOn(reporter, 'warn');
-  const error = vi.spyOn(reporter, 'error');
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
-
   const getEntriesFromManifest = (manifest: Manifest) => {
+    const reporter = new ViReporter();
     const context = parseConfig({
       flags: defaultFlags,
       targets: defaultTargets,
@@ -55,30 +55,31 @@ describe('getEntriesFromContext', () => {
       reporter,
       resolve,
     });
-    return getEntriesFromContext({
+    return {
       context,
-      resolve,
       reporter,
-    });
+      getEntries: () => getEntriesFromContext({
+        context,
+        resolve,
+        reporter,
+      }),
+    };
   };
 
-  test("empty package", () => {
-    expect(
-      getEntriesFromManifest({
-        name: "my-package",
-      }),
-    ).toEqual([]);
-
-    expect(warn).not.toHaveBeenCalled();
+  test('empty package', () => {
+    const { getEntries, reporter } = getEntriesFromManifest({
+      name: 'my-package',
+    });
+    expect(getEntries()).toEqual<Entry[]>([]);
+    expect(reporter.warn).not.toHaveBeenCalled();
   });
 
-  test("main entry, implicit commonjs", () => {
-    expect(
-      getEntriesFromManifest({
-        name: "my-package",
-        main: "./lib/index.js",
-      }),
-    ).toEqual<Entry[]>([
+  test('main entry, implicit commonjs', () => {
+    const { getEntries, reporter } = getEntriesFromManifest({
+      name: 'my-package',
+      main: './lib/index.js',
+    });
+    expect(getEntries()).toEqual<Entry[]>([
       {
         key: "main",
         module: "commonjs",
@@ -91,22 +92,20 @@ describe('getEntriesFromContext', () => {
         outputFile: "/project/lib/index.js",
       },
     ]);
-
-    expect(warn).toHaveBeenCalledWith(
+    expect(reporter.warn).toHaveBeenCalledWith(
       expect.stringContaining(
         `Using ${formatUtils.key('exports')} field is highly recommended.`,
       ),
     );
   });
 
-  test("main field, explicit commonjs", () => {
-    expect(
-      getEntriesFromManifest({
-        name: "my-package",
-        type: "commonjs",
-        main: "./lib/index.js",
-      }),
-    ).toEqual<Entry[]>([
+  test('main field, explicit commonjs', () => {
+    const { getEntries, reporter } = getEntriesFromManifest({
+      name: 'my-package',
+      type: 'commonjs',
+      main: './lib/index.js',
+    });
+    expect(getEntries()).toEqual<Entry[]>([
       {
         key: "main",
         module: "commonjs",
@@ -119,22 +118,20 @@ describe('getEntriesFromContext', () => {
         outputFile: "/project/lib/index.js",
       },
     ]);
-
-    expect(warn).toHaveBeenCalledWith(
+    expect(reporter.warn).toHaveBeenCalledWith(
       expect.stringContaining(
         `Using ${formatUtils.key('exports')} field is highly recommended.`,
       ),
     );
   });
 
-  test("main field, explicit esmodule", () => {
-    expect(
-      getEntriesFromManifest({
-        name: "my-package",
-        type: "module",
-        main: "./lib/index.js",
-      }),
-    ).toEqual<Entry[]>([
+  test('main field, explicit esmodule', () => {
+    const { getEntries, reporter } = getEntriesFromManifest({
+      name: 'my-package',
+      type: 'module',
+      main: './lib/index.js',
+    });
+    expect(getEntries()).toEqual<Entry[]>([
       {
         key: "main",
         module: "esmodule",
@@ -147,22 +144,20 @@ describe('getEntriesFromContext', () => {
         outputFile: "/project/lib/index.js",
       },
     ]);
-
-    expect(warn).toHaveBeenCalledWith(
+    expect(reporter.warn).toHaveBeenCalledWith(
       expect.stringContaining(
         `Using ${formatUtils.key('exports')} field is highly recommended.`,
       ),
     );
   });
 
-  test("main field with module extension", () => {
-    expect(
-      getEntriesFromManifest({
-        name: "my-package",
-        type: "module",
-        main: "./lib/index.cjs",
-      }),
-    ).toEqual<Entry[]>([
+  test('main field with module extension - module/cjs', () => {
+    const { getEntries, reporter } = getEntriesFromManifest({
+      name: 'my-package',
+      type: 'module',
+      main: './lib/index.cjs',
+    });
+    expect(getEntries()).toEqual<Entry[]>([
       {
         key: "main",
         module: "commonjs",
@@ -175,21 +170,20 @@ describe('getEntriesFromContext', () => {
         outputFile: "/project/lib/index.cjs",
       },
     ]);
-
-    expect(warn).toHaveBeenNthCalledWith(
-      1,
+    expect(reporter.warn).toHaveBeenCalledWith(
       expect.stringContaining(
         `Using ${formatUtils.key('exports')} field is highly recommended.`,
       ),
     );
+  });
 
-    expect(
-      getEntriesFromManifest({
-        name: "my-package",
-        type: "commonjs",
-        main: "./lib/index.mjs",
-      }),
-    ).toEqual<Entry[]>([
+  test('main field with module extension - commonjs/mjs', () => {
+    const { getEntries, reporter } = getEntriesFromManifest({
+      name: 'my-package',
+      type: 'commonjs',
+      main: './lib/index.mjs',
+    });
+    expect(getEntries()).toEqual<Entry[]>([
       {
         key: "main",
         module: "esmodule",
@@ -202,22 +196,19 @@ describe('getEntriesFromContext', () => {
         outputFile: "/project/lib/index.mjs",
       },
     ]);
-
-    expect(warn).toHaveBeenNthCalledWith(
-      2,
+    expect(reporter.warn).toHaveBeenCalledWith(
       expect.stringContaining(
         `Using ${formatUtils.key('exports')} field is highly recommended.`,
       ),
     );
   });
 
-  test("main field accepts js, json, node addon entryPaths", () => {
-    expect(
-      getEntriesFromManifest({
-        name: "my-package",
-        main: "./lib/index.json",
-      }),
-    ).toEqual<Entry[]>([
+  test('main field accepts json', () => {
+    const { getEntries } = getEntriesFromManifest({
+      name: 'my-package',
+      main: './lib/index.json',
+    });
+    expect(getEntries()).toEqual<Entry[]>([
       {
         key: "main",
         module: "file",
@@ -230,20 +221,14 @@ describe('getEntriesFromContext', () => {
         outputFile: "/project/lib/index.json",
       },
     ]);
+  });
 
-    expect(warn).toHaveBeenNthCalledWith(
-      1,
-      expect.stringContaining(
-        `Using ${formatUtils.key('exports')} field is highly recommended.`,
-      ),
-    );
-
-    expect(
-      getEntriesFromManifest({
-        name: "my-package",
-        main: "./lib/index.node",
-      }),
-    ).toEqual<Entry[]>([
+  test('main field accepts node addon', () => {
+    const { getEntries } = getEntriesFromManifest({
+      name: 'my-package',
+      main: './lib/index.node',
+    });
+    expect(getEntries()).toEqual<Entry[]>([
       {
         key: "main",
         module: "file",
@@ -256,21 +241,14 @@ describe('getEntriesFromContext', () => {
         outputFile: "/project/lib/index.node",
       },
     ]);
+  });
 
-    expect(warn).toHaveBeenNthCalledWith(
-      2,
-      expect.stringContaining(
-        `Using ${formatUtils.key('exports')} field is highly recommended.`,
-      ),
-    );
-
-    // otherwise treated as JavaScript text
-    expect(
-      getEntriesFromManifest({
-        name: "my-package",
-        main: "./lib/index.css",
-      }),
-    ).toEqual<Entry[]>([
+  test('main field treat unknown extensions as a js file', () => {
+    const { getEntries } = getEntriesFromManifest({
+      name: 'my-package',
+      main: './lib/index.css',
+    });
+    expect(getEntries()).toEqual<Entry[]>([
       {
         key: "main",
         module: "commonjs",
@@ -287,23 +265,15 @@ describe('getEntriesFromContext', () => {
         outputFile: "/project/lib/index.css",
       },
     ]);
-
-    expect(warn).toHaveBeenNthCalledWith(
-      3,
-      expect.stringContaining(
-        `Using ${formatUtils.key('exports')} field is highly recommended.`,
-      ),
-    );
   });
 
-  test("module field", () => {
-    expect(
-      getEntriesFromManifest({
-        name: "my-package",
-        main: "./lib/main.js",
-        module: "./lib/module.js",
-      }),
-    ).toEqual<Entry[]>([
+  test('module field', () => {
+    const { getEntries, reporter } = getEntriesFromManifest({
+      name: 'my-package',
+      main: './lib/main.js',
+      module: './lib/module.js',
+    });
+    expect(getEntries()).toEqual<Entry[]>([
       {
         key: "main",
         module: "commonjs",
@@ -327,8 +297,7 @@ describe('getEntriesFromContext', () => {
         outputFile: "/project/lib/module.js",
       },
     ]);
-
-    expect(warn).toHaveBeenCalledWith(
+    expect(reporter.warn).toHaveBeenCalledWith(
       expect.stringContaining(
         `${formatUtils.key('module')} field is not standard and may works in only legacy bundlers.`,
       ),
@@ -336,29 +305,21 @@ describe('getEntriesFromContext', () => {
   });
 
   test('throw if "main" and "module" is on conflict', () => {
-    expect(
-      () => getEntriesFromManifest({
-        name: "my-package",
-        main: "./lib/index.js",
-        module: "./lib/index.js",
-      })
-    ).toThrowError();
-
-    expect(error).toHaveBeenCalledWith(
-      expect.stringContaining(
-        `Conflict found for ${formatUtils.path('./lib/index.js')}`,
-      ),
-    );
+    const { getEntries } = getEntriesFromManifest({
+      name: 'my-package',
+      main: './lib/index.js',
+      module: './lib/index.js',
+    });
+    expect(getEntries).toThrowErrorMatchingSnapshot();
   });
 
   test('prefer "exports" over "module" on conflict', () => {
-    expect(
-      getEntriesFromManifest({
-        name: "my-package",
-        exports: "./lib/index.js",
-        module: "./lib/index.js",
-      }),
-    ).toEqual<Entry[]>([
+    const { getEntries, reporter } = getEntriesFromManifest({
+      name: 'my-package',
+      exports: './lib/index.js',
+      module: './lib/index.js',
+    });
+    expect(getEntries()).toEqual<Entry[]>([
       {
         key: "exports",
         module: "commonjs",
@@ -371,33 +332,24 @@ describe('getEntriesFromContext', () => {
         outputFile: "/project/lib/index.js",
       },
     ]);
-
-    expect(warn).toHaveBeenNthCalledWith(
-      1,
+    expect(reporter.warn).toHaveBeenCalledWith(
       expect.stringContaining(
         `Entry ${formatUtils.key('module')} will be ignored since`,
       ),
-      expect.anything(),
-      expect.anything(),
-      expect.anything(),
-      expect.anything(),
     );
-
-    expect(warn).toHaveBeenNthCalledWith(
-      2,
+    expect(reporter.warn).toHaveBeenCalledWith(
       expect.stringContaining(
         `${formatUtils.key('module')} field is not standard and may works in only legacy bundlers.`,
       ),
     );
   });
 
-  test("exports field", () => {
-    expect(
-      getEntriesFromManifest({
-        name: "my-package",
-        exports: "./lib/index.js",
-      }),
-    ).toEqual<Entry[]>([
+  test('exports field', () => {
+    const { getEntries } = getEntriesFromManifest({
+      name: 'my-package',
+      exports: './lib/index.js',
+    });
+    expect(getEntries()).toEqual<Entry[]>([
       {
         key: "exports",
         module: "commonjs",
@@ -412,14 +364,13 @@ describe('getEntriesFromContext', () => {
     ]);
   });
 
-  test("exports field always precedense over main", () => {
-    expect(
-      getEntriesFromManifest({
-        name: "my-package",
-        main: "./lib/index.js",
-        exports: "./lib/index.js",
-      }),
-    ).toEqual<Entry[]>([
+  test('exports field always precedense over main #1', () => {
+    const { getEntries, reporter } = getEntriesFromManifest({
+      name: 'my-package',
+      main: './lib/index.js',
+      exports: './lib/index.js',
+    });
+    expect(getEntries()).toEqual<Entry[]>([
       {
         key: "exports",
         module: "commonjs",
@@ -432,19 +383,19 @@ describe('getEntriesFromContext', () => {
         outputFile: "/project/lib/index.js",
       },
     ]);
+    expect(reporter.warn).not.toHaveBeenCalled();
+  });
 
-    expect(warn).not.toHaveBeenCalled();
-
-    expect(
-      getEntriesFromManifest({
-        name: "my-package",
-        type: "module",
-        main: "./lib/index.js",
-        exports: {
-          require: "./lib/index.js",
-        },
-      }),
-    ).toEqual<Entry[]>([
+  test('exports field always precedense over main #2', () => {
+    const { getEntries, reporter } = getEntriesFromManifest({
+      name: 'my-package',
+      type: 'module',
+      main: './lib/index.js',
+      exports: {
+        require: './lib/index.js',
+      },
+    });
+    expect(getEntries()).toEqual<Entry[]>([
       {
         key: "exports.require",
         module: "commonjs",
@@ -457,20 +408,14 @@ describe('getEntriesFromContext', () => {
         outputFile: "/project/lib/index.js",
       },
     ]);
-
-    expect(warn).toHaveBeenNthCalledWith(
-      1,
+    expect(reporter.warn).toHaveBeenCalledWith(
       expect.stringContaining(
         `Entry ${formatUtils.key('main')} will be ignored since`,
       ),
-      expect.anything(),
-      expect.anything(),
-      expect.anything(),
-      expect.anything(),
     );
   });
 
-  test("conditional exports", () => {
+  test('conditional exports', () => {
     expect(
       getEntriesFromManifest({
         name: "my-package",
@@ -478,7 +423,7 @@ describe('getEntriesFromContext', () => {
           require: "./lib/require.js",
           import: "./lib/import.js",
         },
-      }),
+      }).getEntries(),
     ).toEqual<Entry[]>([
       {
         key: "exports.require",
@@ -515,7 +460,7 @@ describe('getEntriesFromContext', () => {
           "./feature/index.js": "./lib/feature/index.js",
           "./package.json": "./package.json",
         },
-      }),
+      }).getEntries(),
     ).toEqual<Entry[]>([
       {
         key: 'exports["."]',
@@ -566,7 +511,7 @@ describe('getEntriesFromContext', () => {
             import: "./lib/index.js",
           },
         },
-      }),
+      }).getEntries(),
     ).toEqual<Entry[]>([
       {
         key: 'exports["."].require',
@@ -617,7 +562,7 @@ describe('getEntriesFromContext', () => {
             "./deno": "./lib/deno.js",
           },
         },
-      }),
+      }).getEntries(),
     ).toEqual<Entry[]>([
       {
         key: 'exports["."].node.require',
@@ -703,30 +648,21 @@ describe('getEntriesFromContext', () => {
   });
 
   describe('getEntriesFromContext - when rootDir=./src, outDir=.', () => {
-    const defaultFlags: Flags = {
-      cwd: '/project',
-      rootDir: 'src',
-      outDir: '.',
-      tsconfig: 'tsconfig.json',
-      importMaps: 'package.json',
-      external: [],
-      standalone: false,
-      noMinify: false,
-      noSourcemap: false,
-      noDts: true,
-      platform: undefined,
-    };
-
-    const reporter = new Reporter(console);
-
-    const info = vi.spyOn(reporter, 'info');
-    const warn = vi.spyOn(reporter, 'warn');
-    const error = vi.spyOn(reporter, 'error');
-    afterEach(() => {
-      vi.restoreAllMocks();
-    });
-
     const getEntriesFromManifest = (manifest: Manifest) => {
+      const defaultFlags: Flags = {
+        cwd: '/project',
+        rootDir: 'src',
+        outDir: '.',
+        tsconfig: 'tsconfig.json',
+        importMaps: 'package.json',
+        external: [],
+        standalone: false,
+        noMinify: false,
+        noSourcemap: false,
+        noDts: true,
+        platform: undefined,
+      };
+      const reporter = new ViReporter();
       const context = parseConfig({
         flags: defaultFlags,
         targets: defaultTargets,
@@ -734,11 +670,12 @@ describe('getEntriesFromContext', () => {
         reporter,
         resolve,
       });
-      return getEntriesFromContext({
+      const getEntries = () => getEntriesFromContext({
         context,
         resolve,
         reporter,
       });
+      return { getEntries, context, reporter };
     };
 
     test('conditional exports', () => {
@@ -749,7 +686,7 @@ describe('getEntriesFromContext', () => {
             require: './require.js',
             import: './import.js',
           },
-        }),
+        }).getEntries(),
       ).toEqual<Entry[]>([
         {
           key: 'exports.require',
@@ -792,7 +729,7 @@ describe('getEntriesFromContext', () => {
             './feature/index.js': './feature/index.js',
             './package.json': './package.json',
           },
-        }),
+        }).getEntries(),
       ).toEqual<Entry[]>([
         {
           key: 'exports["."]',
@@ -838,42 +775,25 @@ describe('getEntriesFromContext', () => {
   });
 
   describe('getEntriesFromContext - when rootDir=., outDir=./lib', () => {
-    const defaultFlags: Flags = {
-      cwd: '/project',
-      rootDir: '.',
-      outDir: 'lib',
-      tsconfig: 'tsconfig.json',
-      importMaps: 'package.json',
-      external: [],
-      standalone: false,
-      noMinify: false,
-      noSourcemap: false,
-      noDts: true,
-      platform: undefined,
-    };
-
-    const reporter = new Reporter(console);
-
-    const info = vi.spyOn(reporter, 'info');
-    const warn = vi.spyOn(reporter, 'warn');
-    const error = vi.spyOn(reporter, 'error');
-    afterEach(() => {
-      vi.restoreAllMocks();
-    });
-
     const getEntriesFromManifest = (manifest: Manifest) => {
+      const reporter = new ViReporter();
       const context = parseConfig({
-        flags: defaultFlags,
+        flags: {
+          ...defaultFlags,
+          rootDir: '.',
+          outDir: 'lib',
+        },
         targets: defaultTargets,
         manifest,
         reporter,
         resolve,
       });
-      return getEntriesFromContext({
+      const getEntries = () => getEntriesFromContext({
         context,
         resolve,
         reporter,
       });
+      return { getEntries, context, reporter };
     };
 
     test('conditional exports', () => {
@@ -884,7 +804,7 @@ describe('getEntriesFromContext', () => {
             require: './lib/require.js',
             import: './lib/import.js',
           },
-        }),
+        }).getEntries(),
       ).toEqual<Entry[]>([
         {
           key: 'exports.require',
@@ -927,7 +847,7 @@ describe('getEntriesFromContext', () => {
             './feature/index.js': './lib/feature/index.js',
             './package.json': './package.json',
           },
-        }),
+        }).getEntries(),
       ).toEqual<Entry[]>([
         {
           key: 'exports["."]',
@@ -988,16 +908,8 @@ describe('getEntriesFromContext - in TypeScript project', () => {
     platform: undefined,
   };
 
-  const reporter = new Reporter(console);
-
-  const info = vi.spyOn(reporter, 'info');
-  const warn = vi.spyOn(reporter, 'warn');
-  const error = vi.spyOn(reporter, 'error');
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
-
   const getEntriesFromManifest = (manifest: Manifest) => {
+    const reporter = new ViReporter();
     const context = parseConfig({
       flags: defaultFlags,
       targets: defaultTargets,
@@ -1006,11 +918,12 @@ describe('getEntriesFromContext - in TypeScript project', () => {
       resolve,
       tsconfig: {},
     });
-    return getEntriesFromContext({
+    const getEntries = () => getEntriesFromContext({
       context,
       resolve,
       reporter,
     });
+    return { getEntries, context, reporter };
   };
 
   test('types entry in root manifest', () => {
@@ -1020,7 +933,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
         main: './lib/index.js',
         module: './lib/index.mjs',
         types: './lib/index.d.ts',
-      }),
+      }).getEntries(),
     ).toEqual<Entry[]>([
       {
         key: 'main',
@@ -1082,7 +995,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
             import: './lib/index.mjs',
           },
         },
-      }),
+      }).getEntries(),
     ).toEqual<Entry[]>([
       {
         key: 'exports["."].types',
@@ -1133,16 +1046,16 @@ describe('getEntriesFromContext - in TypeScript project', () => {
   });
 
   test('types entry must has .d.ts extension', () => {
-    expect(() =>
+    expect(
       getEntriesFromManifest({
         name: 'my-package',
         types: './lib/index.ts',
-      }),
+      }).getEntries,
     ).toThrowErrorMatchingSnapshot();
   });
 
   test('types entry must occur first in conditional exports', () => {
-    expect(() =>
+    expect(
       getEntriesFromManifest({
         name: 'my-package',
         exports: {
@@ -1153,7 +1066,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
             import: './lib/index.mjs',
           },
         },
-      }),
+      }).getEntries,
     ).toThrowErrorMatchingSnapshot();
   });
 
@@ -1171,7 +1084,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
             },
           },
         },
-      }),
+      }).getEntries(),
     ).toEqual<Entry[]>([
       {
         key: 'exports["."].types',
@@ -1249,7 +1162,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
             default: './lib/index.js',
           },
         },
-      }),
+      }).getEntries(),
     ).toEqual<Entry[]>([
       {
         key: 'exports["."].types',
@@ -1351,7 +1264,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
             },
           },
         },
-      }),
+      }).getEntries(),
     ).toEqual<Entry[]>([
       {
         key: 'exports["."].require.types',
@@ -1479,7 +1392,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
   });
 
   test('types entry does not accept nesting', () => {
-    expect(() =>
+    expect(
       getEntriesFromManifest({
         name: 'my-package',
         exports: {
@@ -1491,21 +1404,13 @@ describe('getEntriesFromContext - in TypeScript project', () => {
             import: './lib/index.mjs',
           },
         },
-      }),
+      }).getEntries,
     ).toThrowErrorMatchingSnapshot();
   });
 
   describe('getEntriesFromContext - when rootDir=outDir=.', () => {
-    const reporter = new Reporter(console);
-
-    const info = vi.spyOn(reporter, 'info');
-    const warn = vi.spyOn(reporter, 'warn');
-    const error = vi.spyOn(reporter, 'error');
-    afterEach(() => {
-      vi.restoreAllMocks();
-    });
-
     const getEntriesFromManifest = (manifest: Manifest) => {
+      const reporter = new ViReporter();
       const context = parseConfig({
         flags: defaultFlags,
         targets: defaultTargets,
@@ -1519,11 +1424,12 @@ describe('getEntriesFromContext - in TypeScript project', () => {
           },
         },
       });
-      return getEntriesFromContext({
+      const getEntries = () => getEntriesFromContext({
         context,
         resolve,
         reporter,
       });
+      return { getEntries, context, reporter };
     };
 
     test('conditional exports', () => {
@@ -1537,7 +1443,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
               import: './index.mjs',
             },
           },
-        }),
+        }).getEntries(),
       ).toEqual<Entry[]>([
         {
           key: 'exports["."].types',

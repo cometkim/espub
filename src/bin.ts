@@ -5,7 +5,7 @@ import { parse as parseTsConfig } from 'tsconfck';
 import dedent from 'string-dedent';
 
 import { cli } from './cli';
-import { Reporter } from './reporter';
+import { ConsoleReporter } from './reporter';
 import { loadTargets } from './target';
 import { loadManifest } from './manifest';
 import { parseConfig } from './context';
@@ -15,7 +15,7 @@ import { buildCommand } from './commands/build/build';
 const { flags, input } = cli;
 const [command] = input;
 
-const reporter = new Reporter(console);
+const reporter = new ConsoleReporter(console);
 reporter.level = process.env.DEBUG === 'true' ? 'debug' : 'default';
 
 const resolve = (cwd: string, subpath: string) => path.resolve(cwd, subpath);
@@ -86,6 +86,6 @@ try {
     }
   }
 } catch (error) {
-  reporter.captureError(error);
+  reporter.captureException(error);
   process.exit(1);
 }

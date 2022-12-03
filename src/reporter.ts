@@ -3,7 +3,15 @@ import kleur from 'kleur';
 
 import { colorEnabled } from './formatUtils';
 
-export class Reporter {
+export interface Reporter {
+  debug(msg: string, ...args: any[]): void;
+  info(msg: string, ...args: any[]): void;
+  warn(msg: string, ...args: any[]): void;
+  error(msg: string, ...args: any[]): void;
+  captureException(exn: unknown): void;
+}
+
+export class ConsoleReporter implements Reporter {
   #level: number;
   #console: Console;
 
@@ -72,18 +80,18 @@ export class Reporter {
     );
   }
 
-  captureError(error: unknown): void {
+  captureException(exn: unknown): void {
     let formatted;
-    if (error instanceof Error) {
+    if (exn instanceof Error) {
       formatted = formatWithOptions(
         { colors: this.color },
-        error.stack,
+        exn.stack,
       );
     } else {
       formatted = formatWithOptions(
         { colors: this.color },
         '%s',
-        error,
+        exn,
       );
     }
     const indented = this.#indent(formatted);
@@ -92,8 +100,8 @@ export class Reporter {
     );
   }
 
-  createChildReporter(): Reporter {
-    const child = new Reporter(this.#console, this.#level + 1);
+  createChildReporter(): ConsoleReporter {
+    const child = new ConsoleReporter(this.#console, this.#level + 1);
     child.color = this.color;
     return child;
   }
