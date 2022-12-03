@@ -17,7 +17,7 @@
   },
   "scripts": {
     "prepack": "yarn build",
-    "build": "esbuild src/bin.ts --bundle --format=esm --platform=node --target=node16 --outfile=bin.mjs --external:meow --external:esbuild --external:browserslist --external:typescript --external:pretty-bytes --external:tsconfck",
+    "build": "node build.mjs",
     "dev": "vitest --watch",
     "test": "vitest",
     "changeset": "changeset"
