@@ -177,6 +177,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
       resolvedRootDir,
     );
 
+
     const minifyPattern = /\.min(?<ext>\.(m|c)?js)$/;
     const minifyMatch = resolvedSourceFile.match(minifyPattern);
     const minify = defaultMinify || Boolean(minifyMatch);
@@ -234,10 +235,18 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
 
     switch (module) {
       case 'commonjs':
-      case 'esmodule':
-      case 'file':
+      case 'esmodule': {
         sourceFileCandidates.add(resolvedSourceFile);
         break;
+      }
+      case 'file': {
+        if (path.relative(cwd, path.dirname(resolvedOutputFile))) {
+          sourceFileCandidates.add(resolvedSourceFile);
+        } else {
+          sourceFileCandidates.add(resolvedOutputFile);
+        }
+        break;
+      }
     }
 
     entryMap.set(entryPath, {
