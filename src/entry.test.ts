@@ -800,7 +800,6 @@ describe('getEntriesFromContext - in TypeScript project', () => {
         entryPath: './lib/index.d.ts',
         sourceFile: [
           '/project/src/index.cts',
-          '/project/src/index.mts',
           '/project/src/index.ts',
         ],
         outputFile: '/project/lib/index.d.ts',
@@ -830,8 +829,6 @@ describe('getEntriesFromContext - in TypeScript project', () => {
         platform: 'neutral',
         entryPath: './lib/index.d.ts',
         sourceFile: [
-          '/project/src/index.cts',
-          '/project/src/index.mts',
           '/project/src/index.ts',
         ],
         outputFile: '/project/lib/index.d.ts',
@@ -896,7 +893,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
     ).toThrowErrorMatchingSnapshot();
   });
 
-  test('explicit types entry', () => {
+  test('explicit & implicit types entry', () => {
     expect(
       getEntriesFromManifest({
         name: 'my-package',
@@ -923,7 +920,21 @@ describe('getEntriesFromContext - in TypeScript project', () => {
         sourceFile: [
           '/project/src/index.ts',
         ],
-        outputFile: '/project/lib/index.js',
+        outputFile: '/project/lib/index.d.ts',
+      },
+      {
+        key: 'exports["."].require.types',
+        module: 'dts',
+        mode: undefined,
+        minify: false,
+        sourcemap: true,
+        platform: 'neutral',
+        entryPath: './lib/index.d.cts',
+        sourceFile: [
+          '/project/src/index.cts',
+          '/project/src/index.ts',
+        ],
+        outputFile: '/project/lib/index.d.cts',
       },
       {
         key: 'exports["."].require.development',
@@ -985,9 +996,24 @@ describe('getEntriesFromContext - in TypeScript project', () => {
         platform: 'neutral',
         entryPath: './lib/index.d.ts',
         sourceFile: [
+          '/project/src/index.mts',
           '/project/src/index.ts',
         ],
         outputFile: '/project/lib/index.d.ts',
+      },
+      {
+        key: 'exports["."].require.types',
+        module: 'dts',
+        mode: undefined,
+        minify: false,
+        sourcemap: true,
+        platform: 'neutral',
+        entryPath: './lib/index.d.cts',
+        sourceFile: [
+          '/project/src/index.cts',
+          '/project/src/index.ts',
+        ],
+        outputFile: '/project/lib/index.d.cts',
       },
       {
         key: 'exports["."].require.development',
@@ -1020,6 +1046,22 @@ describe('getEntriesFromContext - in TypeScript project', () => {
           '/project/src/index.js',
         ],
         outputFile: '/project/lib/index.min.cjs',
+      },
+      {
+        key: 'exports["."].default',
+        module: 'esmodule',
+        mode: undefined,
+        minify: false,
+        sourcemap: true,
+        platform: 'neutral',
+        entryPath: './lib/index.js',
+        sourceFile: [
+          '/project/src/index.mts',
+          '/project/src/index.mjs',
+          '/project/src/index.ts',
+          '/project/src/index.js',
+        ],
+        outputFile: '/project/lib/index.js',
       },
     ]);
   });
@@ -1054,12 +1096,12 @@ describe('getEntriesFromContext - in TypeScript project', () => {
         minify: false,
         sourcemap: true,
         platform: 'neutral',
-        entryPath: './lib/index.d.ts',
+        entryPath: './lib/index.d.cts',
         sourceFile: [
           '/project/src/index.cts',
           '/project/src/index.ts',
         ],
-        outputFile: '/project/lib/index.d.ts',
+        outputFile: '/project/lib/index.d.cts',
       },
       {
         key: 'exports["."].require.development',
@@ -1100,12 +1142,12 @@ describe('getEntriesFromContext - in TypeScript project', () => {
         minify: false,
         sourcemap: true,
         platform: 'neutral',
-        entryPath: './lib/index.d.ts',
+        entryPath: './lib/index.d.mts',
         sourceFile: [
           '/project/src/index.mts',
           '/project/src/index.ts',
         ],
-        outputFile: '/project/lib/index.d.ts',
+        outputFile: '/project/lib/index.d.mts',
       },
       {
         key: 'exports["."].import.development',
@@ -1145,11 +1187,11 @@ describe('getEntriesFromContext - in TypeScript project', () => {
         mode: undefined,
         minify: false,
         sourcemap: true,
-        platform: 'neutral',
+        platform: 'node',
         entryPath: './lib/index.node.d.ts',
         sourceFile: [
+          '/project/src/index.node.mts',
           '/project/src/index.node.ts',
-          '/project/src/index.node.js',
         ],
         outputFile: '/project/lib/index.node.d.ts',
       },
@@ -1159,13 +1201,15 @@ describe('getEntriesFromContext - in TypeScript project', () => {
         mode: undefined,
         minify: false,
         sourcemap: true,
-        platform: 'neutral',
-        entryPath: './lib/index.node.d.ts',
+        platform: 'node',
+        entryPath: './lib/index.node.js',
         sourceFile: [
+          '/project/src/index.node.mts',
+          '/project/src/index.node.mjs',
           '/project/src/index.node.ts',
           '/project/src/index.node.js',
         ],
-        outputFile: '/project/lib/index.node.d.ts',
+        outputFile: '/project/lib/index.node.js',
       },
     ]);
   });

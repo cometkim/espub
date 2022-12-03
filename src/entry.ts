@@ -6,7 +6,11 @@ import { type ConditionalExport } from './manifest';
 import { type Context } from './context';
 import { type Reporter } from './reporter';
 import * as formatUtils from './formatUtils';
-import { NanobundleInvalidDtsEntryError, NanobundleInvalidDtsEntryOrderError } from './errors';
+import {
+  NanobundleConfusingDtsEntryError,
+  NanobundleInvalidDtsEntryError,
+  NanobundleInvalidDtsEntryOrderError,
+} from './errors';
 
 export type Entry = {
   key: string;
@@ -38,12 +42,20 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
     cwd,
     rootDir,
     outDir,
-    platform: defaultPlatform,
-    module: defaultModule,
     sourcemap,
     manifest,
+    platform: defaultPlatform,
+    module: defaultModule,
     declaration: useTs,
   } = context;
+
+  const defaultPreferredModule = ({
+    commonjs: 'commonjs',
+    esmodule: 'esmodule',
+    dts: undefined,
+    file: undefined,
+  } as const)[defaultModule];
+
   const resolvePath = (path: string) => resolvePathFrom(cwd, path);
   const resolvedRootDir = resolvePath(rootDir);
   const resolvedOutDir = resolvePath(outDir);
@@ -56,14 +68,16 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
     platform,
     module,
     mode,
+    preferredModule,
   }: {
-    key: string;
-    entryPath: string;
-    platform: Entry["platform"];
-    mode: Entry["mode"];
-    module: Entry["module"];
+    key: string,
+    entryPath: string,
+    platform: Entry['platform'],
+    mode: Entry['mode'],
+    module: Entry['module'],
+    preferredModule?: 'esmodule' | 'commonjs',
   }) {
-    if (!entryPath.startsWith("./")) {
+    if (!entryPath.startsWith('./')) {
       reporter.error(
         `Invalid entry ${formatUtils.key(key)}, entry path should starts with ${formatUtils.literal('./')}`,
       );
@@ -77,7 +91,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
       throw new Error("FIXME");
     }
 
-    if (module === 'dts' && !entryPath.endsWith('.d.ts')) {
+    if (module === 'dts' && !/\.d\.(c|m)?ts$/.test(entryPath)) {
       throw new NanobundleInvalidDtsEntryError();
     }
 
@@ -207,14 +221,13 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
       }
       case 'dts': {
         if (!useTs) break;
-        if (manifest.type === 'module') {
-          sourceFileCandidates.add(resolvedSourceFile.replace(/\.d\.ts$/, '.mts'));
-          sourceFileCandidates.add(resolvedSourceFile.replace(/\.d\.ts$/, '.cts'));
-        } else {
-          sourceFileCandidates.add(resolvedSourceFile.replace(/\.d\.ts$/, '.cts'));
-          sourceFileCandidates.add(resolvedSourceFile.replace(/\.d\.ts$/, '.mts'));
+        if (preferredModule === 'commonjs') {
+          sourceFileCandidates.add(resolvedSourceFile.replace(/\.d\.c?ts$/, '.cts'));
         }
-        sourceFileCandidates.add(resolvedSourceFile.replace(/\.d\.ts$/, '.ts'));
+        if (preferredModule === 'esmodule') {
+          sourceFileCandidates.add(resolvedSourceFile.replace(/\.d\.m?ts$/, '.mts'));
+        }
+        sourceFileCandidates.add(resolvedSourceFile.replace(/\.d\.(m|c)?ts$/, '.ts'));
         break;
       }
     }
@@ -249,37 +262,39 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
   }) {
     const ext = path.extname(entryPath);
     switch (ext) {
-      case ".cjs": {
+      case '.cjs': {
         addEntry({
           key,
           platform: defaultPlatform,
           mode: defaultMode,
-          module: "commonjs",
+          module: 'commonjs',
+          preferredModule: 'commonjs',
           entryPath,
         });
         break;
       }
-      case ".mjs": {
+      case '.mjs': {
         addEntry({
           key,
           platform: defaultPlatform,
           mode: defaultMode,
-          module: "esmodule",
+          module: 'esmodule',
+          preferredModule: 'esmodule',
           entryPath,
         });
         break;
       }
-      case ".node": {
+      case '.node': {
         addEntry({
           key,
-          platform: "node",
+          platform: 'node',
           mode: defaultMode,
-          module: "file",
+          module: 'file',
           entryPath,
         });
         break;
       }
-      case ".json": {
+      case '.json': {
         addEntry({
           key,
           platform: defaultPlatform,
@@ -317,6 +332,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
         platform: defaultPlatform,
         mode: defaultMode,
         module: 'esmodule',
+        preferredModule: 'esmodule',
         entryPath,
       });
     } else {
@@ -337,6 +353,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
         platform: defaultPlatform,
         mode: defaultMode,
         module: 'dts',
+        preferredModule: defaultPreferredModule,
         entryPath,
       });
     } else {
@@ -350,14 +367,16 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
     platform,
     mode,
     module,
+    preferredModule,
     entryPath,
   }: {
-    key: string;
-    parentKey: string;
-    platform: Entry['platform'];
-    mode: Entry['mode'];
-    module: Entry['module'];
-    entryPath: ConditionalExport;
+    key: string,
+    parentKey: string,
+    platform: Entry['platform'],
+    mode: Entry['mode'],
+    module: Entry['module'],
+    preferredModule?: 'commonjs' | 'esmodule',
+    entryPath: ConditionalExport,
   }) {
     if (typeof entryPath === 'string') {
       if (parentKey === 'types') {
@@ -366,6 +385,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
           platform,
           mode,
           module: 'dts',
+          preferredModule,
           entryPath,
         });
         return;
@@ -373,42 +393,46 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
 
       const ext = path.extname(entryPath);
       switch (ext) {
-        case ".cjs": {
+        case '.cjs': {
           addEntry({
             key,
             platform,
             mode,
-            module: "commonjs",
+            module: 'commonjs',
+            preferredModule: 'commonjs',
             entryPath,
           });
           break;
         }
-        case ".mjs": {
+        case '.mjs': {
           addEntry({
             key,
             platform,
             mode,
-            module: "esmodule",
+            module: 'esmodule',
+            preferredModule: 'esmodule',
             entryPath,
           });
           break;
         }
-        case ".node": {
+        case '.node': {
           addEntry({
             key,
-            platform: "node",
+            platform: 'node',
             mode,
-            module: "file",
+            module: 'file',
+            preferredModule,
             entryPath,
           });
           break;
         }
-        case ".json": {
+        case '.json': {
           addEntry({
             key,
             platform,
             mode,
-            module: "file",
+            module: 'file',
+            preferredModule,
             entryPath,
           });
           break;
@@ -420,6 +444,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
             platform,
             mode,
             module,
+            preferredModule,
             entryPath,
           });
           break;
@@ -430,11 +455,46 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
         throw new NanobundleInvalidDtsEntryError();
       }
 
-      const entries = Object.entries(entryPath);
+      let entries = Object.entries(entryPath);
+
       if (typeof entryPath.types !== 'undefined') {
         const typesEntryIndex = entries.findIndex(entry => entry[0] === 'types');
         if (typesEntryIndex !== 0) {
           throw new NanobundleInvalidDtsEntryOrderError();
+        }
+      } else {
+        const firstLeaf = entries.find(entry => typeof entry[1] === 'string');
+        const isLeaf = firstLeaf !== undefined;
+
+        // has leaf default entry
+        if (useTs && isLeaf) {
+          if (typeof entryPath.default === 'string') {
+            const dtsExport: [string, ConditionalExport] = [
+              'types$implicit',
+              inferDtsEntry(entryPath.default),
+            ];
+            entries = [dtsExport, ...entries];
+          } else if (typeof entryPath.require === 'string' && typeof entryPath.import === 'string') {
+            throw new NanobundleConfusingDtsEntryError(key, entryPath.require, entryPath.import);
+          } else if (typeof entryPath.require === 'string') {
+            const dtsExport: [string, ConditionalExport] = [
+              'types$implicit',
+              inferDtsEntry(entryPath.require),
+            ];
+            entries = [dtsExport, ...entries];
+          } else if (typeof entryPath.import === 'string') {
+            const dtsExport: [string, ConditionalExport] = [
+              'types$implicit',
+              inferDtsEntry(entryPath.import),
+            ];
+            entries = [dtsExport, ...entries];
+          } else {
+            const dtsExport: [string, ConditionalExport] = [
+              'types$implicit',
+              inferDtsEntry(firstLeaf[1] as string),
+            ];
+            entries = [dtsExport, ...entries];
+          }
         }
       }
 
@@ -448,6 +508,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
               platform,
               mode,
               module: 'esmodule',
+              preferredModule: 'esmodule',
               entryPath: output,
             });
             break;
@@ -459,6 +520,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
               platform,
               mode,
               module: 'commonjs',
+              preferredModule: 'commonjs',
               entryPath: output,
             });
             break;
@@ -470,6 +532,19 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
               platform,
               mode,
               module: 'dts',
+              preferredModule: undefined,
+              entryPath: output,
+            });
+            break;
+          }
+          case 'types$implicit': {
+            addConditionalEntry({
+              key: `${key}.types`,
+              parentKey: currentKey,
+              platform,
+              mode,
+              module: 'dts',
+              preferredModule,
               entryPath: output,
             });
             break;
@@ -478,9 +553,10 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
             addConditionalEntry({
               key: `${key}.${currentKey}`,
               parentKey: currentKey,
-              platform: "node",
+              platform: 'node',
               mode,
               module,
+              preferredModule,
               entryPath: output,
             });
             break;
@@ -489,9 +565,10 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
             addConditionalEntry({
               key: `${key}.${currentKey}`,
               parentKey: currentKey,
-              platform: "deno",
+              platform: 'deno',
               mode,
               module,
+              preferredModule,
               entryPath: output,
             });
             break;
@@ -503,6 +580,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
               platform: 'browser',
               mode,
               module,
+              preferredModule,
               entryPath: output,
             });
             break;
@@ -514,6 +592,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
               platform,
               mode: 'development',
               module,
+              preferredModule,
               entryPath: output,
             });
             break;
@@ -525,6 +604,19 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
               platform,
               mode: 'production',
               module,
+              preferredModule,
+              entryPath: output,
+            });
+            break;
+          }
+          case 'default': {
+            addConditionalEntry({
+              key: `${key}.${currentKey}`,
+              parentKey: currentKey,
+              platform,
+              mode,
+              module,
+              preferredModule,
               entryPath: output,
             });
             break;
@@ -536,6 +628,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
               platform,
               mode,
               module,
+              preferredModule,
               entryPath: output,
             });
             break;
@@ -548,6 +641,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
                 platform,
                 mode,
                 module,
+                preferredModule,
                 entryPath: output,
               });
             } else {
@@ -566,6 +660,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
       platform: defaultPlatform,
       mode: defaultMode,
       module: defaultModule,
+      preferredModule: defaultPreferredModule,
       entryPath: manifest.exports,
     });
   } else if (manifest.main || manifest.module) {
@@ -605,3 +700,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
 
   return Array.from(entryMap.values());
 };
+
+function inferDtsEntry(entryPath: string): string {
+  return entryPath.replace(/(\.min)?\.(m|c)?js$/, '.d.$2ts');
+}
