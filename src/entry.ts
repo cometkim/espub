@@ -349,12 +349,24 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
   }: {
     key: string;
     parentKey: string;
-    platform: Entry["platform"];
-    mode: Entry["mode"];
-    module: Entry["module"];
+    platform: Entry['platform'];
+    mode: Entry['mode'];
+    module: Entry['module'];
     entryPath: ConditionalExport;
   }) {
-    if (typeof entryPath === "string") {
+    if (typeof entryPath === 'string') {
+      console.log(key, parentKey, entryPath);
+      if (parentKey === 'types' && /\.d\.ts$/.test(entryPath)) {
+        addEntry({
+          key,
+          platform,
+          mode,
+          module: 'dts',
+          entryPath,
+        });
+        return;
+      }
+
       const ext = path.extname(entryPath);
       switch (ext) {
         case ".cjs": {
@@ -409,47 +421,47 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
           break;
         }
       }
-    } else if (typeof entryPath === "object") {
+    } else if (typeof entryPath === 'object') {
       for (const [currentKey, output] of Object.entries(entryPath)) {
         // See https://nodejs.org/api/packages.html#packages_community_conditions_definitions
         switch (currentKey) {
-          case "import": {
+          case 'import': {
             addConditionalEntry({
-              key: `${parentKey}.${currentKey}`,
-              parentKey: `${parentKey}.${currentKey}`,
+              key: `${key}.${currentKey}`,
+              parentKey: currentKey,
               platform,
               mode,
-              module: "esmodule",
+              module: 'esmodule',
               entryPath: output,
             });
             break;
           }
-          case "require": {
+          case 'require': {
             addConditionalEntry({
-              key: `${parentKey}.${currentKey}`,
-              parentKey: `${parentKey}.${currentKey}`,
+              key: `${key}.${currentKey}`,
+              parentKey: currentKey,
               platform,
               mode,
-              module: "commonjs",
+              module: 'commonjs',
               entryPath: output,
             });
             break;
           }
-          case "types": {
+          case 'types': {
             addConditionalEntry({
-              key: `${parentKey}.${currentKey}`,
-              parentKey: `${parentKey}.${currentKey}`,
+              key: `${key}.${currentKey}`,
+              parentKey: currentKey,
               platform,
               mode,
-              module: "dts",
+              module: 'dts',
               entryPath: output,
             });
             break;
           }
-          case "node": {
+          case 'node': {
             addConditionalEntry({
-              key: `${parentKey}.${currentKey}`,
-              parentKey: `${parentKey}.${currentKey}`,
+              key: `${key}.${currentKey}`,
+              parentKey: currentKey,
               platform: "node",
               mode,
               module,
@@ -457,10 +469,10 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
             });
             break;
           }
-          case "deno": {
+          case 'deno': {
             addConditionalEntry({
-              key: `${parentKey}.${currentKey}`,
-              parentKey: `${parentKey}.${currentKey}`,
+              key: `${key}.${currentKey}`,
+              parentKey: currentKey,
               platform: "deno",
               mode,
               module,
@@ -468,43 +480,43 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
             });
             break;
           }
-          case "browser": {
+          case 'browser': {
             addConditionalEntry({
-              key: `${parentKey}.${currentKey}`,
-              parentKey: `${parentKey}.${currentKey}`,
-              platform: "browser",
+              key: `${key}.${currentKey}`,
+              parentKey: currentKey,
+              platform: 'browser',
               mode,
               module,
               entryPath: output,
             });
             break;
           }
-          case "development": {
+          case 'development': {
             addConditionalEntry({
-              key: `${parentKey}.${currentKey}`,
-              parentKey: `${parentKey}.${currentKey}`,
+              key: `${key}.${currentKey}`,
+              parentKey: currentKey,
               platform,
-              mode: "development",
+              mode: 'development',
               module,
               entryPath: output,
             });
             break;
           }
-          case "production": {
+          case 'production': {
             addConditionalEntry({
-              key: `${parentKey}.${currentKey}`,
-              parentKey: `${parentKey}.${currentKey}`,
+              key: `${key}.${currentKey}`,
+              parentKey: currentKey,
               platform,
-              mode: "production",
+              mode: 'production',
               module,
               entryPath: output,
             });
             break;
           }
-          case ".": {
+          case '.': {
             addConditionalEntry({
-              key: `${parentKey}[\"${currentKey}\"]`,
-              parentKey: `${parentKey}[\"${currentKey}\"]`,
+              key: `${key}[\"${currentKey}\"]`,
+              parentKey: currentKey,
               platform,
               mode,
               module,
@@ -513,10 +525,10 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
             break;
           }
           default: {
-            if (currentKey.startsWith("./")) {
+            if (currentKey.startsWith('./')) {
               addConditionalEntry({
-                key: `${parentKey}[\"${currentKey}\"]`,
-                parentKey: `${parentKey}[\"${currentKey}\"]`,
+                key: `${key}[\"${currentKey}\"]`,
+                parentKey: currentKey,
                 platform,
                 mode,
                 module,
@@ -536,7 +548,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
       key: "exports",
       parentKey: "exports",
       platform: defaultPlatform,
-      mode: "production",
+      mode: defaultMode,
       module: defaultModule,
       entryPath: manifest.exports,
     });
