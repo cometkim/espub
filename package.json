@@ -17,7 +17,7 @@
   },
   "scripts": {
     "prepack": "yarn build",
-    "build": "esbuild src/bin.ts --bundle --format=esm --platform=node --target=node14.8 --outfile=bin.mjs --external:meow --external:esbuild --external:browserslist --external:typescript --external:pretty-bytes --external:tsconfck",
+    "build": "esbuild src/bin.ts --bundle --format=esm --platform=node --target=node16 --outfile=bin.mjs --external:meow --external:esbuild --external:browserslist --external:typescript --external:pretty-bytes --external:tsconfck",
     "dev": "vitest --watch",
     "test": "vitest",
     "changeset": "changeset"
@@ -26,7 +26,7 @@
     "bin.mjs"
   ],
   "engines": {
-    "node": ">=14.8.0"
+    "node": ">=16.0.0"
   },
   "peerDependencies": {
     "typescript": "^3.7.0 || ^4.0.0"
