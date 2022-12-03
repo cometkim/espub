@@ -362,7 +362,7 @@ describe('getEntriesFromContext', () => {
       {
         key: "exports",
         module: "commonjs",
-        mode: "production",
+        mode: undefined,
         minify: false,
         sourcemap: true,
         platform: "neutral",
@@ -401,7 +401,7 @@ describe('getEntriesFromContext', () => {
       {
         key: "exports",
         module: "commonjs",
-        mode: "production",
+        mode: undefined,
         minify: false,
         sourcemap: true,
         platform: "neutral",
@@ -423,7 +423,7 @@ describe('getEntriesFromContext', () => {
       {
         key: "exports",
         module: "commonjs",
-        mode: "production",
+        mode: undefined,
         minify: false,
         sourcemap: true,
         platform: "neutral",
@@ -448,7 +448,7 @@ describe('getEntriesFromContext', () => {
       {
         key: "exports.require",
         module: "commonjs",
-        mode: "production",
+        mode: undefined,
         minify: false,
         sourcemap: true,
         platform: "neutral",
@@ -483,7 +483,7 @@ describe('getEntriesFromContext', () => {
       {
         key: "exports.require",
         module: "commonjs",
-        mode: "production",
+        mode: undefined,
         minify: false,
         sourcemap: true,
         platform: "neutral",
@@ -494,7 +494,7 @@ describe('getEntriesFromContext', () => {
       {
         key: "exports.import",
         module: "esmodule",
-        mode: "production",
+        mode: undefined,
         minify: false,
         sourcemap: true,
         platform: "neutral",
@@ -520,7 +520,7 @@ describe('getEntriesFromContext', () => {
       {
         key: 'exports["."]',
         module: "commonjs",
-        mode: "production",
+        mode: undefined,
         minify: false,
         sourcemap: true,
         platform: "neutral",
@@ -531,7 +531,7 @@ describe('getEntriesFromContext', () => {
       {
         key: 'exports["./feature"]',
         module: "commonjs",
-        mode: "production",
+        mode: undefined,
         minify: false,
         sourcemap: true,
         platform: "neutral",
@@ -545,7 +545,7 @@ describe('getEntriesFromContext', () => {
       {
         key: 'exports["./package.json"]',
         module: "file",
-        mode: "production",
+        mode: undefined,
         minify: false,
         sourcemap: true,
         platform: "neutral",
@@ -571,7 +571,7 @@ describe('getEntriesFromContext', () => {
       {
         key: 'exports["."].require',
         module: "commonjs",
-        mode: "production",
+        mode: undefined,
         minify: false,
         sourcemap: true,
         platform: "neutral",
@@ -582,7 +582,7 @@ describe('getEntriesFromContext', () => {
       {
         key: 'exports["."].import',
         module: "esmodule",
-        mode: "production",
+        mode: undefined,
         minify: false,
         sourcemap: true,
         platform: "neutral",
@@ -622,7 +622,7 @@ describe('getEntriesFromContext', () => {
       {
         key: 'exports["."].node.require',
         module: "commonjs",
-        mode: "production",
+        mode: undefined,
         minify: false,
         sourcemap: true,
         platform: "node",
@@ -691,7 +691,7 @@ describe('getEntriesFromContext', () => {
       {
         key: 'exports.deno["./deno"]',
         module: "commonjs",
-        mode: "production",
+        mode: undefined,
         minify: false,
         sourcemap: true,
         platform: "deno",
