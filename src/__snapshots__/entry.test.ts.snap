@@ -1,3 +1,5 @@
 // Vitest Snapshot v1
 
+exports[`getEntriesFromContext - in TypeScript project > types entry does not accept nesting 1`] = `"\\"types\\" entry must be .d.ts file and cannot be nested!"`;
+
 exports[`getEntriesFromContext - in TypeScript project > types entry must has .d.ts extension 1`] = `"\\"types\\" entry must has .d.ts extension!"`;

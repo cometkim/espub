@@ -6,6 +6,7 @@ import { type ConditionalExport } from './manifest';
 import { type Context } from './context';
 import { type Reporter } from './reporter';
 import * as formatUtils from './formatUtils';
+import { NanobundleInvalidDtsEntryError } from './errors';
 
 export type Entry = {
   key: string;
@@ -77,7 +78,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
     }
 
     if (module === 'dts' && !entryPath.endsWith('.d.ts')) {
-      throw new Error('"types" entry must has .d.ts extension!');
+      throw new NanobundleInvalidDtsEntryError();
     }
 
     const entry = entryMap.get(entryPath);
@@ -425,6 +426,10 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
         }
       }
     } else if (typeof entryPath === 'object') {
+      if (parentKey === 'types') {
+        throw new NanobundleInvalidDtsEntryError();
+      }
+
       for (const [currentKey, output] of Object.entries(entryPath)) {
         // See https://nodejs.org/api/packages.html#packages_community_conditions_definitions
         switch (currentKey) {
