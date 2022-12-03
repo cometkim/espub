@@ -6,7 +6,7 @@ import { type ConditionalExport } from './manifest';
 import { type Context } from './context';
 import { type Reporter } from './reporter';
 import * as formatUtils from './formatUtils';
-import { NanobundleInvalidDtsEntryError } from './errors';
+import { NanobundleInvalidDtsEntryError, NanobundleInvalidDtsEntryOrderError } from './errors';
 
 export type Entry = {
   key: string;
@@ -430,7 +430,15 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
         throw new NanobundleInvalidDtsEntryError();
       }
 
-      for (const [currentKey, output] of Object.entries(entryPath)) {
+      const entries = Object.entries(entryPath);
+      if (typeof entryPath.types !== 'undefined') {
+        const typesEntryIndex = entries.findIndex(entry => entry[0] === 'types');
+        if (typesEntryIndex !== 0) {
+          throw new NanobundleInvalidDtsEntryOrderError();
+        }
+      }
+
+      for (const [currentKey, output] of entries) {
         // See https://nodejs.org/api/packages.html#packages_community_conditions_definitions
         switch (currentKey) {
           case 'import': {
