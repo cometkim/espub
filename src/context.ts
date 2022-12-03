@@ -1,3 +1,4 @@
+import dedent from 'string-dedent';
 import { type TSConfig } from 'pkg-types';
 import * as semver from 'semver';
 
@@ -6,6 +7,7 @@ import { type Manifest } from './manifest';
 import { type Entry } from './entry';
 import { type Reporter } from './reporter';
 import { type PathResolver } from './common';
+import * as formatUtils from './formatUtils';
 
 export class NanobundleConfigError extends Error {
   name = 'NanobundleConfigError';
@@ -61,19 +63,16 @@ export function parseConfig({
     ...forceExternalDependencies,
   ];
 
-  const rootDir = (
+  const rootDir: string = (
     flags.rootDir ||
     tsconfig?.compilerOptions?.rootDir ||
     'src'
   );
-  const outDir = (
+  const outDir: string = (
     flags.outDir ||
     tsconfig?.compilerOptions?.outDir ||
     'lib'
   );
-  if (rootDir === outDir) {
-    throw new NanobundleConfigError(`Directory rootDir(${rootDir}) and outDir(${outDir}) are conflict! Please specify different directory for one of them.`)
-  }
 
   const module = (
     manifest.type === 'module'
@@ -100,8 +99,16 @@ export function parseConfig({
   }
 
   let declaration = false;
-  if (!flags.noDts) {
-    declaration = tsconfig?.compilerOptions?.declaration !== false;
+  if (!flags.noDts && tsconfig) {
+    declaration = tsconfig.compilerOptions?.declaration !== false;
+  }
+
+  if (!declaration && rootDir === outDir) {
+    throw new NanobundleConfigError(dedent`
+      ${formatUtils.key('rootDir')} (${formatUtils.path(rootDir)}) and ${formatUtils.key('outDir')} (${formatUtils.path(outDir)}) are conflict!
+
+      Please specify different directory for one of them.
+    `,)
   }
 
   return {

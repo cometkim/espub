@@ -1,3 +1,7 @@
 // Vitest Snapshot v1
 
-exports[`parseConfig > flags > rootDir=outDir 1`] = `"Directory rootDir(.) and outDir(.) are conflict! Please specify different directory for one of them."`;
+exports[`parseConfig > flags > rootDir=outDir is not allowed without TypeScript 1`] = `
+"\\"rootDir\\" (.) and \\"outDir\\" (.) are conflict!
+
+Please specify different directory for one of them."
+`;

@@ -52,7 +52,7 @@ describe('parseConfig', () => {
       module: 'commonjs',
       platform: 'neutral',
       sourcemap: true,
-      declaration: true,
+      declaration: false,
       standalone: false,
       rootDir: 'src',
       outDir: 'lib',
@@ -85,7 +85,7 @@ describe('parseConfig', () => {
         module: 'commonjs',
         platform: 'neutral',
         sourcemap: true,
-        declaration: true,
+        declaration: false,
         standalone: false,
         rootDir: '.',
         outDir: 'lib',
@@ -117,7 +117,7 @@ describe('parseConfig', () => {
         module: 'commonjs',
         platform: 'neutral',
         sourcemap: true,
-        declaration: true,
+        declaration: false,
         standalone: false,
         rootDir: 'src',
         outDir: '.',
@@ -132,7 +132,7 @@ describe('parseConfig', () => {
       });
     });
 
-    test('rootDir=outDir', () => {
+    test('rootDir=outDir is not allowed without TypeScript', () => {
       expect(() => parseConfig({
         flags: {
           ...defaultFlags,
@@ -169,7 +169,7 @@ describe('parseConfig', () => {
         module: 'commonjs',
         platform: 'node',
         sourcemap: true,
-        declaration: true,
+        declaration: false,
         standalone: false,
         rootDir: 'src',
         outDir: 'lib',
@@ -204,7 +204,7 @@ describe('parseConfig', () => {
         module: 'commonjs',
         platform: 'node',
         sourcemap: true,
-        declaration: true,
+        declaration: false,
         standalone: false,
         rootDir: 'src',
         outDir: 'lib',
@@ -405,6 +405,21 @@ describe('parseConfig', () => {
         reporter,
         resolve,
       });
+    });
+
+    test('rootDir=outDir is allowed with TypeScript', () => {
+      expect(() => parseConfig({
+        flags: {
+          ...defaultFlags,
+          rootDir: '.',
+          outDir: '.',
+        },
+        manifest: defaultManifest,
+        targets: defaultTargets,
+        reporter,
+        resolve,
+        tsconfig: defaultTsConfig,
+      })).not.toThrowError();
     });
   });
 });
