@@ -10,6 +10,9 @@ import { loadTargets } from './target';
 import { loadManifest } from './manifest';
 import { parseConfig } from './context';
 import { getEntriesFromContext } from './entry';
+import * as formatUtils from './formatUtils';
+import { NanobundleError } from './errors';
+
 import { buildCommand } from './commands/build/build';
 
 const { flags, input } = cli;
@@ -78,14 +81,18 @@ try {
     }
 
     default: {
-      throw new Error(dedent`
+      throw new NanobundleError(dedent`
         Command "${command}" is not available.
 
-        Run \`nanobundle --help\` for more detail.
+          Run ${formatUtils.command('nanobundle --help')} for usage.
       `);
     }
   }
 } catch (error) {
-  reporter.captureException(error);
+  if (error instanceof NanobundleError) {
+    reporter.error(error.message);
+  } else {
+    reporter.captureException(error);
+  }
   process.exit(1);
 }

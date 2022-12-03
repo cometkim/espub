@@ -96,7 +96,7 @@ export class ConsoleReporter implements Reporter {
     }
     const indented = this.#indent(formatted);
     this.#console.error(
-      kleur.bold().red(`[error] ${indented}`),
+      kleur.bold().red(`${indented}`),
     );
   }
 

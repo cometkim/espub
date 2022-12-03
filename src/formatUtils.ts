@@ -59,3 +59,7 @@ export function object(object: object): string {
   const formatted = formatWithOptions({ colors: colorEnabled }, '%o', object);
   return kleur.white(formatted);
 }
+
+export function command(command: string): string {
+  return kleur.bold().blue(`\`${command}\``);
+}
