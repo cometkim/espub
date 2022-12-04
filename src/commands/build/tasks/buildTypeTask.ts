@@ -54,8 +54,8 @@ export async function buildTypeTask({
     if (compilerOptions.noEmit) {
       context.reporter.warn(dedent`
         Ignored ${formatUtils.key('noEmit')} specified in your tsconfig.json
+          You can disable emitting declaration via ${formatUtils.command('--no-dts')} flag.
 
-        You can disable emitting declaration via ${formatUtils.command('--no-dts')} flag.
       `);
     }
     compilerOptions.noEmit = false;
@@ -63,8 +63,8 @@ export async function buildTypeTask({
     if (!(compilerOptions.moduleResolution === ts.ModuleResolutionKind.Node16 || compilerOptions.moduleResolution === ts.ModuleResolutionKind.NodeNext)) {
       context.reporter.warn(dedent`
         nanobundle support only ${formatUtils.literal('Node16')} or ${formatUtils.literal('NodeNext')} for ${formatUtils.key('compilerOptions.moduleResolution')}
+          Please see ${formatUtils.hyperlink('https://www.typescriptlang.org/docs/handbook/esm-node.html')} for usage.
 
-        Please see ${formatUtils.hyperlink('https://www.typescriptlang.org/docs/handbook/esm-node.html')} for usage.
       `);
     }
     compilerOptions.moduleResolution = ts.ModuleResolutionKind.Node16;

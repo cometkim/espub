@@ -33,6 +33,11 @@ export interface Typegen0 {
       data: unknown;
       __tip: "See the XState TS docs to learn how to strongly type this.";
     };
+    "done.invoke.buildMachine.reportEmitResults:invocation[0]": {
+      type: "done.invoke.buildMachine.reportEmitResults:invocation[0]";
+      data: unknown;
+      __tip: "See the XState TS docs to learn how to strongly type this.";
+    };
     "error.platform.buildMachine.buildEntries.buildBundleEntries.build:invocation[0]": {
       type: "error.platform.buildMachine.buildEntries.buildBundleEntries.build:invocation[0]";
       data: unknown;
@@ -66,6 +71,7 @@ export interface Typegen0 {
     chmodBinTask: "done.invoke.buildMachine.chmodBinEntries:invocation[0]";
     cleanupTask: "done.invoke.buildMachine.cleanup:invocation[0]";
     emitTask: "done.invoke.buildMachine.emitEntries:invocation[0]";
+    reportEmitResults: "done.invoke.buildMachine.reportEmitResults:invocation[0]";
   };
   missingImplementations: {
     actions: never;
@@ -77,33 +83,32 @@ export interface Typegen0 {
     assignBuildBundleError: "error.platform.buildMachine.buildEntries.buildBundleEntries.build:invocation[0]";
     assignBuildFileError: "error.platform.buildMachine.buildEntries.buildFileEntries.build:invocation[0]";
     assignBuildTypeError: "error.platform.buildMachine.buildEntries.buildTypeEntries.build:invocation[0]";
+    assignBundleOutputs: "done.invoke.buildMachine.buildEntries.buildBundleEntries.build:invocation[0]";
     assignEmitError: "error.platform.buildMachine.emitEntries:invocation[0]";
-    assignOutputFiles:
-      | "done.invoke.buildMachine.buildEntries.buildBundleEntries.build:invocation[0]"
-      | "done.invoke.buildMachine.buildEntries.buildFileEntries.build:invocation[0]"
-      | "done.invoke.buildMachine.buildEntries.buildTypeEntries.build:invocation[0]";
+    assignFileOutputs: "done.invoke.buildMachine.buildEntries.buildFileEntries.build:invocation[0]";
+    assignTypeOutputs: "done.invoke.buildMachine.buildEntries.buildTypeEntries.build:invocation[0]";
     reportBuildEnd:
       | "done.invoke.buildMachine.chmodBinEntries:invocation[0]"
       | "done.invoke.buildMachine.cleanup:invocation[0]"
-      | "done.invoke.buildMachine.emitEntries:invocation[0]"
+      | "done.invoke.buildMachine.reportEmitResults:invocation[0]"
       | "error.platform.buildMachine.chmodBinEntries:invocation[0]"
       | "error.platform.buildMachine.cleanup:invocation[0]";
     reportBuildErrors: "done.state.buildMachine.buildEntries";
     reportBuildStart: "BUILD";
-    reportEmitResult: "done.invoke.buildMachine.emitEntries:invocation[0]";
   };
   eventsCausingServices: {
     buildBundleTask: "BUILD";
     buildFileTask: "BUILD";
     buildTypeTask: "BUILD";
-    chmodBinTask: "done.invoke.buildMachine.emitEntries:invocation[0]";
+    chmodBinTask: "done.invoke.buildMachine.reportEmitResults:invocation[0]";
     cleanupTask:
       | "done.state.buildMachine.buildEntries"
       | "error.platform.buildMachine.emitEntries:invocation[0]";
     emitTask: "done.state.buildMachine.buildEntries";
+    reportEmitResults: "done.invoke.buildMachine.emitEntries:invocation[0]";
   };
   eventsCausingGuards: {
-    hasBinEntries: "done.invoke.buildMachine.emitEntries:invocation[0]";
+    hasBinEntries: "done.invoke.buildMachine.reportEmitResults:invocation[0]";
     hasBuildErrors: "done.state.buildMachine.buildEntries";
   };
   eventsCausingDelays: {};
@@ -126,6 +131,7 @@ export interface Typegen0 {
     | "cleanup"
     | "done"
     | "emitEntries"
+    | "reportEmitResults"
     | {
         buildEntries?:
           | "buildBundleEntries"

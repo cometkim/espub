@@ -1,5 +1,6 @@
 import { performance } from 'node:perf_hooks';
 import { interpret } from 'xstate';
+import dedent from 'string-dedent';
 
 import * as formatUtils from '../../formatUtils';
 import { type Context } from '../../context';
@@ -21,16 +22,19 @@ export async function buildCommand({
       .withContext({
         root: context,
         entries,
-        outputFiles: [],
+        bundleOutputs: [],
+        fileOutputs: [],
+        typeOutputs: [],
         errors: {},
         buildStartedAt: performance.now(),
       }),
   );
   service.start();
 
-  context.reporter.info(
-    `build ${formatUtils.highlight(context.manifest.name || 'unnamed')} package`,
-  );
+  context.reporter.info(dedent`
+    build ${formatUtils.highlight(context.manifest.name || 'unnamed')} package
+
+  `);
   service.send('BUILD');
 
   return new Promise(resolve => {

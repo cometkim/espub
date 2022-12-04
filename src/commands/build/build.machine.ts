@@ -1,12 +1,6 @@
-import * as path from 'node:path';
 import { performance } from 'node:perf_hooks';
-import * as zlib from 'node:zlib';
-import { promisify } from 'node:util';
 import { assign, createMachine } from 'xstate';
-import dedent from 'string-dedent';
-import prettyBytes from 'pretty-bytes';
 
-import * as formatUtils from '../../formatUtils';
 import { type Context } from '../../context';
 import { type Entry } from '../../entry';
 import {
@@ -22,12 +16,10 @@ import { buildTypeTask, type BuildTypeTaskError } from './tasks/buildTypeTask';
 import { chmodBinTask } from './tasks/chmodBinTask';
 import { cleanupTask, type CleanupTaskError } from './tasks/cleanupTask';
 import { emitTask, type EmitTaskError } from './tasks/emitTask';
-
-const gzip = promisify(zlib.gzip);
-const brotli = promisify(zlib.brotliCompress);
+import { reportEmitResultsTask } from './tasks/reportEmitResultsTask';
 
 export const buildMachine =
-  /** @xstate-layout N4IgpgJg5mDOIC5QCMCuBLANhAsgQwGMALdAOzADpkB7agF1joCc8AHAYgCEBVASQBkAIgG0ADAF1EoVtVjo66aqSkgAHogCMAVgAsFAJz6AbBtEajAZgDsWizqtGANCACeiLaIsGrGi7YsaAEw2phYAvmHOaFi4hCTkVBjYAKKkzOhw7BBKlIx4dJTR2PjEZIVJEKnpcGKSSCAycgpKKuoIABw6+hQW+qKB+qb2Rjbtzm4IQaJ6OoFaWj7tgRbLdhFRFSXx5TFVTBmwWTkUeQWJMVtl5ylp+zUaddKy8orK9W0rGj2Bs35GZvplmNXJpAtMKLN5jojLN9H4-OsQEVYqUEsi9gdrhBOKhSBBMGAMXAsUcEmQAG7UADWO2KcSu6NumOROLxBKJsCxCAp1AI+VetVqKkaLxa70QRn+FFE7S0g2MJnhOnG7jlFA0Dn0VnsOgsIws7URyMuaIqHKxrPxhKZxOR7DATCY1CYFFYmHyADNnQBbLEm2mVG2clm4q3m5Hc0iUvnNUiCiTC56x1oSqUyuUaBW+WzKkEIIxaIwUKx69oFrqibU6DRGzb0027INYgBiWGt1WDFVJlB5NL99YD4YqrfZTYjPJjAokQvqIuT4vzBoolmr018Nn6VhVHS1BkCnR+Ols8wGtYuA6xQ5iI-bd07MXtjudrvddC9TF9xovjI7LbbV+wSNo35JR40eBok1eFNF3aZc7CGdcPGCbdDC0CF2naAItDBUQjGWQIzzpVFBzHCoABUXFYW9mS7bIySjakA39S9SJiCiqIAiAgN5EC42nBNZ0gsVQDaSxYKrdopg0DUNAw7dAh+PdjHaGxCJRbYWN-ZF2Oo20uwdJ0XTdT0fX7YjNLvLEdM47jJ1A-jwLnKCFzE4sdB0SSwWkxZgQmFZAnQ-QFiWexK08NTmLAb15A5bsKF7JiLyimKg1s3iwMTJpnJExB9ysZc+nXKx9A83xOm3bRMwhYxoV1OwtHaLUIqS6K6FiuiewYvsv3M5K2tSid0unB5MtFN4coQbCAtmKwy1m6YoX0CqYVEChdA0HRRHmJZCwCZreta2KDOfYy31MnqNL6jk0tjDLBKy4S1HcYxiyMTCZX+TMAl8zQ-Hy-pMMPaZGp0faNIIAk8FIVAOA6+KusS8yIbAKGYZuqdxBnJ4HvGp6OgLaV9wCOxpjheYKo8NCYUMasGr8YIjDBq5kdRjhjqM1930-Oskch6HWHR+zMYE7Gxugss0M6MsNqsQJTE6CwKZUihZVwuw3p8QZQciJEefBohvWobEyHa44ErM-XDeN0hrsG26HNG+cJrw1bRDMImSpMWXcwmDVAiLDV4S2+mxKZhJiCtzgTaDR9DJfEyPwt5mDaNqObYGhi7L44XHKE3HRLBFW5ZMcwghGQIKqsEtpVkjyjGMDbSwiHXSCNuAVAuspHeyvGAFprAhMEq-diwzHsOxt176sDEMfRMJhP6jy0MPCloBhmDYbvHraUw1uKhS581WV-acPNsKLN3BmmaZoVMRmdc7hsbg7Lf88QCwAgMdyzDHj+8I0bc0JvAFisJ4ToMpZZzBXhZGiMRLSjhfvdMWC4DSrWrICSw5hZZBAcIA0BFAcK9CCtqSwPhoE-ksiGNkul7zYFftBWYsF0H+wCOXHBp8JgLC8PYOYR5vJgkauQs0rFsDwJoScVABACBwHgEgp2eM+irQcAMLUfQDzWG3A1L4ykxJzQEfoIRjYtIVDEeaD0eAsCoCYGAehC5FGvRUcVGUvwtx5hGN0bCx8G4zThIY5+lDhz-iDLYia1huglU2qYRueo5bbnaDKAwWhZKDELLLSUfjAzGOvEErJdC5E9zaDNL+kTf4xIAXmQYAUFJEI8sEGUkkMmcRvOaWAkjpGwFkaLeRbRZReCSfXcwpCkKuImICJROEMILFARhGsD89YMmEbkiAzSmzmMsdYkJeNelrXMIMSU1hhkVTMLBYIhhiorFpp0RpIiIDWWCfk7e794neEGCpMwMkVJaAqn4RJARDzeS6NcpZdylmbMKfuF5slQHeShV8vMyxugKWwsFEsx5zBAoCWxSi4jWlSJkWCxAx90Iakkm7Bqcofa5XsMWOWfhzDLDRffDY55zIUNgdgEFlk1mYCsTYh5b8OjYWJbNUwW1ZQlW3PVAhnkXG4S2vYaBV17ldIKe-I8PQPrSWmAWeYBZvmFh6KwywMIgjrmgR1AlgruiyVVtqXV31K79HVEsSU0kAiDFmcyoi4M+Yw0tWWPQo9UmiDhNCJYis8zZgDl0XoG1-YlR+NAiOqdo6IJVY8hAdgvBvX-hhUeDhPAjM0KAgKIwqyzWwtYaszcwhAA */
+  /** @xstate-layout N4IgpgJg5mDOIC5QCMCuBLANhAsgQwGMALdAOzADpkB7agF1joCc8AHAYgCEBVASQBkAIgG0ADAF1EoVtVjo66aqSkgAHogCMAVgAsFAJz6AbBtEajAZgDsWizqtGANCACeiLaIsGrGi7YsaAEw2phYAvmHOaFi4hCTkVBjYAKKkzOhw7BBKlIx4dJTR2PjEZIVJEKnpcGKSSCAycgpKKuoIABw6+hQW+qKB+qb2Rjbtzm4IQaJ6OoFaWj7tgRbLdhFRFSXx5TFVTBmwWTkUeQWJMVtl5ylp+zUaddKy8orK9W0rGj2Bs35GZvplmNXJpAtMKLN5jojLN9H4-OsQEVYqUEsi9gdrhBOKhSBBMGAMXAsUcEmQAG7UADWO2KcSu6NumOROLxBKJsCxCAp1AI+VetVqKkaLxa70QRn+FFE7S0g1ENn0CzM400dgogXaFi1OnsWhGlisiORlzRFQ5WNZ+MJTOJyPYYCYTGoTAorEw+QAZi6ALZY020yq2zks3HWi3I7mkSl85qkQUSYXPOOtCVSmVy0yK5UaVUIZZfTrWOaBUtWaFGdrGzb0s27YNYgBiWBt1RDFVJlB5NP9tcDEYqzfZDcjPNjAokQvqIpT4oQlnaFEsOiGvhsnlzIIQOiWGqsYK1Vk8g2C1YufaxA5iQ9bd3bMQdTpdbo9dG9TD9JovjLbTZbV+wKMY35JQE0eBpk1eVN521Jc7FXawPACPMFm6LUNH0csdA8fQtTPOlUX7EcKgAFRcVhb2ZDtsjJaNqUDANL2ImIyIogCICA3kQPjSdE2nSCxVANoFwoLCrEGXoLAsIxSzzdCDAwwZdGMBUrCNSIkRrQimN-ZFWMou0O0dZ1XXdL1fV7bSfzvLF9PYzjx1A3jwJnKC5xEsSJLhaTZK3QFunsXDRBknQAh3fCUW2CgwB9eQOU7ChuwYi8Yri4MHO4sCkyaNyhMQOxFy0DQlhhawgklGw8w0aFAghfpMICdp93E9SNnPbTUroeLjOfMy3wsr8Otirr0rHTLnOy0U3jyhA5SMUTKwsGV-gwxqqr8KxpU1FZdWmdp9B0CLGIIAk8FIVAOBors6J7QaopOsAzoujK4yy-icsEtREHaIwtC29C7GmOF5iqjw-phQwVy0LUtGCIwjovB6no4HrTNfd9Py0+7TvO1gXoncQpyeD7pq+jpfooTofuq-dTCLUGmspjxl0rHxBkOjS7quYgfWobEyHiq7Epu5LtJ5vnOAF0a6McnjCb44mpugmTRGlMxtoOkx9x0Kr93mjQrHhURbFhhcEbFohef50huqfNHzI-Sz7stiWpbbfGnPllyBNJ4SwUpwJzA0IPAhGQJdcN6Vip3IxjGq6Sq05rGriYMAZCYLrhoAJTgVBMAYBKkqdlO05dTP5Bz2A84YD25aJiCSeggBaYIKF8HUd10bUZUqrdzD8HpdAN6GfpMWHzai1P0-LuhK+rw4haLrmEinsvkmz3P89gWvBQeSbZxmrpFxWQPLG0Q8tCqyw-r8FdRlH7QIg00g+bgFRl7AffcrJpubDb7U7Cd1Cu0GUwIJhN18LVGE0NLBzGsFqfQE8GS0AYMwNgX9PptFMBQVCpZcIOFwqbJwW5TZq3lDoaY0JTDwyTu1KK1kDgYN9vlAIBhdqmHjj5bCeYm6hSXLHJaUkiz6hoW1Ai9DzTMWwFaYcbYmHQW7hCDCcxZi-VhNCPM2EegKjmEqY2ocfBILrDcXSFQZEGXvNgeRc5ZiLhXICXQodHGayqjuHB4kKE7i6IHbQ4RaHiIZJI0xMRzEWirgQAgcB4DvSVnOPoqsHADH2qIYKMJpig02gqZSspDA+NsEYoiwTpFhlkTZT0eAsCoFTtYma8SFpJPiZKTxeYVFwVsPtOwMl2jRwKTpGyyIbwchqWTaw3QDoUI4aFLhl8tySQ1EqDwTUpJIQ5mIyKgT6xFIgIMqREBhltFmJtcZZgzBTJCjMiYXR5r6gcLoVSuorA-V6Qwwy15-wNnCZE2A0TFYHzJrKLwRVY7mENEhTcEwwbSkNPYJYYknn+PWcYoMWydm-nKZU6pMS-ltABTg8wgxJSIQ3Hmf4UDlgLgWNhYqgRnlBP6aRciFj9n5RAd4AllhvIyQsHmcstUDpSRMBVaYKxaWbPpSxRl7FmXbk1GykFkkfLcq3J0eagddCyh+nHTUoqTHiuwHZD5qAIlROlbKWqO4Db-G1OuTUcldCiWDqhEwWrE5rMYi8yxEADVooqZgKpn8sXfxxbDCE3SHCeCah4W1fkQ3BBpp4SUi0aUIsYp1IZgbMH5S0UtamQxfrzF+utfUPQAiEphEENcvSrqmrlG3dosoFTYX1GtPuR5arUslMHAIgwNC9KRrjU1MJtE3NEHCaESwlUTF8MW6qcJ2ahwOj8PtLtrbpt+UGrNXhKwyWKlqBUVqrC636EuNSDyzXWBXL01eGd14V03gwaVUkvBUp+ntQ2fQlSg1boYCSxV6q6HUhEIAA */
   createMachine({
     tsTypes: {} as import("./build.machine.typegen").Typegen0,
     schema: {
@@ -38,7 +30,9 @@ export const buildMachine =
         root: Context;
         buildStartedAt: number;
         entries: Entry[];
-        outputFiles: OutputFile[];
+        bundleOutputs: OutputFile[];
+        fileOutputs: OutputFile[];
+        typeOutputs: OutputFile[];
         errors: {
           buildBundle?: BuildBundleTaskError;
           buildFile?: BuildFileTaskError;
@@ -72,7 +66,7 @@ export const buildMachine =
                   onDone: [
                     {
                       target: "success",
-                      actions: "assignOutputFiles",
+                      actions: "assignBundleOutputs",
                     },
                   ],
                   onError: [
@@ -100,7 +94,7 @@ export const buildMachine =
                   onDone: [
                     {
                       target: "success",
-                      actions: "assignOutputFiles",
+                      actions: "assignFileOutputs",
                     },
                   ],
                   onError: [
@@ -128,7 +122,7 @@ export const buildMachine =
                   onDone: [
                     {
                       target: "success",
-                      actions: "assignOutputFiles",
+                      actions: "assignTypeOutputs",
                     },
                   ],
                   onError: [
@@ -164,12 +158,7 @@ export const buildMachine =
           src: "emitTask",
           onDone: [
             {
-              target: "chmodBinEntries",
-              cond: "hasBinEntries",
-              actions: "reportEmitResult",
-            },
-            {
-              target: "done",
+              target: "reportEmitResults",
             },
           ],
           onError: [
@@ -214,6 +203,20 @@ export const buildMachine =
           ],
         },
       },
+      reportEmitResults: {
+        invoke: {
+          src: "reportEmitResults",
+          onDone: [
+            {
+              target: "chmodBinEntries",
+              cond: "hasBinEntries",
+            },
+            {
+              target: "done",
+            },
+          ],
+        },
+      },
     },
   }, {
     guards: {
@@ -234,30 +237,6 @@ export const buildMachine =
         const elapsedTime = (endedAt - ctx.buildStartedAt).toFixed(1);
         ctx.root.reporter.info(`⚡ Done in ${elapsedTime}ms.`);
       },
-      reportEmitResult: async ctx => {
-        const relPath = (filePath: string) => path.relative(ctx.root.cwd, filePath);
-
-        const bundleOutputs = ctx.outputFiles.filter(outputFile => outputFile.path.endsWith('js'));
-        for (const bundle of bundleOutputs) {
-          const [gzipped, brotlied] = await Promise.all([
-            gzip(bundle.content),
-            brotli(bundle.content),
-          ]);
-          ctx.root.reporter.info(dedent`
-            📦 ${formatUtils.path(relPath(bundle.path))}
-              Size      : ${prettyBytes(bundle.content.byteLength)}
-              Size (gz) : ${prettyBytes(gzipped.byteLength)}
-              Size (br) : ${prettyBytes(brotlied.byteLength)}
-          `);
-        }
-
-        const fileOutputs = ctx.outputFiles.filter(outputFile => outputFile.sourcePath);
-        for (const file of fileOutputs) {
-          ctx.root.reporter.info(dedent`
-            Copied ${formatUtils.path(relPath(file.sourcePath!))} to ${formatUtils.path(relPath(file.path))}
-          `);
-        }
-      },
       reportBuildErrors: ctx => {
         if (ctx.errors.buildBundle) {
           for (const cause of ctx.errors.buildBundle.esbuildErrors) {
@@ -273,9 +252,21 @@ export const buildMachine =
           ctx.root.reporter.captureException(ctx.errors.buildType.cause);
         }
       },
-      assignOutputFiles: assign({
-        outputFiles: (ctx, event) => [
-          ...ctx.outputFiles,
+      assignBundleOutputs: assign({
+        bundleOutputs: (ctx, event) => [
+          ...ctx.bundleOutputs,
+          ...(event.data as { outputFiles: OutputFile[] }).outputFiles,
+        ],
+      }),
+      assignFileOutputs: assign({
+        bundleOutputs: (ctx, event) => [
+          ...ctx.fileOutputs,
+          ...(event.data as { outputFiles: OutputFile[] }).outputFiles,
+        ],
+      }),
+      assignTypeOutputs: assign({
+        typeOutputs: (ctx, event) => [
+          ...ctx.typeOutputs,
           ...(event.data as { outputFiles: OutputFile[] }).outputFiles,
         ],
       }),
@@ -319,17 +310,31 @@ export const buildMachine =
       }),
       emitTask: ctx => emitTask({
         context: ctx.root,
-        outputFiles: ctx.outputFiles,
+        outputFiles: [
+          ...ctx.bundleOutputs,
+          ...ctx.fileOutputs,
+          ...ctx.typeOutputs,
+        ],
+      }),
+      reportEmitResults: ctx => reportEmitResultsTask({
+        context: ctx.root,
+        bundleOutputs: ctx.bundleOutputs,
+        fileOutputs: ctx.fileOutputs,
+        typeOutputs: ctx.typeOutputs,
       }),
       cleanupTask: ctx => cleanupTask({
         context: ctx.root,
-        outputFiles: ctx.outputFiles,
+        outputFiles: [
+          ...ctx.bundleOutputs,
+          ...ctx.fileOutputs,
+          ...ctx.typeOutputs,
+        ],
       }),
       chmodBinTask: ctx => chmodBinTask({
         context: ctx.root,
         binEntries: ctx.entries
           .filter(filterBundleEntry)
           .filter(entry => entry.key.startsWith('bin')),
-      })
+      }),
     },
   });
