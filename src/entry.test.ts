@@ -1577,3 +1577,163 @@ describe('getEntriesFromContext - in TypeScript project', () => {
     });
   });
 });
+
+describe('common usecases', () => {
+  const defaultFlags: Flags = {
+    cwd: '/project',
+    rootDir: 'src',
+    outDir: 'lib',
+    tsconfig: 'tsconfig.json',
+    importMaps: 'package.json',
+    external: [],
+    standalone: false,
+    noMinify: false,
+    noSourcemap: false,
+    noDts: false,
+    platform: undefined,
+  };
+
+  const getEntriesFromManifest = (manifest: Manifest) => {
+    const reporter = new ViReporter();
+    const context = parseConfig({
+      flags: defaultFlags,
+      targets: defaultTargets,
+      manifest,
+      reporter,
+      resolve,
+      tsconfig: {},
+    });
+    const getEntries = () => getEntriesFromContext({
+      context,
+      resolve,
+      reporter,
+    });
+    return { getEntries, context, reporter };
+  };
+
+  test('server client entries', () => {
+    expect(
+      getEntriesFromManifest({
+        name: 'my-package',
+
+        exports: {
+          '.': {
+            types: './client.d.ts',
+            require: './client.min.js',
+            import: './client.min.mjs',
+          },
+          './server': {
+            types: './server.d.ts',
+            require: './server.js',
+            import: './server.mjs',
+          },
+          './package.json': './package.json',
+        },
+      }).getEntries(),
+    ).toEqual<Entry[]>([
+      {
+        key: 'exports["."].types',
+        module: 'dts',
+        mode: undefined,
+        minify: false,
+        sourcemap: true,
+        platform: 'neutral',
+        entryPath: './client.d.ts',
+        sourceFile: [
+          '/project/client.ts',
+        ],
+        outputFile: '/project/client.d.ts',
+      },
+      {
+        key: 'exports["."].require',
+        module: 'commonjs',
+        mode: undefined,
+        minify: true,
+        sourcemap: true,
+        platform: 'neutral',
+        entryPath: './client.min.js',
+        sourceFile: [
+          '/project/client.cts',
+          '/project/client.cjs',
+          '/project/client.ts',
+          '/project/client.js',
+        ],
+        outputFile: '/project/client.min.js',
+      },
+      {
+        key: 'exports["."].import',
+        module: 'esmodule',
+        mode: undefined,
+        minify: true,
+        sourcemap: true,
+        platform: 'neutral',
+        entryPath: './client.min.mjs',
+        sourceFile: [
+          '/project/client.mts',
+          '/project/client.mjs',
+          '/project/client.ts',
+          '/project/client.js',
+        ],
+        outputFile: '/project/client.min.mjs',
+      },
+      {
+        key: 'exports["./server"].types',
+        module: 'dts',
+        mode: undefined,
+        minify: false,
+        sourcemap: true,
+        platform: 'neutral',
+        entryPath: './server.d.ts',
+        sourceFile: [
+          '/project/server.ts',
+        ],
+        outputFile: '/project/server.d.ts',
+      },
+      {
+        key: 'exports["./server"].require',
+        module: 'commonjs',
+        mode: undefined,
+        minify: false,
+        sourcemap: true,
+        platform: 'neutral',
+        entryPath: './server.js',
+        sourceFile: [
+          '/project/server.cts',
+          '/project/server.cjs',
+          '/project/server.ts',
+          '/project/server.js',
+        ],
+        outputFile: '/project/server.js',
+      },
+      {
+        key: 'exports["./server"].import',
+        module: 'esmodule',
+        mode: undefined,
+        minify: false,
+        sourcemap: true,
+        platform: 'neutral',
+        entryPath: './server.mjs',
+        sourceFile: [
+          '/project/server.mts',
+          '/project/server.mjs',
+          '/project/server.ts',
+          '/project/server.js',
+        ],
+        outputFile: '/project/server.mjs',
+      },
+      {
+        key: 'exports["./package.json"]',
+        module: 'file',
+        mode: undefined,
+        minify: false,
+        sourcemap: true,
+        platform: 'neutral',
+        entryPath: './package.json',
+        sourceFile: [
+          '/project/package.json',
+        ],
+        outputFile: '/project/package.json',
+      },
+    ]);
+  });
+});

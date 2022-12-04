@@ -504,7 +504,9 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
           throw new NanobundleEntryError(Message.INVALID_DTS_ORDER());
         }
       } else {
-        const firstLeaf = entries.find(entry => typeof entry[1] === 'string');
+        const firstLeaf = entries.find(([entryKey, entry]) => {
+          return typeof entry === 'string' && !entryKey.startsWith('.');
+        });
         const isLeaf = firstLeaf !== undefined;
 
         // has leaf default entry
