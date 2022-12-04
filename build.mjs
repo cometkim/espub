@@ -12,5 +12,8 @@ esbuild.build({
   format: 'esm',
   platform: 'node',
   target: ['node16'],
-  external: Object.keys(manifest.dependencies),
+  external: [
+    ...Object.keys(manifest.dependencies),
+    ...Object.keys(manifest.peerDependencies),
+  ],
 });
