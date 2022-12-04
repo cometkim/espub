@@ -6,7 +6,9 @@
     "strict": true,
     "composite": true,
     "incremental": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "rootDir": "src",
+    "outDir": "."
   },
   "include": [
     "src"
