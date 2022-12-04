@@ -1,3 +1,4 @@
+import * as path from 'node:path';
 import dedent from 'string-dedent';
 import { type TSConfig } from 'pkg-types';
 import * as semver from 'semver';
@@ -51,7 +52,7 @@ export function parseConfig({
   tsconfig,
   tsconfigPath: resolvedTsConfigPath,
 }: Config): Context {
-  const cwd = flags.cwd;
+  const cwd = path.resolve(flags.cwd);
   const sourcemap = !flags.noSourcemap;
   const standalone = flags.standalone;
   const tsconfigPath = resolvedTsConfigPath || flags.tsconfig;
