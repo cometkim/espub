@@ -1,5 +1,12 @@
 # nanobundle
 
+## 1.0.0-rc.2
+
+### Patch Changes
+
+- d14d8d5: add padding to warn/error messages
+- a187ab5: fix implicit types entry not to be conflicted with others
+
 ## 1.0.0-rc.1
 
 ### Patch Changes
