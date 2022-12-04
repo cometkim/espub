@@ -2945,7 +2945,7 @@ __metadata:
     typescript:
       optional: true
   bin:
-    nanobundle: ./bin.mjs
+    nanobundle: ./bin.min.mjs
   languageName: unknown
   linkType: soft
 
