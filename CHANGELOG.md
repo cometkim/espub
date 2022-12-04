@@ -1,5 +1,11 @@
 # nanobundle
 
+## 1.0.0-rc.3
+
+### Patch Changes
+
+- 781557a: fix things
+
 ## 1.0.0-rc.2
 
 ### Patch Changes
