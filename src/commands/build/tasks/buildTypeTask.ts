@@ -50,35 +50,50 @@ export async function buildTypeTask({
       declaration: true,
       emitDeclarationOnly: true,
     };
+
     if (compilerOptions.noEmit) {
       context.reporter.warn(dedent`
         Ignored ${formatUtils.key('noEmit')} specified in your tsconfig.json
 
         You can disable emitting declaration via ${formatUtils.command('--no-dts')} flag.
       `);
-      compilerOptions.noEmit = false;
     }
+    compilerOptions.noEmit = false;
+
+    if (!(compilerOptions.moduleResolution === ts.ModuleResolutionKind.Node16 || compilerOptions.moduleResolution === ts.ModuleResolutionKind.NodeNext)) {
+      context.reporter.warn(dedent`
+        nanobundle support only ${formatUtils.literal('Node16')} or ${formatUtils.literal('NodeNext')} for ${formatUtils.key('compilerOptions.moduleResolution')}
+
+        Please see ${formatUtils.hyperlink('https://www.typescriptlang.org/docs/handbook/esm-node.html')} for usage.
+      `);
+    }
+    compilerOptions.moduleResolution = ts.ModuleResolutionKind.Node16;
+
     context.reporter.debug('ts compilerOptions %o', compilerOptions);
 
     const outputMap = new Map<string, Uint8Array>();
     const host = ts.createCompilerHost(compilerOptions);
     host.writeFile = (filename, content) => {
-      context.reporter.debug(`ts host emit file to %s`, filename);
+      context.reporter.debug(`ts program emitted file to ${formatUtils.path(filename)}`);
       outputMap.set(filename, Buffer.from(content, 'utf-8'));
     };
 
     for (const entry of typeEntries) {
       const program = ts.createProgram(entry.sourceFile, compilerOptions, host);
+      context.reporter.debug(`created ts program from %o`, entry.sourceFile);
+
       const result = program.emit();
 
-      context.reporter.info(dedent`
-        TypeScript dignostics:
+      if (result.diagnostics.length > 0) {
+        context.reporter.info(dedent`
+          TypeScript dignostics:
 
-          %s
+            %s
 
-        `,
-        ts.formatDiagnostics(result.diagnostics, host),
-      );
+          `,
+          ts.formatDiagnostics(result.diagnostics, host),
+        );
+      }
     }
 
     const outputFiles = [...outputMap.entries()]
