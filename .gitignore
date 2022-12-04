@@ -5,7 +5,7 @@
 node_modules/
 coverage/
 
-/bin.mjs
+/bin.min.mjs
 
 .yarn/*
 !.yarn/patches

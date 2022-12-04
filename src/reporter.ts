@@ -43,7 +43,9 @@ export class ConsoleReporter implements Reporter {
       ...args,
     );
     const indented = this.#indent(formatted);
-    this.#console.debug(`[debug] ${indented}`);
+    this.#console.debug(
+      kleur.gray(`[debug] ${indented}`),
+    );
   }
 
   info(msg: string, ...args: any[]): void {
@@ -53,7 +55,9 @@ export class ConsoleReporter implements Reporter {
       ...args,
     );
     const indented = this.#indent(formatted);
-    this.#console.info(`[info] ${indented}`);
+    this.#console.info(
+      kleur.white(`[info] ${indented}`),
+    );
   }
 
   warn(msg: string, ...args: any[]): void {

@@ -55,7 +55,7 @@ export function makePlugin({
       });
 
       build.onEnd(() => {
-        if (dependOnNode) {
+        if (standalone && dependOnNode) {
           reporter.warn('Not completely standalone bundle, while the code depends on some Node.js APIs.');
         }
       });

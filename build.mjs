@@ -3,7 +3,7 @@ import manifest from './package.json' assert { type: 'json' };
 
 esbuild.build({
   entryPoints: ['src/bin.ts'],
-  outfile: 'bin.mjs',
+  outfile: 'bin.min.mjs',
   bundle: true,
   write: true,
   treeShaking: true,

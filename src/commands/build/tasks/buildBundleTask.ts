@@ -1,8 +1,9 @@
+import * as path from 'node:path';
 import * as esbuild from 'esbuild';
+import dedent from 'string-dedent';
 
-import {
-  type Context,
-} from '../../../context';
+import { type Context } from '../../../context';
+import { NanobundleError } from '../../../errors';
 import * as fsUtils from '../../../fsUtils';
 import {
   groupBundleEntries,
@@ -16,23 +17,14 @@ import {
   validateImportMaps,
   type ValidNodeImportMaps,
 } from '../importMaps';
-import {
-  type OutputFile,
-} from '../outputFile';
-import {
-  makePlugin as makeImportMapsPlugin,
-} from '../plugins/esbuildImportMapsPlugin';
-import {
-  makePlugin as makeEmbedPlugin,
-} from '../plugins/esbuildEmbedPlugin';
+import { type OutputFile } from '../outputFile';
+import { makePlugin as makeImportMapsPlugin } from '../plugins/esbuildImportMapsPlugin';
+import { makePlugin as makeEmbedPlugin } from '../plugins/esbuildEmbedPlugin';
 
-export class NanobundleBuildBundleError extends Error {
-  name = 'NanobundleBuildBundleError';
-
+export class BuildBundleTaskError extends NanobundleError {
   esbuildErrors: esbuild.Message[];
-
-  constructor(errors: esbuild.Message[]) {
-    super();
+  constructor(message: string, errors: esbuild.Message[]) {
+    super(message);
     this.esbuildErrors = errors;
   }
 }
@@ -62,14 +54,22 @@ export async function buildBundleTask({
         options,
         bundleEntries: entries,
         validImportMaps,
-        defaultPlugins: [],
+        plugins: [],
       }),
     );
   }
   const results = await Promise.all(subtasks);
+
   const errors = results.flatMap(result => result.errors);
   if (errors.length > 0) {
-    throw new NanobundleBuildBundleError(errors);
+    throw new BuildBundleTaskError('Some errors occur while runnign esbuild', errors);
+  }
+
+  const warnings = results.flatMap(result => result.warnings);
+  if (warnings.length > 0) {
+    for (const warning of warnings) {
+      context.reporter.warn(warning.text);
+    }
   }
 
   const outputFiles = results
@@ -84,7 +84,7 @@ export async function buildBundleTask({
 
 type BuildBundleGroupOptions = {
   context: Context,
-  defaultPlugins: esbuild.Plugin[],
+  plugins: esbuild.Plugin[],
   validImportMaps: ValidNodeImportMaps,
   bundleEntries: BundleEntry[],
   options: BundleOptions,
@@ -92,35 +92,42 @@ type BuildBundleGroupOptions = {
 
 type BuildBundleGroupResult = {
   errors: esbuild.Message[],
+  warnings: esbuild.Message[],
   outputFiles: esbuild.OutputFile[],
 };
 
 async function buildBundleGroup({
   context,
-  defaultPlugins,
+  plugins,
   validImportMaps,
   bundleEntries,
   options,
 }: BuildBundleGroupOptions): Promise<BuildBundleGroupResult> {
+  const baseDir = path.resolve(context.cwd);
   const entryPointsEntries: [string, string][] = [];
   for (const entry of bundleEntries) {
-    let sourceFile: string | null = null;
-    for (const candidate of entry.sourceFile) {
-      const path = context.resolve(context.cwd, candidate);
-      const exist = await fsUtils.exists(path);
-      if (exist) {
-        sourceFile = candidate;
-      }
-    }
+    const sourceFile = await fsUtils.chooseExist(entry.sourceFile);
     if (!sourceFile) {
       // FIXME
-      throw new Error('buildBundle');
+      throw new BuildBundleTaskError(dedent`
+        Source file not exist.
+
+        Expected one of
+          - ${entry.sourceFile.join('\n' + '  '.repeat(10) + ' -')}
+      `, []);
     }
-    entryPointsEntries.push([entry.outputFile, sourceFile]);
+    entryPointsEntries.push([
+      path.relative(baseDir, entry.outputFile),
+      sourceFile,
+    ]);
   }
 
+  const entryPoints = Object.fromEntries(entryPointsEntries);
+  context.reporter.debug('entryPoints: %o', entryPoints);
+
   const esbuildOptions: esbuild.BuildOptions = {
-    entryPoints: Object.fromEntries(entryPointsEntries),
+    entryPoints,
+    outdir: baseDir,
     bundle: true,
     treeShaking: true,
     target: context.targets,
@@ -129,11 +136,13 @@ async function buildBundleGroup({
     minify: options.minify,
     plugins: [],
   };
+
   if (options.platform === 'deno') {
     esbuildOptions.platform = 'neutral';
   } else {
     esbuildOptions.platform = options.platform;
   }
+
   if (options.mode) {
     esbuildOptions.define = {
       'process.env.NODE_ENV': JSON.stringify(options.mode),
@@ -150,7 +159,7 @@ async function buildBundleGroup({
 
   esbuildOptions.plugins = [
     ...esbuildOptions.plugins ?? [],
-    ...defaultPlugins,
+    ...plugins,
   ];
 
   const result = await esbuild.build({
@@ -158,8 +167,14 @@ async function buildBundleGroup({
     write: false,
   });
 
+  const outputFiles = result.outputFiles.map(outputFile => ({
+    ...outputFile,
+    path: outputFile.path.replace(/\.js$/, ''),
+  }));
+
   return {
     errors: result.errors,
-    outputFiles: result.outputFiles,
+    warnings: result.warnings,
+    outputFiles,
   };
 }

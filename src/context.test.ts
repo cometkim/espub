@@ -187,7 +187,6 @@ describe('parseConfig', () => {
         forceExternalDependencies: [],
         manifest,
         targets: [
-          ...defaultTargets,
           'node16',
         ],
         reporter,
@@ -222,7 +221,6 @@ describe('parseConfig', () => {
         forceExternalDependencies: [],
         manifest: defaultManifest,
         targets: [
-          ...defaultTargets,
           'node14',
         ],
         reporter,

@@ -1,16 +1,19 @@
-import { readFile } from 'node:fs/promises';
+import * as fs from 'node:fs/promises';
 import dedent from 'string-dedent';
 
 import * as formatUtils from '../../../formatUtils';
-import {
-  type Context,
-} from '../../../context';
-import {
-  type FileEntry,
-} from '../entryGroup';
-import {
-  type OutputFile,
-} from '../outputFile';
+import { type Context } from '../../../context';
+import { type FileEntry } from '../entryGroup';
+import { type OutputFile } from '../outputFile';
+import { NanobundleError } from '../../../errors';
+
+export class BuildFileTaskError extends NanobundleError {
+  reasons: any[];
+  constructor(reasons: any[]) {
+    super();
+    this.reasons = reasons;
+  }
+}
 
 type BuildFileTaskOptions = {
   context: Context,
@@ -19,7 +22,7 @@ type BuildFileTaskOptions = {
 
 type BuildFileTaskResult = {
   outputFiles: OutputFile[],
-}
+};
 
 export async function buildFileTask({
   context,
@@ -29,19 +32,22 @@ export async function buildFileTask({
   for (const entry of fileEntries) {
     const sourceFile = entry.sourceFile[0];
     const outputFile = entry.outputFile;
-
     if (sourceFile === outputFile) {
       context.reporter.debug(dedent`
         Noop for ${formatUtils.key(entry.key)} because of source path and output path are the same.
       `);
       continue;
     }
-
     subtasks.push(buildFile({ sourceFile, outputFile }));
   }
 
-  const jobs = await Promise.all(subtasks);
-  const outputFiles = jobs.map(job => job.outputFile);
+  const results = await Promise.allSettled(subtasks);
+  const rejects = results.filter((result): result is PromiseRejectedResult => result.status === 'rejected');
+  if (rejects.length) {
+    throw new BuildFileTaskError(rejects.map(reject => reject.reason));
+  }
+  const resolves = results as PromiseFulfilledResult<BuildFileResult>[];
+  const outputFiles = resolves.map(result => result.value.outputFile);
 
   return { outputFiles };
 }
@@ -59,9 +65,10 @@ async function buildFile({
   sourceFile,
   outputFile,
 }: BuildFileOptions): Promise<BuildFileResult> {
-  const content = await readFile(sourceFile);
+  const content = await fs.readFile(sourceFile);
   return {
     outputFile: {
+      sourcePath: sourceFile,
       path: outputFile,
       content,
     },

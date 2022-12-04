@@ -1,19 +1,25 @@
-import { createMachine } from 'xstate';
+import { performance } from 'node:perf_hooks';
+import { actions, assign, createMachine } from 'xstate';
 
 import { type Context } from '../../context';
 import { type Entry } from '../../entry';
 import {
   filterBundleEntry,
   filterFileEntry,
+  filterTypeEntry,
 } from './entryGroup';
 import { type OutputFile } from './outputFile';
-import { buildBundleTask } from './tasks/buildBundleTask';
-import { buildFileTask } from './tasks/buildFileTask';
+
+import { buildBundleTask, type BuildBundleTaskError } from './tasks/buildBundleTask';
+import { buildFileTask, type BuildFileTaskError } from './tasks/buildFileTask';
+import { buildTypeTask } from './tasks/buildTypeTask';
+import { chmodBinTask } from './tasks/chmodBinTask';
+import { cleanupTask, type CleanupTaskError } from './tasks/cleanupTask';
+import { emitTask, type EmitTaskError } from './tasks/emitTask';
 
 export const buildMachine =
-  /** @xstate-layout N4IgpgJg5mDOIC5QCMCuBLANhAsgQwGMALdAOzADpkB7agF1joCc8AHAYgCEBVASQBkAIgG0ADAF1EoVtVjo66aqSkgAHogCMANi0UAnFtF6AzAHYArABoQAT0TmATLtOnRADgeitG01otuAXwDrNCxcQhJyKgxsAFFSZnQ4dgglSkY8OkpQ7HxiMmyYiHjEuDFJJBAZOQUlFXUENwAWPQpjPVEHPQ1RJt9-azsEDU8miiaHc3NTDQ9jB2NjJqCQorzIwrCSpiTYFLSKDKzosPWCk7iEnbKNCulZeUVlSob5jTaHCeNzQw09Bbcg00o3Gk3MTS0ExM5m+KxAOXC+SiCO2uwuEE4qFIEEwYFRcHR+yiZAAbtQANabXIRc4oq5ohGY7G4-GwdEIUnUAiZJ7lcoqaqPOovRA6UQUSHmZrfURS8x6JpAhAw96dQzGDQtJqarxwhFnZFFVnopk4vH0gkI9hgJhMahMCisTCZABm9oAtuiDVTiha2YysWbjQiOaQydzaqQ+RIBQ9I-VRYYJU0pU0ZXKFUqtA43BQMw4C9qHD09Hq1jTDVs-eiAGJYc2lf1FImUTmUr0Vn3Bop1lnVkOciO8iT8yqC+MihBadoSrT-Nw9WVueWK2yINxmCgjBYWJpuDwLhxl06d9HdsK9hvXJtha22+2O510N1MT36090xu1+vn7Ch8M8ko0Z3FUcZPAmU4zjo86Lhmq5DCYYxaB4TjZt83zaMe1JIl2-ZFAAKjYrBXgyzapMSYYUj63pnnhYSEcRv4QP+XKAVGI4xmOYHCqADTTrmphNHuIyiBoPizICa4IIW+hdMhFhYYiGy0V+CIMSRlrNjadoOk6roeh2OEqde6LqUxLFDkBHEgeO4GTvxFCCcJnhiTM+5KvMDjjG4ejTB4fSiK4xiKTRYDuvIrIthQbbUaeYURX6FlscBsY1HZvGiqI4p6G4FguGmrg9BoSoaFKuYOKYiGanO7TBcE8LlkZ8V0JF2kPnpz4Ge+TXhS1iWDsl1mpUKzwZcqBiOchxjuL8JizCV3ymBQnQbp8TS9D5yxwqQ1AQHAKjdRsw0TmNAC0m4TIFhULKJfRLEqp3avoegvTlLiGKY6EhR+tAMMwbDHelaiaOK0z-F0uVzsuqFKo4uhZd0vS9BCPRaN9RmftegM8cDCCLF5eiVbMhXiblVhSRC+i+D8haGJCBbo8pmOkWEpp9o22OjbjxhuNlRO5aJpMWEqQleb0Crgl8hVTIztJGnR2BsxpN7YJzEETLmhPdALrnE+TQzguYHzaKJbh+H4Uqy5WlyqUUSvGrAqAEAQcDwFxaU4w0HTvJ5-w+I4-yE7DMIUAuvi+d4-SW-Vh1y1Wtus4G7MmS6eBYKgTBgGrk7ex8XTFhY+dB1JWjmD7LhStOkKCd4Vu4Qn2CXqy2djTzfPayTbnC1Jgm5pqYPND4zQMzHjVM-LDcQE3CsQC3uMa1THeC13+vrmX4w+BLZuzNoW2rCeGMTyZCLT1+jvO67c8NMuYxTJ40JLiuSrLq03Tre03g75CdfGSzjc-tWVO6dM5XzXrfRwRh0wv3gogXyS07omFEN8fcZtTA-2ZppeiRFlagLxrzRexNl56wWkbXyGoFhOA8KJHK6Cj5-wgGZGeuCF5a0IbrMmSoFitALI4Pyn0YRlzRqPA+4947HwItgh2TsXawDdvcD2XNr6OG8kPWC0DOF9EcsWDCaEBGYWEdhURNtxFYMYoAtOmAM5Z3diNCC0MVGmAXFlOCHkUwUBzCMKWXhZR9B-s1ZuNiTrczcdNM2OYebmC8MhEhS03o9DTGJHyaCDFKXOOfGRcjQIKLsToNo-xHAtGLDlM2JUpjvC6MYHQEwYRax-kAyxIDAlA2vpCNoso-CQIhHMEhuhNQmDfk4BUnwghBCAA */
+  /** @xstate-layout N4IgpgJg5mDOIC5QCMCuBLANhAsgQwGMALdAOzADpkB7agF1joCc8AHAYgCEBVASQBkAIgG0ADAF1EoVtVjo66aqSkgAHogCMAVgAsFAJz6AbBtEajAZgDsWizqtGANCACeiLaIsGrGi7YsaAEw2phYAvmHOaFi4hCTkVBjYAKKkzOhw7BBKlIx4dJTR2PjEZIVJEKnpcGKSSCAycgpKKuoIABw6+hQW+qKB+qb2Rjbtzm4IQaJ6OoFaWj7tgRbLdhFRFSXx5TFVTBmwWTkUeQWJMVtl5ylp+zUaddKy8orK9W0rGj2Bs35GZvplmNXJpAtMKLN5jojLN9H4-OsQEVYqUEsi9gdrhBOKhSBBMGAMXAsUcEmQAG7UADWO2KcSu6NumOROLxBKJsCxCAp1AI+VetVqKkaLxa70QRn+FFE7S0g2MJnhOnG7jlFA0Dn0VnsOgsIws7URyMuaIqHKxrPxhKZxOR7DATCY1CYFFYmHyADNnQBbLEm2mVG2clm4q3m5Hc0iUvnNUiCiTC56x1oSqUyuUaBW+WzKkEIIxaIwUKx69oFrqibU6DRGzb0027INYgBiWGt1WDFVJlB5NL99YD4YqrfZTYjPJjAokQvqIuT4vzBoolmr018Nn6VhVHS1BkCnR+Ols8wGtYuA6xQ5iI-bd07MXtjudrvddC9TF9xovjI7LbbV+wSNo35JR40eBok1eFNF3aZc7CGdcPGCbdDC0CF2naAItDBUQjGWQIzzpVFBzHCoABUXFYW9mS7bIySjakA39S9SJiCiqIAiAgN5EC42nBNZ0gsVQDaSxYKrdopg0DUNAw7dAh+PdjHaGxCJRbYWN-ZF2Oo20uwdJ0XTdT0fX7YjNLvLEdM47jJ1A-jwLnKCFzE4sdB0SSwWkxZgQmFZAnQ-QFiWexK08NTmLAb15A5bsKF7JiLyimKg1s3iwMTJpnJExB9ysZc+nXKx9A83xOm3bRMwhYxoV1OwtHaLUIqS6K6FiuiewYvsv3M5K2tSid0unB5MtFN4coQbCAtmKwy1m6YoX0CqYVEChdA0HRRHmJZCwCZreta2KDOfYy31MnqNL6jk0tjDLBKy4S1HcYxiyMTCZX+TMAl8zQ-Hy-pMMPaZGp0faNIIAk8FIVAOA6+KusS8yIbAKGYZuqdxBnJ4HvGp6OgLaV9wCOxpjheYKo8NCYUMasGr8YIjDBq5kdRjhjqM1930-Oskch6HWHR+zMYE7Gxugss0M6MsNqsQJTE6CwKZUihZVwuw3p8QZQciJEefBohvWobEyHa44ErM-XDeN0hrsG26HNG+cJrw1bRDMImSpMWXcwmDVAiLDV4S2+mxKZhJiCtzgTaDR9DJfEyPwt5mDaNqObYGhi7L44XHKE3HRLBFW5ZMcwghGQIKqsEtpVkjyjGMDbSwiHXSCNuAVAuspHeyvGAFprAhMEq-diwzHsOxt176sDEMFSq8BWZGvCHXO7RWgGGYNhu8etpTDW4qFP0FT69lf2nDzbCizdwZpmmaFTEZle9YZM0g23-PEAsAIDHcswx6-vCGhtzQm8JKDUxVJRV39mHEiWkKiWlHB2d+0EDSrWrICSw5hZZBAcMAqwq0cLVhUh4SwBYYEWRojEBBul7zYGQQuReEJMz+wCOXHB58JgLC8PYOYR5vJgkauQn8lkQxshoScVABACBwHgPdMWC4+irQcAMLUfQDzWG3A1L4ykxJzQEfoIRr84FUNDIgyyHo8BYFQEwMA9CJqKNeio4qMpfhbjzCMbo2FT4NxmnCQxjZjHYBvByOxeNrDdBKptUwjc9Ry23O0GUBgtCyTlL0Qw0Cn7nnMsIyhQT-ysToXIp2eMZo-yif-WJQC8yDACgpNJHlggykkv4m4gSIDBKbLASR0jYCyNFsUtosovDJPruYSwG5kLVMLrLN2GEFj4IwjWTJRENI5L0tefJv4LFWJsaEwZtg1rmEGJKawSE3G+zMLBYIhhiorFpp0FpgY2nWTfkUnuHwEneEGCpMwMliEVT8EkrC-sPJfzLMvDYWTVlGJEeRSi4jkR7MQIw1Rsl8HeTRVoeSvQKAKWwsFEsx5zCPM4i838XSpEyKRR0bC6ENSSTdg1OUPtcr2GLHLPw5hlhEsfpClZL8AmwrYvC802zMDWNsW8neiBT50tmqYLasoSrbnqrizyrjcJbXsOQq6rz+nvM-keHoH1pLTALPMAsALCw9FYaQ6sHKrDkI6tSpV6o5mViPLtWSld+hurPtJAIgwll8vUszPmMMXUwmNYWfBcJoRLEVnmbMAcui9A2v7EqPxyER1TtHJBUqP4IDsF4N6gCMKjwcJ4c5mh8EBRGFWWa2FrDVmbmEIAA */
   createMachine({
-    predictableActionArguments: true,
     tsTypes: {} as import("./build.machine.typegen").Typegen0,
     schema: {
       events: {} as {
@@ -24,8 +30,15 @@ export const buildMachine =
         buildStartedAt: number;
         entries: Entry[];
         outputFiles: OutputFile[];
+        errors: {
+          buildBundle?: BuildBundleTaskError;
+          buildFile?: BuildFileTaskError;
+          emit?: EmitTaskError;
+          cleanup?: CleanupTaskError;
+        };
       },
     },
+    predictableActionArguments: true,
     id: "buildMachine",
     initial: "bootstrap",
     states: {
@@ -33,6 +46,7 @@ export const buildMachine =
         on: {
           BUILD: {
             target: "buildEntries",
+            actions: "reportBuildStart",
           },
         },
       },
@@ -110,7 +124,6 @@ export const buildMachine =
                   onError: [
                     {
                       target: "failure",
-                      actions: "assignBuildTypeErrors",
                     },
                   ],
                 },
@@ -126,8 +139,9 @@ export const buildMachine =
         },
         onDone: [
           {
-            target: "failure",
-            cond: "hasErrors",
+            target: "cleanup",
+            cond: "hasBuildErrors",
+            actions: "reportBuildErrors",
           },
           {
             target: "emitEntries",
@@ -139,27 +153,114 @@ export const buildMachine =
           src: "emitTask",
           onDone: [
             {
-              target: "success",
+              target: "chmodBinEntries",
+              cond: "hasBinEntries",
+              actions: "reportEmitResult",
+            },
+            {
+              target: "done",
             },
           ],
           onError: [
             {
-              target: "failure",
-              actions: ["assignErrorCode", "assignEmitErrors"],
+              target: "cleanup",
+              actions: "assignEmitErrors",
             },
           ],
         },
       },
-      success: {
-        entry: ["reportResults", "reportPerformance"],
+      done: {
+        entry: "reportBuildEnd",
         type: "final",
       },
-      failure: {
-        entry: ["reportErrors", "cleanup"],
-        type: "final",
+      cleanup: {
+        invoke: {
+          src: "cleanupTask",
+          onDone: [
+            {
+              target: "done",
+            },
+          ],
+          onError: [
+            {
+              target: "done",
+            },
+          ],
+        },
+      },
+      chmodBinEntries: {
+        invoke: {
+          src: "chmodBinTask",
+          onDone: [
+            {
+              target: "done",
+            },
+          ],
+          onError: [
+            {
+              target: "done",
+            },
+          ],
+        },
       },
     },
   }, {
+    guards: {
+      hasBuildErrors: ctx => Boolean(
+        ctx.errors.buildBundle ||
+        ctx.errors.buildFile ||
+        ctx.errors.emit
+      ),
+      hasBinEntries: ctx => ctx.entries
+        .some(entry => entry.key.startsWith('bin')),
+    },
+    actions: {
+      reportBuildStart: assign({
+        buildStartedAt: _ctx => performance.now(),
+      }),
+      reportBuildEnd: ctx => {
+        const endedAt = performance.now();
+        const elapsedTime = (endedAt - ctx.buildStartedAt).toFixed(1);
+        ctx.root.reporter.info(`⚡ Done in ${elapsedTime}ms.`);
+      },
+      reportEmitResult: ctx => {
+        ctx.root.reporter.info('%o', ctx.outputFiles.map(file => file.path));
+      },
+      reportBuildErrors: ctx => {
+        if (ctx.errors.buildBundle) {
+          for (const cause of ctx.errors.buildBundle.esbuildErrors) {
+            ctx.root.reporter.error(cause.text);
+          }
+        }
+        if (ctx.errors.buildFile) {
+          ctx.root.reporter.captureException(ctx.errors.buildFile);
+        }
+      },
+      assignOutputFiles: assign({
+        outputFiles: (ctx, event) => [
+          ...ctx.outputFiles,
+          ...(event.data as { outputFiles: OutputFile[] }).outputFiles,
+        ],
+      }),
+      assignBuildBundleErrors: assign({
+        errors: (ctx, event) => ({
+          ...ctx.errors,
+          buildBundle: event.data as BuildBundleTaskError,
+        }),
+      }),
+      assignBuildFileErrors: assign({
+        errors: (ctx, event) => ({
+          ...ctx.errors,
+          buildFile: event.data as BuildFileTaskError,
+        }),
+      }),
+      assignEmitErrors: assign({
+        errors: (ctx, event) => ({
+          ...ctx.errors,
+          emit: event.data as EmitTaskError,
+        })
+      }),
+    },
     services: {
       buildBundleTask: ctx => buildBundleTask({
         context: ctx.root,
@@ -169,5 +270,23 @@ export const buildMachine =
         context: ctx.root,
         fileEntries: ctx.entries.filter(filterFileEntry),
       }),
+      buildTypeTask: ctx => buildTypeTask({
+        context: ctx.root,
+        typeEntries: ctx.entries.filter(filterTypeEntry),
+      }),
+      emitTask: ctx => emitTask({
+        context: ctx.root,
+        outputFiles: ctx.outputFiles,
+      }),
+      cleanupTask: ctx => cleanupTask({
+        context: ctx.root,
+        outputFiles: ctx.outputFiles,
+      }),
+      chmodBinTask: ctx => chmodBinTask({
+        context: ctx.root,
+        binEntries: ctx.entries
+          .filter(filterBundleEntry)
+          .filter(entry => entry.key.startsWith('bin')),
+      })
     },
   });

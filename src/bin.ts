@@ -52,10 +52,7 @@ try {
       if (tsconfigPath) {
         reporter.debug(`load tsconfig from ${tsconfigPath}`);
       }
-
       const targets = await loadTargets({ basePath: flags.cwd });
-      reporter.debug(`load targets ${targets.join(', ')}`);
-
       const context = parseConfig({
         flags,
         targets,
@@ -65,6 +62,7 @@ try {
         resolve,
         reporter,
       });
+      reporter.debug(`load targets ${context.targets.join(', ')}`);
 
       const entries = getEntriesFromContext({
         context,

@@ -87,15 +87,15 @@ export function parseConfig({
     platform = 'node';
   }
 
-  const targets = [...inputTargets];
+  let targets = [...inputTargets];
   if (manifest.engines?.node) {
     const version = semver.minVersion(manifest.engines.node);
     if (version) {
-      targets.push(`node${version.major}`);
+      targets = [`node${version.major}`];
     }
   }
   if (platform === 'node' && !targets.some(target => target.startsWith('node'))) {
-    targets.push('node14');
+    targets = ['node14'];
   }
 
   let declaration = false;

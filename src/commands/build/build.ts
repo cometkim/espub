@@ -21,21 +21,14 @@ export async function buildCommand({
         root: context,
         entries,
         outputFiles: [],
+        errors: {},
         buildStartedAt: performance.now(),
-      })
-      .withConfig({
-        actions: {
-
-        },
-        guards: {
-
-        },
       }),
   );
-
-  service.onTransition(state => {
-  });
-
   service.start();
   service.send('BUILD');
+
+  return new Promise(resolve => {
+    service.onDone(() => resolve());
+  });
 }
