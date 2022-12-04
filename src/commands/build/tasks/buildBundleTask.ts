@@ -176,7 +176,9 @@ async function buildBundleGroup({
 
   const outputFiles = result.outputFiles.map(outputFile => ({
     ...outputFile,
-    path: outputFile.path.replace(/\.js$/, ''),
+    path: outputFile.path
+      .replace(/\.js$/, '')
+      .replace(/\.js\.map$/, '.map'),
   }));
 
   return {
