@@ -1,6 +1,7 @@
 import { performance } from 'node:perf_hooks';
 import { interpret } from 'xstate';
 
+import * as formatUtils from '../../formatUtils';
 import { type Context } from '../../context';
 import { type Entry } from '../../entry';
 
@@ -26,6 +27,10 @@ export async function buildCommand({
       }),
   );
   service.start();
+
+  context.reporter.info(
+    `build ${formatUtils.highlight(context.manifest.name || 'unnamed')} package`,
+  );
   service.send('BUILD');
 
   return new Promise(resolve => {

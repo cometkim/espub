@@ -23,7 +23,6 @@ export async function buildTypeTask({
   const ts = await import('typescript');
 
   const result = await parseNative(context.tsconfigPath);
-  context.reporter.debug(`load tsconfig from ${result.tsconfigFile}`);
 
   const compilerOptions: CompilerOptions = {
     ...result.tsconfig.compilerOptions,
@@ -34,6 +33,7 @@ export async function buildTypeTask({
     declaration: true,
     emitDeclarationOnly: true,
   };
+  context.reporter.debug('ts compilerOptions %o', compilerOptions);
 
   if (compilerOptions.noEmit) {
     context.reporter.warn(dedent`
@@ -47,6 +47,7 @@ export async function buildTypeTask({
   const outputMap = new Map<string, Uint8Array>();
   const host = ts.createCompilerHost(compilerOptions);
   host.writeFile = (filename, content) => {
+    context.reporter.debug(`ts host emit file to %s`, filename);
     outputMap.set(filename, Buffer.from(content, 'utf-8'));
   };
 
@@ -54,8 +55,8 @@ export async function buildTypeTask({
     const program = ts.createProgram(entry.sourceFile, compilerOptions, host);
     const result = program.emit();
 
-    context.reporter.info(
-      `TypeScript Dignostics:
+    context.reporter.info(dedent`
+      TypeScript dignostics:
 
         %s
 

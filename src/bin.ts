@@ -34,7 +34,7 @@ try {
         cwd: flags.cwd,
         resolve,
       });
-      reporter.info(`build ${manifest.name || 'unnamed'} package`);
+      reporter.debug('loaded manifest %o', manifest);
 
       const tsconfigResult = await parseTsConfig(flags.tsconfig, {
         resolveWithEmptyIfConfigNotFound: true,
@@ -44,15 +44,21 @@ try {
           ? tsconfigResult.tsconfigFile
           : undefined
       );
+      if (tsconfigPath) {
+        reporter.debug(`loaded tsconfig from ${tsconfigPath}`);
+      }
       const tsconfig = (
         tsconfigResult.tsconfigFile !== 'no_tsconfig_file_found'
           ? tsconfigResult.tsconfig
           : undefined
       );
-      if (tsconfigPath) {
-        reporter.debug(`load tsconfig from ${tsconfigPath}`);
+      if (tsconfig) {
+        reporter.debug('loaded tsconfig %o', tsconfig);
       }
+
       const targets = await loadTargets({ basePath: flags.cwd });
+      reporter.debug(`loaded targets ${targets.join(', ')}`);
+
       const context = parseConfig({
         flags,
         targets,
@@ -62,19 +68,16 @@ try {
         resolve,
         reporter,
       });
-      reporter.debug(`load targets ${context.targets.join(', ')}`);
+      reporter.debug(`normalized targets to ${context.targets.join(', ')}`);
 
       const entries = getEntriesFromContext({
         context,
         reporter,
         resolve,
       });
+      reporter.debug(`parsed entries %o`, entries);
 
-      await buildCommand({
-        context,
-        entries,
-      });
-
+      await buildCommand({ context, entries });
       break;
     }
 

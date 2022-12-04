@@ -35,7 +35,7 @@ export function hyperlink(hyperlink: string): string {
 }
 
 export function path(path: string): string {
-  return kleur.underline().cyan(path);
+  return kleur.underline().yellow(path);
 }
 
 export function literal(literal: unknown): string {
@@ -62,4 +62,8 @@ export function object(object: object): string {
 
 export function command(command: string): string {
   return kleur.bold().blue(`\`${command}\``);
+}
+
+export function highlight(text: string): string {
+  return kleur.bold().cyan(text);
 }
