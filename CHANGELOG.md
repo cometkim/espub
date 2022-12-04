@@ -1,5 +1,13 @@
 # nanobundle
 
+## 1.0.0-rc.4
+
+### Patch Changes
+
+- 7426fd6: fix build flags and help text
+- 1f5c2d3: fix sourcemap output path
+- e6d2499: fix dts build option
+
 ## 1.0.0-rc.3
 
 ### Patch Changes
