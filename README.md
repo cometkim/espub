@@ -11,6 +11,7 @@ Perfect build tool for libraries, powered by [esbuild]
 ## Features
 
 - Automatic entry points
+- TypeScript `NodeNext` resolution
 - Support for ESM and CommonJS
 - Support multple/complex entries by [Conditional Exports](https://nodejs.org/api/packages.html#conditional-exports)
 - Support [Import Maps](https://wicg.github.io/import-maps/)
@@ -60,6 +61,16 @@ You don't need to pass or set entry points in any configuration file, only you h
 
 nanobundle will automatically search for entry files in the `rootDir` and `outDir` you have. (defaults are `src` and `lib`, or respectively configurable by `tsconfig.json` or CLI arguments)
 
+```jsonc
+{
+  "main": "./lib/index.js", // => search src/index.cts, src/index.ts, etc
+  "module": "./lib/index.mjs", // => search src/index.mts, src/index.ts, etc
+  "exports": {
+    "./feature": "./lib/feature.js" // => search src/feature.cts, src/feature.ts, etc
+  }
+}
+```
+
 ### Build targets
 
 **nanobundle expects you to write a Web-compatible package.**
@@ -90,7 +101,7 @@ See [Node.js docs](https://nodejs.org/api/packages.html#packages_package_entry_p
 }
 ```
 
-You can use conditional exports for dealing with **"Dual Package Hazard"**. E.g. for supporting both CommonJS and ESM package.
+You can use conditional exports for dealing with **[Dual Package Hazard](https://nodejs.org/api/packages.html#dual-package-hazard)**. E.g. for supporting both CommonJS and ESM package.
 
 ```jsonc
 {
@@ -134,6 +145,31 @@ Dependencies specified with `--external` and Node.js internal APIs are always ex
 Given a `tsconfig.json` file in the cwd or `--tsconfig` option, nanobundle looks for options for TypeScript and JSX.
 
 nanobundle automatically generate TypeScript declaration as you specify `types` entries in the `package.json`, or you can disable it passing `--no-dts` flag.
+
+### Minification
+
+Any entires with `.min.(c|m)?js` will generate minified output.
+
+```jsonc
+{
+  "exports": "./index.min.js"  // will be minifies output
+}
+```
+
+### Using `process.env.NODE_ENV` with condition
+
+Conditional entries with Node.js community condition `production` or `development` will be built with injected `process.env.NODE_ENV` as its value.
+
+```jsonc
+{
+  "exports": {
+    ".": {
+      "development": "./dev.js",     // process.env.NODE_ENV === 'development'
+      "production": "./prod.min.js"  // process.env.NODE_ENV === 'production'
+    }
+  }
+}
+```
 
 ## Alternatives
 
