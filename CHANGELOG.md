@@ -1,5 +1,17 @@
 # nanobundle
 
+## 1.0.0-rc.0
+
+### Major Changes
+
+- c6fad2b: v1 features
+
+  - support multiple entries
+  - support nested conditional exports
+  - source inference from rootDir and outDir
+  - enable tree-shaking by default
+  - pretty reporter
+
 ## 0.0.28
 
 ### Patch Changes

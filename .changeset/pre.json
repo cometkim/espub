@@ -1,0 +1,10 @@
+{
+  "mode": "pre",
+  "tag": "rc",
+  "initialVersions": {
+    "nanobundle": "0.0.28"
+  },
+  "changesets": [
+    "tender-boxes-approve"
+  ]
+}
