@@ -1,5 +1,11 @@
 # nanobundle
 
+## 1.0.0-rc.6
+
+### Patch Changes
+
+- a57385d: fix result to be reported properly
+
 ## 1.0.0-rc.5
 
 ### Patch Changes
