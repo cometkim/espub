@@ -27,7 +27,8 @@ Perfect build tool for libraries, powered by [esbuild]
    {
      "name": "your-package-name",
 
-     "exports": {                   // export maps for multiple/conditional entries
+     // conditional exports for entries
+     "exports": {
        "./client": {
          "types": "./lib/client.d.ts",
          "require": "./lib/client.min.js",
@@ -42,7 +43,7 @@ Perfect build tool for libraries, powered by [esbuild]
      },
 
      "scripts": {
-       "build": "nanobundle build"  // compiles "source" to "main"/"module"
+       "build": "nanobundle build"
      }
    }
    ```
@@ -63,8 +64,8 @@ nanobundle will automatically search for entry files in the `rootDir` and `outDi
 
 ```jsonc
 {
-  "main": "./lib/index.js", // => search src/index.cts, src/index.ts, etc
-  "module": "./lib/index.mjs", // => search src/index.mts, src/index.ts, etc
+  "main": "./lib/index.js",         // => search src/index.cts, src/index.ts, etc
+  "module": "./lib/index.mjs",      // => search src/index.mts, src/index.ts, etc
   "exports": {
     "./feature": "./lib/feature.js" // => search src/feature.cts, src/feature.ts, etc
   }
