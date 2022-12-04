@@ -5,6 +5,7 @@
     "nanobundle": "0.0.28"
   },
   "changesets": [
+    "big-fishes-dance",
     "tender-boxes-approve"
   ]
 }

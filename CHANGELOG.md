@@ -1,5 +1,11 @@
 # nanobundle
 
+## 1.0.0-rc.1
+
+### Patch Changes
+
+- 8ad0d33: more debug logs
+
 ## 1.0.0-rc.0
 
 ### Major Changes
