@@ -91,11 +91,17 @@ export function parseConfig({
   if (manifest.engines?.node) {
     const version = semver.minVersion(manifest.engines.node);
     if (version) {
-      targets = [`node${version.major}`];
+      targets = [...targets, `node${version.major}`];
     }
   }
   if (platform === 'node' && !targets.some(target => target.startsWith('node'))) {
-    targets = ['node14'];
+    targets = [...targets, 'node14'];
+  }
+  if (platform === 'node') {
+    targets = targets.filter(target => target.startsWith('node'));
+  }
+  if (platform === 'browser') {
+    targets = targets.filter(target => !target.startsWith('node'));
   }
 
   let declaration = false;

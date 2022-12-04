@@ -15,22 +15,25 @@ Options
   --cwd              Use an alternative working directory
 
   --root-dir         Specify the path to resolve source entry (default: ./src)
-                     This can be overriden by tsconfig.json
+                     This can be configured by tsconfig.json
 
-  --out-dir          Specify the path to resolve source entry (default: .)
-                     This can be overriden by tsconfig.json
+  --out-dir          Specify the path to resolve source entry (default: ./lib)
+                     This can be configured by tsconfig.json
 
   --tsconfig         Specify the path to a custom tsconfig.json
 
-  --import-maps      Specify import map file path  (default: package.json)
+  --import-maps      Specify import map file path (default: package.json)
 
   --standalone       Embed external dependencies into the bundle (default: false)
 
   --external         Specify external dependencies to exclude from the bundle
 
-  --sourcemap        Generate source map (default: true)
+  --platform         Specify bundle target platform (default: "netural")
+                     One of "netural", "browser", "node" is allowed.
 
-  --dts              Generate TypeScript .d.ts files (default: true)
+  --no-sourcemap     Disable source map generation
+
+  --no-dts           Disable TypeScript .d.ts build
 
   --help             Display this message
 `, {

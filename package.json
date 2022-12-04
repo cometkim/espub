@@ -16,9 +16,9 @@
     "access": "public"
   },
   "scripts": {
-    "prepack": "yarn build",
+    "prepack": "yarn build:self",
     "build": "node build.mjs",
-    "build:self": "node bin.min.mjs build",
+    "build:self": "node bin.min.mjs build --platform=node",
     "dev": "vitest --watch",
     "test": "vitest",
     "changeset": "changeset"
