@@ -763,33 +763,43 @@ export class NanobundleEntryError extends NanobundleError {
 
 export const Message = {
   INVALID_MODULE_EXTENSION: () => dedent`
+
     Only ${formatUtils.path('.js')} or ${formatUtils.path('.mjs')} allowed for ${formatUtils.key('module')} entry.
+
   `,
 
   INVALID_TYPES_EXTENSION: () => dedent`
+
     Only ${formatUtils.path('.d.ts')} or ${formatUtils.path('.d.cts')} or ${formatUtils.path('.d.mts')} allowed for ${formatUtils.key('types')} entry.
+
   `,
 
   INVALID_BIN_EXTENSION: () => dedent`
+
     Only JavaScript files are allowed for ${formatUtils.path('bin')} entry.
+
   `,
 
   INVALID_PATH_KEY: (path: string) => dedent`
+
     Invalid entry path ${formatUtils.path(path)}, entry path should starts with ${formatUtils.literal('./')}.
 
   `,
 
   INVALID_DTS_FORMAT: () => dedent`
+
     ${formatUtils.key('types')} entry must be .d.ts file and cannot be nested!
 
   `,
 
   INVALID_DTS_ORDER: () => dedent`
+
     ${formatUtils.key('types')} entry must occur first in conditional exports for correct type resolution.
 
   `,
 
   UNDETEMINED_DTS_SOURCE: (key: string, requirePath: string, importPath: string) => dedent`
+
     ${formatUtils.key('types')} entry doesn't set properly for ${formatUtils.key(key)}:
 
         "require": "${requirePath}",
@@ -815,11 +825,14 @@ export const Message = {
   `,
 
   SUBPATH_PATTERN: (path: string) => dedent`
+
     Subpath pattern (${formatUtils.path(path)}) is not supported yet.
+
   `,
 
   CONFLICT_ENTRY: (a: EntryTarget, b: EntryTarget, hint: string) => formatUtils.format(
     dedent`
+
       Conflict found for ${formatUtils.path(a.entryPath)}
 
           %s
@@ -835,10 +848,11 @@ export const Message = {
     formatUtils.object({ module: a.module, platform: a.platform }),
     formatUtils.key(b.key),
     formatUtils.object({ module: b.module, platform: b.platform }),
-  ) + hint ? `Hint: ${hint}\n` : '',
+  ) + hint ? `Hint: ${hint}\n\n` : '',
 
   PRECEDENSE_ENTRY: (a: EntryTarget, b: EntryTarget) => formatUtils.format(
     dedent`
+
       Entry ${formatUtils.key(b.key)} will be ignored since
 
           %s
@@ -857,18 +871,21 @@ export const Message = {
   ),
 
   RECOMMEND_EXPORTS: () => dedent`
+
     Using ${formatUtils.key('exports')} field is highly recommended.
       See ${formatUtils.hyperlink('https://nodejs.org/api/packages.html')} for more detail.
 
   `,
 
   MODULE_NOT_RECOMMENDED: () => dedent`
+
     ${formatUtils.key('module')} field is not standard and may works in only legacy bundlers. Consider using ${formatUtils.key('exports')} instead.
       See ${formatUtils.hyperlink('https://nodejs.org/api/packages.html')} for more detail.
 
   `,
 
   TYPES_MAY_NOT_BE_RESOLVED: (key: string) => dedent`
+
     ${formatUtils.key(key)} entry might not be resolved correctly in ${formatUtils.key('moduleResolution')}: ${formatUtils.literal('Node16')}.
 
     Consider to specify ${formatUtils.key('types')} entry for it.

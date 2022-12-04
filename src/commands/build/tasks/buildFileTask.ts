@@ -34,7 +34,8 @@ export async function buildFileTask({
     const outputFile = entry.outputFile;
     if (sourceFile === outputFile) {
       context.reporter.debug(dedent`
-        Noop for ${formatUtils.key(entry.key)} because of source path and output path are the same.
+        noop for ${formatUtils.key(entry.key)} because of source path and output path are the same.
+          entry path: ${formatUtils.path(entry.entryPath)}
       `);
       continue;
     }

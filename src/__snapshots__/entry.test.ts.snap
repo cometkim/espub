@@ -1,20 +1,31 @@
 // Vitest Snapshot v1
 
-exports[`getEntriesFromContext > bin entry only accepts js 1`] = `"Only JavaScript files are allowed for bin entry."`;
+exports[`getEntriesFromContext > bin entry only accepts js 1`] = `
+"
+Only JavaScript files are allowed for bin entry.
+"
+`;
 
 exports[`getEntriesFromContext > throw if "main" and "module" is on conflict 1`] = `
 "Hint: Did you forgot to set \\"type\\" to 'module' for ESM-first approach?
+
 "
 `;
 
 exports[`getEntriesFromContext - in TypeScript project > types entry does not accept nesting 1`] = `
-"\\"types\\" entry must be .d.ts file and cannot be nested!
+"
+\\"types\\" entry must be .d.ts file and cannot be nested!
 "
 `;
 
-exports[`getEntriesFromContext - in TypeScript project > types entry must has .d.ts extension 1`] = `"Only .d.ts or .d.cts or .d.mts allowed for \\"types\\" entry."`;
+exports[`getEntriesFromContext - in TypeScript project > types entry must has .d.ts extension 1`] = `
+"
+Only .d.ts or .d.cts or .d.mts allowed for \\"types\\" entry.
+"
+`;
 
 exports[`getEntriesFromContext - in TypeScript project > types entry must occur first in conditional exports 1`] = `
-"\\"types\\" entry must occur first in conditional exports for correct type resolution.
+"
+\\"types\\" entry must occur first in conditional exports for correct type resolution.
 "
 `;
