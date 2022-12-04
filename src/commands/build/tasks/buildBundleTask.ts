@@ -42,6 +42,13 @@ export async function buildBundleTask({
   context,
   bundleEntries,
 }: BuildBundleTaskOptions): Promise<BuildBundleTaskResult> {
+  if (bundleEntries.length > 0) {
+    context.reporter.debug(`start buildBundleTask for ${bundleEntries.length} entries`);
+  } else {
+    context.reporter.debug('there are no js entries, skipped buildBundleTask');
+    return { outputFiles: [] };
+  }
+
   const importMaps = await loadImportMaps(context);
   const validImportMaps = await validateImportMaps({ context, importMaps });
   const bundleGroup = groupBundleEntries(bundleEntries);

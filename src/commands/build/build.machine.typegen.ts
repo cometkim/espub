@@ -41,6 +41,10 @@ export interface Typegen0 {
       type: "error.platform.buildMachine.buildEntries.buildFileEntries.build:invocation[0]";
       data: unknown;
     };
+    "error.platform.buildMachine.buildEntries.buildTypeEntries.build:invocation[0]": {
+      type: "error.platform.buildMachine.buildEntries.buildTypeEntries.build:invocation[0]";
+      data: unknown;
+    };
     "error.platform.buildMachine.chmodBinEntries:invocation[0]": {
       type: "error.platform.buildMachine.chmodBinEntries:invocation[0]";
       data: unknown;
@@ -70,9 +74,10 @@ export interface Typegen0 {
     delays: never;
   };
   eventsCausingActions: {
-    assignBuildBundleErrors: "error.platform.buildMachine.buildEntries.buildBundleEntries.build:invocation[0]";
-    assignBuildFileErrors: "error.platform.buildMachine.buildEntries.buildFileEntries.build:invocation[0]";
-    assignEmitErrors: "error.platform.buildMachine.emitEntries:invocation[0]";
+    assignBuildBundleError: "error.platform.buildMachine.buildEntries.buildBundleEntries.build:invocation[0]";
+    assignBuildFileError: "error.platform.buildMachine.buildEntries.buildFileEntries.build:invocation[0]";
+    assignBuildTypeError: "error.platform.buildMachine.buildEntries.buildTypeEntries.build:invocation[0]";
+    assignEmitError: "error.platform.buildMachine.emitEntries:invocation[0]";
     assignOutputFiles:
       | "done.invoke.buildMachine.buildEntries.buildBundleEntries.build:invocation[0]"
       | "done.invoke.buildMachine.buildEntries.buildFileEntries.build:invocation[0]"

@@ -28,6 +28,13 @@ export async function buildFileTask({
   context,
   fileEntries,
 }: BuildFileTaskOptions): Promise<BuildFileTaskResult> {
+  if (fileEntries.length > 0) {
+    context.reporter.debug(`start buildFileTask for ${fileEntries.length} entries`);
+  } else {
+    context.reporter.debug('there are no file entries, skipped buildFileTask');
+    return { outputFiles: [] };
+  }
+
   const subtasks: Array<Promise<BuildFileResult>> = [];
   for (const entry of fileEntries) {
     const sourceFile = entry.sourceFile[0];
