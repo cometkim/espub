@@ -35,7 +35,7 @@ export function hyperlink(hyperlink: string): string {
 }
 
 export function path(path: string): string {
-  return kleur.underline().yellow(path);
+  return kleur.underline().cyan(path);
 }
 
 export function literal(literal: unknown): string {
