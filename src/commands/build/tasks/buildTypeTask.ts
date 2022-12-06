@@ -59,11 +59,11 @@ export async function buildTypeTask({
     throw new BuildTypeTaskError(error);
   }
 
-  const result = await parseNative(context.tsconfigPath);
+  context.reporter.debug('loaded TypeScript compiler API version %s', ts.version);
 
+  const { result } = await parseNative(context.tsconfigPath);
   const compilerOptions: CompilerOptions = {
-    ...result.tsconfig.compilerOptions,
-
+    ...result.options,
     allowJs: true,
     composite: false,
     incremental: false,
@@ -81,16 +81,19 @@ export async function buildTypeTask({
   }
   compilerOptions.noEmit = false;
 
-  if (!(compilerOptions.moduleResolution === ts.ModuleResolutionKind.Node16 || compilerOptions.moduleResolution === ts.ModuleResolutionKind.NodeNext)) {
+  if (!(
+    compilerOptions.moduleResolution === ts.ModuleResolutionKind.Node16 ||
+    compilerOptions.moduleResolution === ts.ModuleResolutionKind.NodeNext
+  )) {
     context.reporter.warn(dedent`
-      nanobundle recommend to use ${formatUtils.literal('Node16')} or ${formatUtils.literal('NodeNext')} for ${formatUtils.key('compilerOptions.moduleResolution')}
+      nanobundle recommends to use ${formatUtils.literal('Node16')} or ${formatUtils.literal('NodeNext')} for ${formatUtils.key('compilerOptions.moduleResolution')}
 
-        Please see ${formatUtils.hyperlink('https://www.typescriptlang.org/docs/handbook/esm-node.html')} for usage.
+        See ${formatUtils.hyperlink('https://www.typescriptlang.org/docs/handbook/esm-node.html')} for usage.
 
     `);
   }
 
-  context.reporter.debug('ts compilerOptions %o', compilerOptions);
+  context.reporter.debug('loaded compilerOptions %o', compilerOptions);
 
   const outputMap = new Map<string, Uint8Array>();
   const host = ts.createCompilerHost(compilerOptions);

@@ -130,7 +130,7 @@ async function buildBundleGroup({
   }
 
   const entryPoints = Object.fromEntries(entryPointsEntries);
-  context.reporter.debug('entryPoints: %o', entryPoints);
+  context.reporter.debug('esbuild entryPoints: %o', entryPoints);
 
   const esbuildOptions: esbuild.BuildOptions = {
     entryPoints,

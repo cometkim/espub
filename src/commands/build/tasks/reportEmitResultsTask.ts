@@ -41,12 +41,12 @@ export async function reportEmitResultsTask({
   }
 
   if (typeOutputs.length > 0) {
-    for (const type of typeOutputs) {
-      context.reporter.info(dedent`
-        TypeScript declaration emitted to ${formatUtils.path(relPath(type.path))}
-      `);
-    }
-    console.log();
+    context.reporter.info(dedent`
+      TypeScript declarations generated:
+
+        📦 ${typeOutputs.map(output => formatUtils.path(relPath(output.path))).join('\n  📦 ')}
+
+    `);
   }
 
   if (fileOutputs.length > 0) {
