@@ -1,5 +1,13 @@
 # nanobundle
 
+## 1.0.0-rc.8
+
+### Patch Changes
+
+- a414231: change pathLike string colors"
+- d4e84bc: update depdencies
+- 4918a88: Fix TypeScript declartion build and prettify reporting
+
 ## 1.0.0-rc.7
 
 ### Patch Changes
