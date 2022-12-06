@@ -220,11 +220,7 @@ export const buildMachine =
     },
   }, {
     guards: {
-      hasBuildErrors: ctx => Boolean(
-        ctx.errors.buildBundle ||
-        ctx.errors.buildFile ||
-        ctx.errors.emit
-      ),
+      hasBuildErrors: ctx => Object.values(ctx.errors).some(Boolean),
       hasBinEntries: ctx => ctx.entries
         .some(entry => entry.key.startsWith('bin')),
     },
@@ -249,7 +245,7 @@ export const buildMachine =
           }
         }
         if (ctx.errors.buildType) {
-          ctx.root.reporter.captureException(ctx.errors.buildType.cause);
+          ctx.root.reporter.captureException(ctx.errors.buildType);
         }
       },
       assignBundleOutputs: assign({
@@ -282,11 +278,13 @@ export const buildMachine =
           buildFile: event.data as BuildFileTaskError,
         }),
       }),
-      assignBuildTypeError: assign({
-        errors: (ctx, event) => ({
-          ...ctx.errors,
-          buildType: event.data as BuildTypeTaskError,
-        }),
+      assignBuildTypeError: assign((ctx, event) => {
+        return {
+          errors: {
+            ...ctx.errors,
+            buildType: event.data as BuildTypeTaskError,
+          },
+        };
       }),
       assignEmitError: assign({
         errors: (ctx, event) => ({
