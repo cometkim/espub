@@ -2,6 +2,7 @@ import { formatWithOptions } from 'node:util';
 import kleur from 'kleur';
 
 import { colorEnabled } from './formatUtils';
+import { NanobundleError } from './errors';
 
 export interface Reporter {
   debug(msg: string, ...args: any[]): void;
@@ -86,7 +87,9 @@ export class ConsoleReporter implements Reporter {
 
   captureException(exn: unknown): void {
     let formatted;
-    if (exn instanceof Error) {
+    if (exn instanceof NanobundleError && exn.message) {
+      formatted = exn.message;
+    } else if (exn instanceof Error) {
       formatted = formatWithOptions(
         { colors: this.color },
         exn.stack,
