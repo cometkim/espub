@@ -1,5 +1,11 @@
 # nanobundle
 
+## 1.0.0-rc.7
+
+### Patch Changes
+
+- 67b74ef: Fix TypeScript build task
+
 ## 1.0.0-rc.6
 
 ### Patch Changes
