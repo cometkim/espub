@@ -1,6 +1,6 @@
 {
   "name": "nanobundle",
-  "version": "1.0.0-rc.8",
+  "version": "1.0.0-rc.9",
   "type": "module",
   "license": "MIT",
   "bin": "./bin.min.mjs",
