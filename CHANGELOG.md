@@ -1,5 +1,11 @@
 # nanobundle
 
+## 1.0.0-rc.9
+
+### Patch Changes
+
+- a7c3312: Fix internal error handling
+
 ## 1.0.0-rc.8
 
 ### Patch Changes
