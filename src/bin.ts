@@ -8,7 +8,7 @@ import { cli } from './cli';
 import { ConsoleReporter } from './reporter';
 import { loadTargets } from './target';
 import { loadManifest } from './manifest';
-import { parseConfig } from './context';
+import { NanobundleConfigError, parseConfig } from './context';
 import { getEntriesFromContext } from './entry';
 import * as formatUtils from './formatUtils';
 import { NanobundleError } from './errors';
@@ -75,6 +75,19 @@ try {
         reporter,
         resolve,
       });
+
+      if (
+        entries.some(entry => entry.module === 'dts') &&
+        tsconfigPath == null
+      ) {
+        throw new NanobundleConfigError(dedent`
+          You have set ${formatUtils.key('types')} entry. But no ${formatUtils.path('tsconfig.json')} found.
+
+            Please create ${formatUtils.path('tsconfig.json')} file in the current directory, or pass its path to ${formatUtils.command('--tsconfig')} argument.
+
+        `);
+      }
+
       reporter.debug(`parsed entries %o`, entries);
 
       await buildCommand({ context, entries });
@@ -91,7 +104,9 @@ try {
   }
 } catch (error) {
   if (error instanceof NanobundleError) {
-    reporter.error(error.message);
+    if (error.message) {
+      reporter.error(error.message);
+    }
   } else {
     reporter.captureException(error);
   }

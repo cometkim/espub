@@ -9,8 +9,9 @@ import { type Entry } from './entry';
 import { type Reporter } from './reporter';
 import { type PathResolver } from './common';
 import * as formatUtils from './formatUtils';
+import { NanobundleError } from './errors';
 
-export class NanobundleConfigError extends Error {
+export class NanobundleConfigError extends NanobundleError {
   name = 'NanobundleConfigError';
 }
 

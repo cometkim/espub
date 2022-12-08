@@ -12,5 +12,7 @@
   },
   "include": [
     "src"
+  ],
+  "exclude": [
   ]
 }

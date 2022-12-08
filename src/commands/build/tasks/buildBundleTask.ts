@@ -5,6 +5,7 @@ import dedent from 'string-dedent';
 import { type Context } from '../../../context';
 import { NanobundleError } from '../../../errors';
 import * as fsUtils from '../../../fsUtils';
+import * as formatUtils from '../../../formatUtils';
 import {
   groupBundleEntries,
   optionsFromHash,
@@ -117,10 +118,16 @@ async function buildBundleGroup({
     if (!sourceFile) {
       // FIXME
       throw new BuildBundleTaskError(dedent`
-        Source file not exist.
+        Source file doesn not exist.
 
-        Expected one of
-          - ${entry.sourceFile.join('\n' + '  '.repeat(10) + ' -')}
+          Expected one of
+            - ${entry.sourceFile.join('\n    - ')}
+
+          But no matched files found.
+
+        Please check your ${formatUtils.key('rootDir')} or ${formatUtils.key('outDir')} and try again.
+        You can configure it in your ${formatUtils.path('tsconfig.json')}, or in CLI by ${formatUtils.command('--root-dir')} and ${formatUtils.command('--out-dir')} argument.
+
       `, []);
     }
     entryPointsEntries.push([
