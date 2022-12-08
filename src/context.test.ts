@@ -64,7 +64,7 @@ describe('parseConfig', () => {
       standalone: false,
       rootDir: 'src',
       outDir: 'lib',
-      tsconfigPath: 'tsconfig.json',
+      tsconfigPath: undefined,
       importMapsPath: 'package.json',
       externalDependencies: [],
       forceExternalDependencies: [],
@@ -97,7 +97,7 @@ describe('parseConfig', () => {
         standalone: false,
         rootDir: '.',
         outDir: 'lib',
-        tsconfigPath: 'tsconfig.json',
+        tsconfigPath: undefined,
         importMapsPath: 'package.json',
         externalDependencies: [],
         forceExternalDependencies: [],
@@ -129,7 +129,7 @@ describe('parseConfig', () => {
         standalone: false,
         rootDir: 'src',
         outDir: '.',
-        tsconfigPath: 'tsconfig.json',
+        tsconfigPath: undefined,
         importMapsPath: 'package.json',
         externalDependencies: [],
         forceExternalDependencies: [],
@@ -181,7 +181,7 @@ describe('parseConfig', () => {
         standalone: false,
         rootDir: 'src',
         outDir: 'lib',
-        tsconfigPath: 'tsconfig.json',
+        tsconfigPath: undefined,
         importMapsPath: 'package.json',
         externalDependencies: [],
         forceExternalDependencies: [],
@@ -215,7 +215,7 @@ describe('parseConfig', () => {
         standalone: false,
         rootDir: 'src',
         outDir: 'lib',
-        tsconfigPath: 'tsconfig.json',
+        tsconfigPath: undefined,
         importMapsPath: 'package.json',
         externalDependencies: [],
         forceExternalDependencies: [],
@@ -243,6 +243,7 @@ describe('parseConfig', () => {
         targets: defaultTargets,
         reporter,
         resolve,
+        tsconfigPath: 'tsconfig.json',
         tsconfig: defaultTsConfig,
       });
 
@@ -273,6 +274,7 @@ describe('parseConfig', () => {
         targets: defaultTargets,
         reporter,
         resolve,
+        tsconfigPath: 'tsconfig.json',
         tsconfig: {
           compilerOptions: {
             ...defaultTsConfig.compilerOptions,
@@ -312,6 +314,7 @@ describe('parseConfig', () => {
         targets: defaultTargets,
         reporter,
         resolve,
+        tsconfigPath: 'tsconfig.json',
         tsconfig: defaultTsConfig,
       });
 
@@ -342,6 +345,7 @@ describe('parseConfig', () => {
         targets: defaultTargets,
         reporter,
         resolve,
+        tsconfigPath: 'tsconfig.json',
         tsconfig: {
           ...defaultTsConfig,
           compilerOptions: {
@@ -383,6 +387,7 @@ describe('parseConfig', () => {
         targets: defaultTargets,
         reporter,
         resolve,
+        tsconfigPath: 'tsconfig.json',
         tsconfig: {
           ...defaultTsConfig,
           compilerOptions: {

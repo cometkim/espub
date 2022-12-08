@@ -1000,6 +1000,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
       manifest,
       reporter,
       resolve,
+      tsconfigPath: 'tsconfig.json',
       tsconfig: {},
     });
     const getEntries = () => getEntriesFromContext({
@@ -1501,6 +1502,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
         manifest,
         reporter,
         resolve,
+        tsconfigPath: 'tsconfig.json',
         tsconfig: {
           compilerOptions: {
             rootDir: '.',
@@ -1597,6 +1599,7 @@ describe('common usecases', () => {
       manifest,
       reporter,
       resolve,
+      tsconfigPath: 'tsconfig.json',
       tsconfig: {},
     });
     const getEntries = () => getEntriesFromContext({

@@ -50,7 +50,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
     outDir,
     sourcemap,
     manifest,
-    declaration,
+    tsconfigPath,
     platform: defaultPlatform,
     module: defaultModule,
   } = context;
@@ -66,7 +66,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
   const resolvedRootDir = resolvePath(rootDir);
   const resolvedOutDir = resolvePath(outDir);
 
-  const useTsSource = declaration;
+  const useTsSource = tsconfigPath != null;
   const useJsSource = !(useTsSource && resolvedRootDir === resolvedOutDir);
 
   const entryMap = new Map<Entry["entryPath"], Entry>();

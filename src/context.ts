@@ -24,7 +24,7 @@ export type Context = {
   standalone: boolean,
   rootDir: string,
   outDir: string,
-  tsconfigPath: string,
+  tsconfigPath?: string,
   importMapsPath: string,
   externalDependencies: string[],
   forceExternalDependencies: string[],
@@ -56,7 +56,7 @@ export function parseConfig({
   const cwd = path.resolve(flags.cwd);
   const sourcemap = !flags.noSourcemap;
   const standalone = flags.standalone;
-  const tsconfigPath = resolvedTsConfigPath || flags.tsconfig;
+  const tsconfigPath = resolvedTsConfigPath;
   const importMapsPath = flags.importMaps;
   const forceExternalDependencies = flags.external;
   const externalDependencies = [

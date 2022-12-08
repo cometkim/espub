@@ -39,6 +39,11 @@ export async function buildTypeTask({
     return { outputFiles: [] };
   }
 
+  if (!context.tsconfigPath) {
+    context.reporter.debug(`buildTypeTask skipped since no tsconfig.json provided`);
+    return { outputFiles: [] };
+  }
+
   if (typeEntries.length > 0) {
     context.reporter.debug(`start buildTypeTask for ${typeEntries.length} entries`);
   } else {
