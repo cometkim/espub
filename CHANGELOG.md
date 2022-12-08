@@ -1,5 +1,13 @@
 # nanobundle
 
+## 1.0.0-rc.10
+
+### Patch Changes
+
+- 7af4bf4: polished error messages and validation
+- c2d75a8: fix boolean flag handling
+- 31124fe: fix to --no-dts properly skip buildTypeTask
+
 ## 1.0.0-rc.9
 
 ### Patch Changes
