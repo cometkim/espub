@@ -68,7 +68,7 @@ try {
         resolve,
         reporter,
       });
-      reporter.debug(`normalized targets to ${context.targets.join(', ')}`);
+      reporter.debug(`loaded context %o`, context);
 
       const entries = getEntriesFromContext({
         context,
