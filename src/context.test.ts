@@ -28,8 +28,8 @@ describe('parseConfig', () => {
     importMaps: 'package.json',
     external: [],
     standalone: false,
-    noDts: false,
-    noSourcemap: false,
+    dts: true,
+    sourcemap: true,
   };
   const defaultManifest: Manifest = {
     name: 'package'
@@ -306,7 +306,7 @@ describe('parseConfig', () => {
       const result = parseConfig({
         flags: {
           ...defaultFlags,
-          noDts: true,
+          dts: false,
         },
         manifest: defaultManifest,
         targets: defaultTargets,

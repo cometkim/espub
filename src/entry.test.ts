@@ -40,9 +40,8 @@ describe('getEntriesFromContext', () => {
     importMaps: 'package.json',
     external: [],
     standalone: false,
-    noMinify: false,
-    noSourcemap: false,
-    noDts: true,
+    sourcemap: true,
+    dts: false,
     platform: undefined,
   };
 
@@ -744,9 +743,8 @@ describe('getEntriesFromContext', () => {
         importMaps: 'package.json',
         external: [],
         standalone: false,
-        noMinify: false,
-        noSourcemap: false,
-        noDts: true,
+        sourcemap: true,
+        dts: false,
         platform: undefined,
       };
       const reporter = new ViReporter();
@@ -989,9 +987,8 @@ describe('getEntriesFromContext - in TypeScript project', () => {
     importMaps: 'package.json',
     external: [],
     standalone: false,
-    noMinify: false,
-    noSourcemap: false,
-    noDts: false,
+    sourcemap: true,
+    dts: true,
     platform: undefined,
   };
 
@@ -1587,9 +1584,8 @@ describe('common usecases', () => {
     importMaps: 'package.json',
     external: [],
     standalone: false,
-    noMinify: false,
-    noSourcemap: false,
-    noDts: false,
+    sourcemap: true,
+    dts: true,
     platform: undefined,
   };
 

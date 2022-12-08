@@ -69,13 +69,13 @@ Options
       type: 'boolean',
       default: false,
     },
-    noSourcemap: {
+    sourcemap: {
       type: 'boolean',
-      default: false,
+      default: true,
     },
-    noDts: {
+    dts: {
       type: 'boolean',
-      default: false,
+      default: true,
     },
   },
 });
