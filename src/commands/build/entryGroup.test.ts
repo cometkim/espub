@@ -1,4 +1,4 @@
-import { test, expect } from "vitest";
+import { test, expect } from 'vitest';
 
 import type { BundleEntry, BundleEntryGroup } from './entryGroup';
 import { groupBundleEntries, hashBundleOptions } from './entryGroup';

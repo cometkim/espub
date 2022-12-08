@@ -1,18 +1,13 @@
 import * as fs from 'fs/promises';
 
 import { type Context } from '../../context';
-import * as formatUtils from '../../formatUtils';
 import * as fsUtils from '../../fsUtils';
+import { type ConditionalImports } from '../../manifest';
 
-export type ImportMapPlatformFlag = (
-  | 'default'
-  | 'node'
-);
+import { type BundleOptions } from './entryGroup';
 
 export type NodeImportMaps = {
-  imports: Record<string, string | {
-    [platform in ImportMapPlatformFlag]?: string
-  }>,
+  imports: ConditionalImports,
 };
 export type ValidNodeImportMaps = NodeImportMaps & { __BRAND__: 'ValidNodeImportMaps' };
 export type ImportMaps = {
@@ -60,29 +55,12 @@ export async function validateImportMaps({
 
 export function normalizeImportMaps(
   importMaps: ValidNodeImportMaps,
-  platform: ImportMapPlatformFlag,
+  bundleOptions: BundleOptions,
 ): ImportMaps {
   const result: ImportMaps = {
     imports: {},
   };
-  for (const [key, value] of Object.entries(importMaps.imports)) {
-    if (typeof value === 'string') {
-      result.imports[key] = value;
-    } else if (typeof value === 'object') {
-      if (platform === 'default') {
-        if (value.default) {
-          result.imports[key] = value.default;
-        }
-        // noop for the web target, if there is no default mapping
-        // explicit mappings only required for the node target
-      } else if (platform === 'node' && value.node) {
-        result.imports[key] = value.node;
-      } else if (platform === 'node' && value.default) {
-        result.imports[key] = value.default;
-      } else {
-        throw new Error(`Couldn't resolve import maps entry "${key}" for "${formatUtils.platform(platform)}" platform condition`);
-      }
-    }
+  const { mode, module, platform } = bundleOptions;
+  function normalize() {
   }
-  return result;
 }

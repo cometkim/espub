@@ -163,9 +163,8 @@ async function buildBundleGroup({
     };
   }
 
-  const importMapsCondition = options.platform === 'node' ? 'node' : 'default';
-  const importMaps = normalizeImportMaps(validImportMaps, importMapsCondition);
-  const importMapsPlugin = makeImportMapsPlugin({ context, importMaps, platform: importMapsCondition });
+  const importMaps = normalizeImportMaps(validImportMaps, options);
+  const importMapsPlugin = makeImportMapsPlugin({ context, importMaps });
   esbuildOptions.plugins?.push(importMapsPlugin);
 
   const embedPlugin = makeEmbedPlugin({ context });

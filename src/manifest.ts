@@ -27,7 +27,10 @@ export type Manifest = {
   types?: string,
 
   // Export maps
-  exports?: ConditionalExport,
+  exports?: ConditionalExports,
+
+  // Subpath imports
+  imports?: ConditionalImports,
 
   dependencies?: {
     [name: string]: string,
@@ -46,26 +49,41 @@ export type Manifest = {
 
 // See https://nodejs.org/api/packages.html#packages_nested_conditions
 // What a mess :/
-export type ConditionalExport = (
+export type ConditionalExports = (
   | string
   | {
-    [module: string]: ConditionalExport,
+    [module: string]: ConditionalExports,
   }
   | {
-    'import'?: ConditionalExport,
-    'require'?: ConditionalExport,
-    'node'?: ConditionalExport,
-    'node-addons'?: ConditionalExport,
-    'default'?: ConditionalExport,
+    'import'?: ConditionalExports,
+    'require'?: ConditionalExports,
+    'node'?: ConditionalExports,
+    'node-addons'?: ConditionalExports,
+    'default'?: ConditionalExports,
 
     // community conditions definitions
     // See https://nodejs.org/api/packages.html#packages_community_conditions_definitions
     // See also https://devblogs.microsoft.com/typescript/announcing-typescript-4-7/#package-json-exports-imports-and-self-referencing
-    'types'?: ConditionalExport,
-    'deno'?: ConditionalExport,
-    'browser'?: ConditionalExport,
-    'development'?: ConditionalExport,
-    'production'?: ConditionalExport,
+    'types'?: ConditionalExports,
+    'deno'?: ConditionalExports,
+    'browser'?: ConditionalExports,
+    'development'?: ConditionalExports,
+    'production'?: ConditionalExports,
+  }
+);
+
+export type ConditionalImports = (
+  | {
+    [module: string]: ConditionalImports,
+  }
+  | {
+    'import'?: ConditionalImports,
+    'require'?: ConditionalImports,
+    'node'?: ConditionalImports,
+    'default'?: ConditionalImports,
+    'browser'?: ConditionalImports,
+    'development'?: ConditionalImports,
+    'production'?: ConditionalImports,
   }
 );
 

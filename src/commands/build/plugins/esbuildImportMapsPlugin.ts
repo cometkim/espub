@@ -2,27 +2,22 @@ import { type Plugin } from 'esbuild';
 
 import { type Context } from '../../../context';
 import * as fsUtils from '../../../fsUtils';
-import {
-  type ImportMaps,
-  type ImportMapPlatformFlag,
-} from '../importMaps';
+import { type ImportMaps } from '../importMaps';
 
 type PluginOptions = {
   context: Context,
-  platform: ImportMapPlatformFlag,
   importMaps: ImportMaps,
 };
 
 export function makePlugin({
   context,
-  platform,
   importMaps: {
     imports,
   },
 }: PluginOptions): Plugin {
   const isExternalPath = (path: string) => !fsUtils.isFileSystemReference(path);
   return {
-    name: `@nanobundle/import-maps/${platform}`,
+    name: `@nanobundle/import-maps`,
     setup(build) {
       build.onResolve({ filter: /.*/ }, args => {
         if (imports[args.path]) {

@@ -2,7 +2,7 @@ import * as path from 'node:path';
 import dedent from 'string-dedent';
 import kleur from 'kleur';
 
-import { type ConditionalExport } from './manifest';
+import { type ConditionalExports } from './manifest';
 import { type Context } from './context';
 import { type Reporter } from './reporter';
 import * as formatUtils from './formatUtils';
@@ -411,7 +411,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
     mode: Entry['mode'],
     module: Entry['module'],
     preferredModule?: 'commonjs' | 'esmodule',
-    entryPath: ConditionalExport,
+    entryPath: ConditionalExports,
   }) {
     if (typeof entryPath === 'string') {
       if (parentKey === 'types') {
@@ -512,7 +512,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
         // has leaf default entry
         if (useTsSource && isLeaf) {
           if (typeof entryPath.default === 'string') {
-            const dtsExport: [string, ConditionalExport] = [
+            const dtsExport: [string, ConditionalExports] = [
               'types$implicit',
               inferDtsEntry(entryPath.default),
             ];
@@ -522,19 +522,19 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
               Message.UNDETEMINED_DTS_SOURCE(key, entryPath.require, entryPath.import),
             );
           } else if (typeof entryPath.require === 'string') {
-            const dtsExport: [string, ConditionalExport] = [
+            const dtsExport: [string, ConditionalExports] = [
               'types$implicit',
               inferDtsEntry(entryPath.require),
             ];
             entries = [dtsExport, ...entries];
           } else if (typeof entryPath.import === 'string') {
-            const dtsExport: [string, ConditionalExport] = [
+            const dtsExport: [string, ConditionalExports] = [
               'types$implicit',
               inferDtsEntry(entryPath.import),
             ];
             entries = [dtsExport, ...entries];
           } else if (preferredModule) {
-            const dtsExport: [string, ConditionalExport] = [
+            const dtsExport: [string, ConditionalExports] = [
               'types$implicit',
               inferDtsEntry(firstLeaf[1] as string),
             ];
