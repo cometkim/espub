@@ -51,6 +51,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
     sourcemap,
     manifest,
     tsconfigPath,
+    jsx,
     platform: defaultPlatform,
     module: defaultModule,
   } = context;
@@ -66,6 +67,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
   const resolvedRootDir = resolvePath(rootDir);
   const resolvedOutDir = resolvePath(outDir);
 
+  const useJsx = jsx != null;
   const useTsSource = tsconfigPath != null;
   const useJsSource = !(useTsSource && resolvedRootDir === resolvedOutDir);
 
@@ -145,7 +147,6 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
       resolvedRootDir,
     );
 
-
     const minifyPattern = /\.min(?<ext>\.(m|c)?js)$/;
     const minifyMatch = resolvedSourceFile.match(minifyPattern);
     const minify = defaultMinify || Boolean(minifyMatch);
@@ -157,16 +158,24 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
     if (!resolvedOutputFile.endsWith('js')) {
       switch (module) {
         case 'commonjs': {
+          useJsx && useTsSource && sourceFileCandidates.add(`${resolvedSourceFile}.ctsx`);
           useTsSource && sourceFileCandidates.add(`${resolvedSourceFile}.cts`);
+          useJsx && useJsSource && sourceFileCandidates.add(`${resolvedSourceFile}.cjsx`);
           useJsSource && sourceFileCandidates.add(`${resolvedSourceFile}.cjs`);
+          useJsx && useTsSource && sourceFileCandidates.add(`${resolvedSourceFile}.tsx`);
           useTsSource && sourceFileCandidates.add(`${resolvedSourceFile}.ts`);
+          useJsx && useJsSource && sourceFileCandidates.add(`${resolvedSourceFile}.jsx`);
           useJsSource && sourceFileCandidates.add(`${resolvedSourceFile}.js`);
           break;
         }
         case 'esmodule': {
+          useJsx && useTsSource && sourceFileCandidates.add(`${resolvedSourceFile}.mtsx`);
           useTsSource && sourceFileCandidates.add(`${resolvedSourceFile}.mts`);
+          useJsx && useJsSource && sourceFileCandidates.add(`${resolvedSourceFile}.mjsx`);
           useJsSource && sourceFileCandidates.add(`${resolvedSourceFile}.mjs`);
+          useJsx && useTsSource && sourceFileCandidates.add(`${resolvedSourceFile}.tsx`);
           useTsSource && sourceFileCandidates.add(`${resolvedSourceFile}.ts`);
+          useJsx && useJsSource && sourceFileCandidates.add(`${resolvedSourceFile}.jsx`);
           useJsSource && sourceFileCandidates.add(`${resolvedSourceFile}.js`);
           break;
         }
@@ -175,27 +184,38 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
 
     switch (module) {
       case 'commonjs': {
-        useTsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?js$/, ".cts"));
-        useJsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?js$/, ".cjs"));
-        useTsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?js$/, ".ts"));
-        useJsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?js$/, ".js"));
+        useJsx && useTsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?js$/, '.ctsx'));
+        useTsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?js$/, '.cts'));
+        useJsx && useJsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?js$/, '.cjsx'));
+        useJsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?js$/, '.cjs'));
+        useJsx && useTsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?js$/, '.tsx'));
+        useTsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?js$/, '.ts'));
+        useJsx && useJsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?js$/, '.jsx'));
+        useJsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?js$/, '.js'));
         break;
       }
       case 'esmodule': {
-        useTsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?js$/, ".mts"));
-        useJsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?js$/, ".mjs"));
-        useTsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?js$/, ".ts"));
-        useJsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?js$/, ".js"));
+        useJsx && useTsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?js$/, '.mtsx'));
+        useTsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?js$/, '.mts'));
+        useJsx && useJsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?js$/, '.mjsx'));
+        useJsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?js$/, '.mjs'));
+        useJsx && useTsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?js$/, '.tsx'));
+        useTsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?js$/, '.ts'));
+        useJsx && useJsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?js$/, '.jsx'));
+        useJsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?js$/, '.js'));
         break;
       }
       case 'dts': {
         if (!useTsSource) break;
         if (preferredModule === 'commonjs') {
+          useJsx && sourceFileCandidates.add(resolvedSourceFile.replace(/\.d\.c?ts$/, '.ctsx'));
           sourceFileCandidates.add(resolvedSourceFile.replace(/\.d\.c?ts$/, '.cts'));
         }
         if (preferredModule === 'esmodule') {
+          useJsx && sourceFileCandidates.add(resolvedSourceFile.replace(/\.d\.m?ts$/, '.mtsx'));
           sourceFileCandidates.add(resolvedSourceFile.replace(/\.d\.m?ts$/, '.mts'));
         }
+        useJsx && sourceFileCandidates.add(resolvedSourceFile.replace(/\.d\.(m|c)?ts$/, '.tsx'));
         sourceFileCandidates.add(resolvedSourceFile.replace(/\.d\.(m|c)?ts$/, '.ts'));
         break;
       }

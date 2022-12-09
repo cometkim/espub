@@ -143,6 +143,8 @@ async function buildBundleGroup({
     entryPoints,
     outdir: baseDir,
     bundle: true,
+    jsx: context.jsx ?? undefined,
+    jsxDev: context.jsxDev,
     treeShaking: true,
     target: context.targets,
     format: options.module === 'commonjs' ? 'cjs' : 'esm',
