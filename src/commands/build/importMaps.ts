@@ -7,7 +7,7 @@ import { type ConditionalImports } from '../../manifest';
 import { type BundleOptions } from './entryGroup';
 
 export type NodeImportMaps = {
-  imports: ConditionalImports,
+  imports: Exclude<ConditionalImports, string>,
 };
 export type ValidNodeImportMaps = NodeImportMaps & { __BRAND__: 'ValidNodeImportMaps' };
 export type ImportMaps = {
@@ -57,10 +57,128 @@ export function normalizeImportMaps(
   importMaps: ValidNodeImportMaps,
   bundleOptions: BundleOptions,
 ): ImportMaps {
+  function normalize(
+    rootKey: string,
+    imports: ConditionalImports,
+    mode: BundleOptions['mode'],
+    module: BundleOptions['module'],
+    platform: BundleOptions['platform'],
+  ): string {
+    if (typeof imports === 'string') {
+      return imports;
+
+    } else {
+      for (const [key, value] of Object.entries(imports)) {
+        if (key === 'node' && platform === 'node') {
+          if (typeof value === 'string') {
+            return value;
+          } else {
+            return normalize(
+              rootKey,
+              value,
+              mode,
+              module,
+              'node',
+            );
+          }
+        }
+        if (key === 'browser' && platform === 'browser') {
+          if (typeof value === 'string') {
+            return value;
+          } else {
+            return normalize(
+              rootKey,
+              imports,
+              mode,
+              module,
+              'browser',
+            );
+          }
+        }
+        if (key === 'require' && module === 'commonjs') {
+          if (typeof value === 'string') {
+            return value;
+          } else {
+            return normalize(
+              rootKey,
+              imports,
+              mode,
+              'commonjs',
+              platform,
+            );
+          }
+        }
+        if (key === 'import' && module === 'esmodule') {
+          if (typeof value === 'string') {
+            return value;
+          } else {
+            return normalize(
+              rootKey,
+              imports,
+              mode,
+              'esmodule',
+              platform,
+            );
+          }
+        }
+        if (key === 'development' && mode === 'development') {
+          if (typeof value === 'string') {
+            return value;
+          } else {
+            return normalize(
+              rootKey,
+              imports,
+              'development',
+              module,
+              platform,
+            );
+          }
+        }
+        if (key === 'production' && mode === 'production') {
+          if (typeof value === 'string') {
+            return value;
+          } else {
+            return normalize(
+              rootKey,
+              imports,
+              'production',
+              module,
+              platform,
+            );
+          }
+        }
+        if (key === 'default') {
+          if (typeof value === 'string') {
+            return value;
+          } else {
+            return normalize(
+              rootKey,
+              imports,
+              mode,
+              module,
+              platform,
+            );
+          }
+        }
+        continue;
+      }
+      return rootKey;
+    }
+  }
+
+  const { mode, module, platform } = bundleOptions;
   const result: ImportMaps = {
     imports: {},
   };
-  const { mode, module, platform } = bundleOptions;
-  function normalize() {
+  for (const [key, imports] of Object.entries(importMaps.imports)) {
+    result.imports[key] = normalize(
+      key,
+      imports,
+      mode,
+      module,
+      platform,
+    );
   }
+
+  return result;
 }

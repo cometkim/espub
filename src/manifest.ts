@@ -73,6 +73,7 @@ export type ConditionalExports = (
 );
 
 export type ConditionalImports = (
+  | string
   | {
     [module: string]: ConditionalImports,
   }
