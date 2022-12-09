@@ -21,6 +21,8 @@ export type Context = {
   platform: Entry['platform'],
   sourcemap: boolean,
   declaration: boolean,
+  jsx: 'preserve' | 'automatic' | null,
+  jsxDev: boolean,
   standalone: boolean,
   rootDir: string,
   outDir: string,
@@ -119,12 +121,33 @@ export function parseConfig({
     `,)
   }
 
+  let jsx: Context['jsx'] = null;
+  if (['preserve', 'react', 'react-native'].includes(tsconfig?.compilerOptions?.jsx)) {
+    jsx = 'preserve';
+  }
+  if (['react-jsx', 'react-jsxdev'].includes(tsconfig?.compilerOptions?.jsx)) {
+    jsx = 'automatic';
+  }
+  if (flags.jsx === 'preserve') {
+    jsx = 'preserve';
+  }
+  if (flags.jsx === 'automatic') {
+    jsx = 'automatic';
+  }
+
+  let jsxDev = false;
+  if (!flags.jsx && tsconfig?.compilerOptions?.jsx === 'react-jsxdev') {
+    jsxDev = true;
+  }
+
   return {
     cwd,
     module,
     platform,
     sourcemap,
     declaration,
+    jsx,
+    jsxDev,
     standalone,
     rootDir,
     outDir,

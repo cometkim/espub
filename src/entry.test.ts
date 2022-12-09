@@ -39,6 +39,7 @@ describe('getEntriesFromContext', () => {
     tsconfig: 'tsconfig.json',
     importMaps: 'package.json',
     external: [],
+    jsx: undefined,
     standalone: false,
     sourcemap: true,
     dts: false,
@@ -742,6 +743,7 @@ describe('getEntriesFromContext', () => {
         tsconfig: 'tsconfig.json',
         importMaps: 'package.json',
         external: [],
+        jsx: undefined,
         standalone: false,
         sourcemap: true,
         dts: false,
@@ -976,6 +978,73 @@ describe('getEntriesFromContext', () => {
       ]);
     });
   });
+
+  describe('getEntriesFromContext - jsx=preserve', () => {
+    const getEntriesFromManifest = (manifest: Manifest) => {
+      const reporter = new ViReporter();
+      const context = parseConfig({
+        flags: {
+          ...defaultFlags,
+          jsx: 'preserve',
+        },
+        targets: defaultTargets,
+        manifest,
+        reporter,
+        resolve,
+      });
+      const getEntries = () => getEntriesFromContext({
+        context,
+        resolve,
+        reporter,
+      });
+      return { getEntries, context, reporter };
+    };
+
+    test('conditional exports', () => {
+      expect(
+        getEntriesFromManifest({
+          name: 'my-package',
+          exports: {
+            require: './lib/index.cjs',
+            import: './lib/index.mjs',
+          },
+        }).getEntries(),
+      ).toEqual<Entry[]>([
+        {
+          key: 'exports.require',
+          module: 'commonjs',
+          mode: undefined,
+          minify: false,
+          sourcemap: true,
+          platform: 'neutral',
+          entryPath: './lib/index.cjs',
+          sourceFile: [
+            '/project/src/index.cjsx',
+            '/project/src/index.cjs',
+            '/project/src/index.jsx',
+            '/project/src/index.js',
+          ],
+          outputFile: '/project/lib/index.cjs',
+        },
+        {
+          key: 'exports.import',
+          module: 'esmodule',
+          mode: undefined,
+          minify: false,
+          sourcemap: true,
+          platform: 'neutral',
+          entryPath: './lib/index.mjs',
+          sourceFile: [
+            '/project/src/index.mjsx',
+            '/project/src/index.mjs',
+            '/project/src/index.jsx',
+            '/project/src/index.js',
+          ],
+          outputFile: '/project/lib/index.mjs',
+        },
+      ]);
+    });
+  });
 });
 
 describe('getEntriesFromContext - in TypeScript project', () => {
@@ -986,6 +1055,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
     tsconfig: 'tsconfig.json',
     importMaps: 'package.json',
     external: [],
+    jsx: undefined,
     standalone: false,
     sourcemap: true,
     dts: true,
@@ -1575,6 +1645,101 @@ describe('getEntriesFromContext - in TypeScript project', () => {
       ]);
     });
   });
+
+  describe('getEntriesFromContext - when jsx=preserve', () => {
+    const getEntriesFromManifest = (manifest: Manifest) => {
+      const reporter = new ViReporter();
+      const context = parseConfig({
+        flags: defaultFlags,
+        targets: defaultTargets,
+        manifest,
+        reporter,
+        resolve,
+        tsconfigPath: 'tsconfig.json',
+        tsconfig: {
+          compilerOptions: {
+            jsx: 'preserve',
+          },
+        },
+      });
+      const getEntries = () => getEntriesFromContext({
+        context,
+        resolve,
+        reporter,
+      });
+      return { getEntries, context, reporter };
+    };
+
+    test('conditional exports', () => {
+      expect(
+        getEntriesFromManifest({
+          name: 'my-package',
+          exports: {
+            '.': {
+              types: './lib/index.d.ts',
+              require: './lib/index.cjs',
+              import: './lib/index.mjs',
+            },
+          },
+        }).getEntries(),
+      ).toEqual<Entry[]>([
+        {
+          key: 'exports["."].types',
+          module: 'dts',
+          mode: undefined,
+          minify: false,
+          sourcemap: true,
+          platform: 'neutral',
+          entryPath: './lib/index.d.ts',
+          sourceFile: [
+            '/project/src/index.tsx',
+            '/project/src/index.ts',
+          ],
+          outputFile: '/project/lib/index.d.ts',
+        },
+        {
+          key: 'exports["."].require',
+          module: 'commonjs',
+          mode: undefined,
+          minify: false,
+          sourcemap: true,
+          platform: 'neutral',
+          entryPath: './lib/index.cjs',
+          sourceFile: [
+            '/project/src/index.ctsx',
+            '/project/src/index.cts',
+            '/project/src/index.cjsx',
+            '/project/src/index.cjs',
+            '/project/src/index.tsx',
+            '/project/src/index.ts',
+            '/project/src/index.jsx',
+            '/project/src/index.js',
+          ],
+          outputFile: '/project/lib/index.cjs',
+        },
+        {
+          key: 'exports["."].import',
+          module: 'esmodule',
+          mode: undefined,
+          minify: false,
+          sourcemap: true,
+          platform: 'neutral',
+          entryPath: './lib/index.mjs',
+          sourceFile: [
+            '/project/src/index.mtsx',
+            '/project/src/index.mts',
+            '/project/src/index.mjsx',
+            '/project/src/index.mjs',
+            '/project/src/index.tsx',
+            '/project/src/index.ts',
+            '/project/src/index.jsx',
+            '/project/src/index.js',
+          ],
+          outputFile: '/project/lib/index.mjs',
+        },
+      ]);
+    });
+  });
 });
 
 describe('common usecases', () => {
@@ -1585,6 +1750,7 @@ describe('common usecases', () => {
     tsconfig: 'tsconfig.json',
     importMaps: 'package.json',
     external: [],
+    jsx: undefined,
     standalone: false,
     sourcemap: true,
     dts: true,

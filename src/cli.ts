@@ -14,22 +14,25 @@ Options
 
   --cwd              Use an alternative working directory
 
-  --root-dir         Specify the path to resolve source entry (default: ./src)
-                     This can be configured by tsconfig.json
-
-  --out-dir          Specify the path to resolve source entry (default: ./lib)
-                     This can be configured by tsconfig.json
-
   --tsconfig         Specify the path to a custom tsconfig.json
 
   --import-maps      Specify import map file path (default: package.json)
 
-  --standalone       Embed external dependencies into the bundle (default: false)
+  --root-dir         Specify the path to resolve source entry (default: ./src)
+                     This also can be configured by tsconfig.json
 
-  --external         Specify external dependencies to exclude from the bundle
+  --out-dir          Specify the path to resolve source entry (default: ./lib)
+                     This also can be configured by tsconfig.json
+
+  --jsx              Specify JSX mode. One of "preserve", "automatic" is allowed.
+                     This also can be configured by tsconfig.json
 
   --platform         Specify bundle target platform (default: "netural")
                      One of "netural", "browser", "node" is allowed.
+
+  --standalone       Embed external dependencies into the bundle (default: false)
+
+  --external         Specify external dependencies to exclude from the bundle
 
   --no-sourcemap     Disable source map generation
 
@@ -56,6 +59,9 @@ Options
     importMaps: {
       type: 'string',
       default: 'package.json',
+    },
+    jsx: {
+      type: 'string',
     },
     external: {
       type: 'string',
