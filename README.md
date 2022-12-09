@@ -12,7 +12,7 @@ Perfect build tool for libraries, powered by [esbuild]
 
 - Automatic entry points
 - Support for **ESM** and **CommonJS**
-- Support **TypeScript `NodeNext` moduleResolution**
+- Support **TypeScript `NodeNext`** moduleResolution
 - Support **multple** & **complex** entries by Node.js's **[Conditional Exports](https://nodejs.org/api/packages.html#conditional-exports)**
 - Support **[Import Maps](https://wicg.github.io/import-maps/)** with Node.js's **[Subpath Imports](https://nodejs.org/api/packages.html#subpath-imports)** rule
 - Optimize esbuild options to **maximize concurrency**
