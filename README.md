@@ -11,11 +11,11 @@ Perfect build tool for libraries, powered by [esbuild]
 ## Features
 
 - Automatic entry points
-- TypeScript `NodeNext` resolution
 - Support for ESM and CommonJS
-- Support multple/complex entries by [Conditional Exports](https://nodejs.org/api/packages.html#conditional-exports)
-- Support [Import Maps](https://wicg.github.io/import-maps/)
-- Find and optimize the esbuild options for you
+- Support TypeScript `NodeNext` resolution
+- Support multple & complex entries by [Conditional Exports](https://nodejs.org/api/packages.html#conditional-exports)
+- Support [Import Maps](https://wicg.github.io/import-maps/) with Node.js's [Subpath Imports](https://nodejs.org/api/packages.html#subpath-imports) rule
+- Optimize esbuild options to maximize concurrency
 - Only configuration you need is `package.json` (and optionally `tsconfig.json`)
 
 ## Installation
@@ -113,7 +113,7 @@ You can use conditional exports for dealing with **[Dual Package Hazard](https:/
 }
 ```
 
-### Import Map
+### Import Maps
 
 nanobundle supports [Import Maps](https://wicg.github.io/import-maps/)
 
@@ -124,8 +124,15 @@ You can specify import alias by your `package.json`, or by a separated json file
   "imports": {
     "~/": "./",
     "@util/": "./src/utils/",
+  }
+}
+```
 
-    // Node.js-style conditional imports
+nanobundle also handles Node.js's [Subpath Imports](https://nodejs.org/api/packages.html#subpath-imports) rule.
+
+```jsonc
+{
+  "imports": {
     "#dep": {
       "node": "dep-node-native",
       "default": "./dep-polyfill.js"
@@ -133,6 +140,7 @@ You can specify import alias by your `package.json`, or by a separated json file
   }
 }
 ```
+
 ### Embedding dependencies
 
 nanobundle by default does nothing about external like `dependencies` and `peerDependencies`.

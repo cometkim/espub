@@ -1,18 +1,13 @@
 import * as fs from 'fs/promises';
 
 import { type Context } from '../../context';
-import * as formatUtils from '../../formatUtils';
 import * as fsUtils from '../../fsUtils';
+import { type ConditionalImports } from '../../manifest';
 
-export type ImportMapPlatformFlag = (
-  | 'default'
-  | 'node'
-);
+import { type BundleOptions } from './entryGroup';
 
 export type NodeImportMaps = {
-  imports: Record<string, string | {
-    [platform in ImportMapPlatformFlag]?: string
-  }>,
+  imports: Exclude<ConditionalImports, string>,
 };
 export type ValidNodeImportMaps = NodeImportMaps & { __BRAND__: 'ValidNodeImportMaps' };
 export type ImportMaps = {
@@ -60,29 +55,130 @@ export async function validateImportMaps({
 
 export function normalizeImportMaps(
   importMaps: ValidNodeImportMaps,
-  platform: ImportMapPlatformFlag,
+  bundleOptions: BundleOptions,
 ): ImportMaps {
+  function normalize(
+    rootKey: string,
+    imports: ConditionalImports,
+    mode: BundleOptions['mode'],
+    module: BundleOptions['module'],
+    platform: BundleOptions['platform'],
+  ): string {
+    if (typeof imports === 'string') {
+      return imports;
+
+    } else {
+      for (const [key, value] of Object.entries(imports)) {
+        if (key === 'node' && platform === 'node') {
+          if (typeof value === 'string') {
+            return value;
+          } else {
+            return normalize(
+              rootKey,
+              value,
+              mode,
+              module,
+              'node',
+            );
+          }
+        }
+        if (key === 'browser' && platform === 'browser') {
+          if (typeof value === 'string') {
+            return value;
+          } else {
+            return normalize(
+              rootKey,
+              imports,
+              mode,
+              module,
+              'browser',
+            );
+          }
+        }
+        if (key === 'require' && module === 'commonjs') {
+          if (typeof value === 'string') {
+            return value;
+          } else {
+            return normalize(
+              rootKey,
+              imports,
+              mode,
+              'commonjs',
+              platform,
+            );
+          }
+        }
+        if (key === 'import' && module === 'esmodule') {
+          if (typeof value === 'string') {
+            return value;
+          } else {
+            return normalize(
+              rootKey,
+              imports,
+              mode,
+              'esmodule',
+              platform,
+            );
+          }
+        }
+        if (key === 'development' && mode === 'development') {
+          if (typeof value === 'string') {
+            return value;
+          } else {
+            return normalize(
+              rootKey,
+              imports,
+              'development',
+              module,
+              platform,
+            );
+          }
+        }
+        if (key === 'production' && mode === 'production') {
+          if (typeof value === 'string') {
+            return value;
+          } else {
+            return normalize(
+              rootKey,
+              imports,
+              'production',
+              module,
+              platform,
+            );
+          }
+        }
+        if (key === 'default') {
+          if (typeof value === 'string') {
+            return value;
+          } else {
+            return normalize(
+              rootKey,
+              imports,
+              mode,
+              module,
+              platform,
+            );
+          }
+        }
+        continue;
+      }
+      return rootKey;
+    }
+  }
+
+  const { mode, module, platform } = bundleOptions;
   const result: ImportMaps = {
     imports: {},
   };
-  for (const [key, value] of Object.entries(importMaps.imports)) {
-    if (typeof value === 'string') {
-      result.imports[key] = value;
-    } else if (typeof value === 'object') {
-      if (platform === 'default') {
-        if (value.default) {
-          result.imports[key] = value.default;
-        }
-        // noop for the web target, if there is no default mapping
-        // explicit mappings only required for the node target
-      } else if (platform === 'node' && value.node) {
-        result.imports[key] = value.node;
-      } else if (platform === 'node' && value.default) {
-        result.imports[key] = value.default;
-      } else {
-        throw new Error(`Couldn't resolve import maps entry "${key}" for "${formatUtils.platform(platform)}" platform condition`);
-      }
-    }
+  for (const [key, imports] of Object.entries(importMaps.imports)) {
+    result.imports[key] = normalize(
+      key,
+      imports,
+      mode,
+      module,
+      platform,
+    );
   }
+
   return result;
 }
