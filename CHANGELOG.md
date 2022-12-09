@@ -1,5 +1,11 @@
 # nanobundle
 
+## 1.0.0-rc.11
+
+### Patch Changes
+
+- 7762b4a: Support Node.js resolution for import maps
+
 ## 1.0.0-rc.10
 
 ### Patch Changes
