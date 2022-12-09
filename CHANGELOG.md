@@ -1,5 +1,11 @@
 # nanobundle
 
+## 1.0.0-rc.12
+
+### Patch Changes
+
+- ea2782f: Support JSX sources
+
 ## 1.0.0-rc.11
 
 ### Patch Changes
