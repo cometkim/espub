@@ -1,6 +1,10 @@
 import dedent from 'string-dedent';
 import { parseNative } from 'tsconfck';
-import { type CompilerOptions } from 'typescript';
+import {
+  type CompilerOptions,
+  type CompilerHost,
+  type Diagnostic,
+} from 'typescript';
 
 import * as formatUtils from '../../../formatUtils';
 import { NanobundleError } from '../../../errors';
@@ -9,15 +13,17 @@ import { type TypeEntry } from '../entryGroup';
 import { type OutputFile } from '../outputFile';
 
 export class BuildTypeTaskError extends NanobundleError {
-  cause: unknown;
+}
 
-  constructor(cause: unknown) {
-    super();
-    this.cause = cause;
+export class BuildTypeTaskTsError extends NanobundleError {
+  constructor(ts: typeof import('typescript'), host: CompilerHost, diagnostics: readonly Diagnostic[]) {
+    const message = dedent`
+    [error] TypeScript compilation failed
 
-    if (typeof cause === 'string') {
-      this.message = cause;
-    }
+      ${ts.formatDiagnosticsWithColorAndContext(diagnostics, host).split('\n').join('\n  ')}
+    `;
+
+    super(message);
   }
 }
 
@@ -55,13 +61,12 @@ export async function buildTypeTask({
   try {
     ts = await import('typescript').then(mod => mod.default);
   } catch (error: unknown) {
-    context.reporter.error(dedent`
+    throw new BuildTypeTaskError(dedent`
       Couldn't load TypeScript API
 
       Try ${formatUtils.command('npm i -D typescript')} or ${formatUtils.command('yarn add -D typescript')} and build again.
 
     `);
-    throw new BuildTypeTaskError(error);
   }
 
   context.reporter.debug('loaded TypeScript compiler API version %s', ts.version);
@@ -75,6 +80,7 @@ export async function buildTypeTask({
     skipLibCheck: true,
     declaration: true,
     emitDeclarationOnly: true,
+    noEmitOnError: true,
   };
 
   if (compilerOptions.noEmit) {
@@ -112,26 +118,39 @@ export async function buildTypeTask({
     context.reporter.debug(`created ts program from %o`, entry.sourceFile);
 
     const result = program.emit();
+    const allDiagnostics = dedupeDiagnostics(
+      ts.getPreEmitDiagnostics(program).concat(result.diagnostics),
+    );
 
-    let hasErrors = false;
-    for (const dignostic of result.diagnostics) {
-      const formattedMessage = ts.formatDiagnostic(dignostic, host);
-      switch (dignostic.category) {
+    const errrorDignostics: Diagnostic[] = [];
+
+    for (const diagnostic of allDiagnostics) {
+      if (diagnosticIgnores.includes(diagnostic.code)) {
+        continue;
+      }
+      switch (diagnostic.category) {
         case ts.DiagnosticCategory.Error: {
-          context.reporter.error(formattedMessage);
-          hasErrors = true;
+          errrorDignostics.push(diagnostic);
           break;
         }
         case ts.DiagnosticCategory.Warning: {
+          const formattedMessage = ts.formatDiagnostic(diagnostic, host);
           context.reporter.warn(formattedMessage);
+          break;
         }
         default: {
+          const formattedMessage = ts.formatDiagnostic(diagnostic, host);
           context.reporter.info(formattedMessage);
+          break;
         }
       }
     }
-    if (hasErrors) {
-      throw new BuildTypeTaskError('TypeScript build failed');
+    if (errrorDignostics.length > 0) {
+      throw new BuildTypeTaskTsError(
+        ts,
+        host,
+        errrorDignostics,
+      );
     }
   }
 
@@ -143,3 +162,29 @@ export async function buildTypeTask({
 
   return { outputFiles };
 }
+
+function dedupeDiagnostics(diagnostics: readonly Diagnostic[]): readonly Diagnostic[] {
+  const unique: Diagnostic[] = [];
+
+  const rootCodes = new Set<number>();
+  const files = new Set<string>();
+
+  for (const diagnostic of diagnostics) {
+    if (diagnostic.file) {
+      if (!files.has(diagnostic.file.fileName)) {
+        files.add(diagnostic.file.fileName);
+        unique.push(diagnostic);
+      }
+    } else {
+      if (!rootCodes.has(diagnostic.code)) {
+        rootCodes.add(diagnostic.code);
+        unique.push(diagnostic);
+      }
+    }
+  }
+  return unique;
+}
+
+const diagnosticIgnores: number[] = [
+  6053,
+];
