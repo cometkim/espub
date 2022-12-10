@@ -1,5 +1,16 @@
 # nanobundle
 
+## 1.0.0-rc.14
+
+### Patch Changes
+
+- c910f0c: fix indentation on typescript diagnostics
+- 6976909: fix dts generation
+- fde48ba: polished reporting and diagnostics
+- 84c8214: Fix to make it failed on type errors
+- 2075f16: compact reporting while on verbose mode
+- 12d5305: normalize ts rootDir and outDir
+
 ## 1.0.0-rc.13
 
 ### Patch Changes
