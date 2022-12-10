@@ -201,7 +201,7 @@ More interestingly, it supports all of Node.js' notoriously complex **[Condition
 
 Nanobundle believes the `package.json` today is expressive enough for most module use cases.
 
-So attempting to turn users' attention back to the [Node's package spec](https://nodejs.org/api/packages.html) and some meaningful proposals like [ES Modules](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules) and [Import Maps](https://wicg.github.io/import-maps/) which are already supported by Node.js, rather than adding another customizing options.
+So attempting to turn users' attention back to the [Node's package spec](https://nodejs.org/api/packages.html) like [ES Modules](https://nodejs.org/api/esm.html) and [Import Maps](https://wicg.github.io/import-maps/) which are already supported by Node.js, rather than adding another customizing options.
 
 ### Automatic entry points
 
