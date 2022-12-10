@@ -33,18 +33,22 @@ export async function reportEmitResultsTask({
     ]);
     context.reporter.info(dedent`
       📦 ${formatUtils.path(relPath(bundle.path))}
+      ${context.verbose ? formatUtils.indent(dedent`
         Size      : ${prettyBytes(bundle.content.byteLength)}
         Size (gz) : ${prettyBytes(gzipped.byteLength)}
         Size (br) : ${prettyBytes(brotlied.byteLength)}
 
+      `, 1) : ''}
     `);
   }
 
   if (typeOutputs.length > 0) {
     context.reporter.info(dedent`
-      ${typeOutputs.length} declaration ${typeOutputs.length === 1 ? 'file is' : 'files are'} generated:
-
-        📦 ${typeOutputs.map(output => formatUtils.path(relPath(output.path))).join('\n  📦 ')}
+      Also ${typeOutputs.length} declaration ${typeOutputs.length === 1 ? 'file is' : 'files are'} generated
+        ${context.verbose
+          ? `📦 ${typeOutputs.map(output => formatUtils.path(relPath(output.path))).join('\n  📦 ')}`
+          : ''
+        }
 
     `);
   }
