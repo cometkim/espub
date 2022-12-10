@@ -268,9 +268,118 @@ describe('parseConfig', () => {
   });
 
   describe('externalDependencies', () => {
-    test.todo('externalDependencies has manifest dependencies')
-    test.todo('forceExternalDependencies always include --external flag list')
-    test.todo('externalDependencies always include --external flag list')
+    test('externalDependencies has manifest dependencies', () => {
+      const result = parseConfig({
+        flags: defaultFlags,
+        manifest: {
+          ...defaultManifest,
+          dependencies: {
+            'dependency-a': '^1.0.0',
+            'dependency-b': '^1.0.0',
+            'dependency-c': '^1.0.0',
+          },
+          peerDependencies: {
+            'peer-dependency-a': '^1.0.0',
+            'peer-dependency-b': '^1.0.0',
+          },
+        },
+        targets: defaultTargets,
+        reporter,
+        resolve,
+      });
+
+      expect(result).toEqual<Context>({
+        cwd: '/project',
+        verbose: false,
+        module: 'commonjs',
+        platform: 'neutral',
+        sourcemap: true,
+        declaration: false,
+        standalone: false,
+        rootDir: 'src',
+        outDir: 'lib',
+        tsconfigPath: undefined,
+        jsx: undefined,
+        jsxDev: false,
+        jsxFactory: 'React.createElement',
+        jsxFragment: 'Fragment',
+        jsxImportSource: 'react',
+        importMapsPath: 'package.json',
+        externalDependencies: [
+          'dependency-a',
+          'dependency-b',
+          'dependency-c',
+          'peer-dependency-a',
+          'peer-dependency-b',
+        ],
+        forceExternalDependencies: [],
+        manifest: {
+          ...defaultManifest,
+          dependencies: {
+            'dependency-a': '^1.0.0',
+            'dependency-b': '^1.0.0',
+            'dependency-c': '^1.0.0',
+          },
+          peerDependencies: {
+            'peer-dependency-a': '^1.0.0',
+            'peer-dependency-b': '^1.0.0',
+          },
+        },
+        targets: defaultTargets,
+        reporter,
+        resolve,
+      });
+    });
+
+    test('forceExternalDependencies always include --external flag list', () => {
+      const result = parseConfig({
+        flags: {
+          ...defaultFlags,
+          external: [
+            'external-a',
+            'external-b',
+            'external-c',
+          ],
+        },
+        manifest: defaultManifest,
+        targets: defaultTargets,
+        reporter,
+        resolve,
+      });
+
+      expect(result).toEqual<Context>({
+        cwd: '/project',
+        verbose: false,
+        module: 'commonjs',
+        platform: 'neutral',
+        sourcemap: true,
+        declaration: false,
+        standalone: false,
+        rootDir: 'src',
+        outDir: 'lib',
+        tsconfigPath: undefined,
+        jsx: undefined,
+        jsxDev: false,
+        jsxFactory: 'React.createElement',
+        jsxFragment: 'Fragment',
+        jsxImportSource: 'react',
+        importMapsPath: 'package.json',
+        externalDependencies: [
+          'external-a',
+          'external-b',
+          'external-c',
+        ],
+        forceExternalDependencies: [
+          'external-a',
+          'external-b',
+          'external-c',
+        ],
+        manifest: defaultManifest,
+        targets: defaultTargets,
+        reporter,
+        resolve,
+      });
+    });
   });
 
   describe('tsCompilerOptions', () => {
