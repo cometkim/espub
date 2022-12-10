@@ -1,5 +1,12 @@
 # nanobundle
 
+## 1.0.0-rc.13
+
+### Patch Changes
+
+- ad38773: Fix flag test on jsx options
+- d5ed671: Fix jsx transform to work with additional options
+
 ## 1.0.0-rc.12
 
 ### Patch Changes
