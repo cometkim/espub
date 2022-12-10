@@ -56,7 +56,7 @@ More interestingly, it supports all of Node.js' notoriously complex **[Condition
     "module": "./lib/index.js"  // => src/index.ts
     "exports": "./lib/index.js" // => src/index.ts
   }
-  ```
+  ```    
 </details>
 
 <details>
@@ -254,7 +254,7 @@ You can use conditional exports for dealing with **[Dual Package Hazard](https:/
 ```
 
 ### Import Maps
-	￼	￼
+
 nanobundle supports [Import Maps](https://wicg.github.io/import-maps/)
 
 You can specify import alias by your `package.json`, or by a separated json file with the `--import-map` option.
