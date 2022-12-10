@@ -21,8 +21,11 @@ export type Context = {
   platform: Entry['platform'],
   sourcemap: boolean,
   declaration: boolean,
-  jsx: 'preserve' | 'automatic' | null,
+  jsx: 'transform' | 'preserve' | 'automatic' | undefined,
   jsxDev: boolean,
+  jsxFactory: string,
+  jsxFragment: string,
+  jsxImportSource: string,
   standalone: boolean,
   rootDir: string,
   outDir: string,
@@ -121,14 +124,20 @@ export function parseConfig({
     `,)
   }
 
-  let jsx: Context['jsx'] = null;
-  if (['preserve', 'react', 'react-native'].includes(tsconfig?.compilerOptions?.jsx)) {
+  let jsx: Context['jsx'] = undefined;
+  if (tsconfig?.compilerOptions?.jsx === 'preserve') {
     jsx = 'preserve';
+  }
+  if (['react', 'react-native'].includes(tsconfig?.compilerOptions?.jsx)) {
+    jsx = 'transform';
   }
   if (['react-jsx', 'react-jsxdev'].includes(tsconfig?.compilerOptions?.jsx)) {
     jsx = 'automatic';
   }
   if (flags.jsx === 'preserve') {
+    jsx = 'preserve';
+  }
+  if (flags.jsx === 'transform') {
     jsx = 'preserve';
   }
   if (flags.jsx === 'automatic') {
@@ -140,6 +149,24 @@ export function parseConfig({
     jsxDev = true;
   }
 
+  const jsxFactory: Context['jsxFactory'] = (
+    flags.jsxFactory ||
+    tsconfig?.compilerOptions?.jsxFactory ||
+    'React.createElement'
+  );
+
+  const jsxFragment: Context['jsxFactory'] = (
+    flags.jsxFragment ||
+    tsconfig?.compilerOptions?.jsxFragmentFactory ||
+    'Fragment'
+  );
+
+  const jsxImportSource: Context['jsxImportSource'] = (
+    flags.jsxImportSource ||
+    tsconfig?.compilerOptions?.jsxImportSource ||
+    'react'
+  );
+
   return {
     cwd,
     module,
@@ -148,6 +175,9 @@ export function parseConfig({
     declaration,
     jsx,
     jsxDev,
+    jsxFactory,
+    jsxFragment,
+    jsxImportSource,
     standalone,
     rootDir,
     outDir,
