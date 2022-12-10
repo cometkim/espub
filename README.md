@@ -205,7 +205,7 @@ Nanobundle believes the `package.json` today is expressive enough for most modul
 
 So attempting to turn users' attention back to the [Node's package spec](https://nodejs.org/api/packages.html) and some meaningful proposals like [ES Modules](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules) and [Import Maps](https://wicg.github.io/import-maps/) which are already supported by Node.js, rather than adding another customizing options.
 
-### Automatic entry pointsfeature comparison
+### Automatic entry points
 
 You don't need to pass or set entry points in any configuration file, only you have to do is provide correct `exports` in your `package.json`.
 
@@ -251,7 +251,9 @@ See [Node.js docs](https://nodejs.org/api/packages.html#packages_package_entry_p
 }
 ```
 
-You can use conditional exports for dealing with **[Dual Package Hazard](https://nodejs.org/api/packages.html#dual-package-hazard)**. E.g. for supporting both CommonJS and ESM package.
+You can use conditional exports for dealing with **[Dual Package Hazard](https://nodejs.org/api/packages.html#dual-package-hazard)**.
+
+E.g. for supporting both CommonJS and ESM package.
 
 ```jsonc
 {
