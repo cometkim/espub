@@ -1,5 +1,11 @@
 # nanobundle
 
+## 1.0.0-rc.15
+
+### Patch Changes
+
+- 47f8eef: more compact logs
+
 ## 1.0.0-rc.14
 
 ### Patch Changes
