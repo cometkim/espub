@@ -138,7 +138,7 @@ export function parseConfig({
     jsx = 'preserve';
   }
   if (flags.jsx === 'transform') {
-    jsx = 'preserve';
+    jsx = 'transform';
   }
   if (flags.jsx === 'automatic') {
     jsx = 'automatic';
