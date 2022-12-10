@@ -33,7 +33,7 @@ export class BuildBundleTaskError extends NanobundleError {
 type BuildBundleTaskOptions = {
   context: Context,
   bundleEntries: BundleEntry[],
-}
+};
 
 type BuildBundleTaskResult = {
   outputFiles: OutputFile[],
@@ -56,6 +56,8 @@ export async function buildBundleTask({
   const subtasks: Array<Promise<BuildBundleGroupResult>> = [];
   for (const [optionsHash, entries] of Object.entries(bundleGroup)) {
     const options = optionsFromHash(optionsHash);
+    context.reporter.debug('bundle options %o', options);
+
     subtasks.push(
       buildBundleGroup({
         context,
@@ -143,8 +145,11 @@ async function buildBundleGroup({
     entryPoints,
     outdir: baseDir,
     bundle: true,
-    jsx: context.jsx ?? undefined,
+    jsx: context.jsx,
     jsxDev: context.jsxDev,
+    jsxFactory: context.jsxFactory,
+    jsxFragment: context.jsxFragment,
+    jsxImportSource: context.jsxImportSource,
     treeShaking: true,
     target: context.targets,
     format: options.module === 'commonjs' ? 'cjs' : 'esm',
@@ -176,6 +181,8 @@ async function buildBundleGroup({
     ...esbuildOptions.plugins ?? [],
     ...plugins,
   ];
+
+  context.reporter.debug('esbuild build options %o', esbuildOptions);
 
   const result = await esbuild.build({
     ...esbuildOptions,

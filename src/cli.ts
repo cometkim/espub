@@ -10,35 +10,44 @@ Available Commands
   build    Build once and exit
 
 Options
-  --version          Display current version
+  --version            Display current version
 
-  --cwd              Use an alternative working directory
+  --cwd                Use an alternative working directory
 
-  --tsconfig         Specify the path to a custom tsconfig.json
+  --tsconfig           Specify the path to a custom tsconfig.json
 
-  --import-maps      Specify import map file path (default: package.json)
+  --import-maps        Specify import map file path (default: package.json)
 
-  --root-dir         Specify the path to resolve source entry (default: ./src)
-                     This also can be configured by tsconfig.json
+  --root-dir           Specify the path to resolve source entry (default: ./src)
+                       This also can be configured by tsconfig.json
 
-  --out-dir          Specify the path to resolve source entry (default: ./lib)
-                     This also can be configured by tsconfig.json
+  --out-dir            Specify the path to resolve source entry (default: ./lib)
+                       This also can be configured by tsconfig.json
 
-  --jsx              Specify JSX mode. One of "preserve", "automatic" is allowed.
-                     This also can be configured by tsconfig.json
+  --platform           Specify bundle target platform (default: "netural")
+                       One of "netural", "browser", "node" is allowed
 
-  --platform         Specify bundle target platform (default: "netural")
-                     One of "netural", "browser", "node" is allowed.
+  --standalone         Embed external dependencies into the bundle (default: false)
 
-  --standalone       Embed external dependencies into the bundle (default: false)
+  --external           Specify external dependencies to exclude from the bundle
 
-  --external         Specify external dependencies to exclude from the bundle
+  --jsx                Specify JSX mode. One of "transform", "preserve", "automatic" is allowed
+                       This also can be configured by tsconfig.json
 
-  --no-sourcemap     Disable source map generation
+  --jsx-factory        Specify JSX factory (default: "React.createElement")
+                       This also can be configured by tsconfig.json
 
-  --no-dts           Disable TypeScript .d.ts build
+  --jsx-fragment       Specify JSX <Fragment> factory (default: "Fragment")
+                       This also can be configured by tsconfig.json
 
-  --help             Display this message
+  --jsx-import-source  Specify JSX import source (default: "react")
+                       This also can be configured by tsconfig.json
+
+  --no-sourcemap       Disable source map generation
+
+  --no-dts             Disable TypeScript .d.ts build
+
+  --help               Display this message
 `, {
   importMeta: import.meta,
   flags: {
@@ -60,9 +69,6 @@ Options
       type: 'string',
       default: 'package.json',
     },
-    jsx: {
-      type: 'string',
-    },
     external: {
       type: 'string',
       isMultiple: true,
@@ -82,6 +88,18 @@ Options
     dts: {
       type: 'boolean',
       default: true,
+    },
+    jsx: {
+      type: 'string',
+    },
+    jsxFactory: {
+      type: 'string',
+    },
+    jsxFragment: {
+      type: 'string',
+    },
+    jsxImportSource: {
+      type: 'string',
     },
   },
 });
