@@ -42,7 +42,7 @@ nanobundle is smart enough to automatically determine the location of the approp
 
 It searches based on the `--root-dir` and `--out-dir` on the CLI flags (defaults to `src` and `lib`) but respects `tsconfig.json` if present.
 
-### Recipes
+### `package.json` Recipes
 
 More interestingly, it supports all of Node.js' notoriously complex **[Conditional Exports](https://nodejs.org/api/packages.html#conditional-exports)** rules.
 
