@@ -1,0 +1,45 @@
+{
+  "projectName": "nanobundle",
+  "projectOwner": "cometkim",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": true,
+  "commitConvention": "none",
+  "contributors": [
+    {
+      "login": "cometkim",
+      "name": "Hyeseong Kim",
+      "avatar_url": "https://avatars.githubusercontent.com/u/9696352?v=4",
+      "profile": "https://blog.cometkim.kr/",
+      "contributions": [
+        "code",
+        "maintenance"
+      ]
+    },
+    {
+      "login": "eolme",
+      "name": "Anton Petrov",
+      "avatar_url": "https://avatars.githubusercontent.com/u/11076888?v=4",
+      "profile": "https://github.com/eolme",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "easylogic",
+      "name": "jinho park",
+      "avatar_url": "https://avatars.githubusercontent.com/u/591983?v=4",
+      "profile": "https://www.easylogic.studio/",
+      "contributions": [
+        "test",
+        "bug"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "linkToUsage": false
+}
