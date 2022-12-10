@@ -1,5 +1,5 @@
 # nanobundle
-[![Version on NPM](https://img.shields.io/npm/v/nanobundle/rc)](https://www.npmjs.com/package/nanobundle)
+[![Version on NPM](https://img.shields.io/npm/v/nanobundle)](https://www.npmjs.com/package/nanobundle)
 [![Downlaods on NPM](https://img.shields.io/npm/dm/nanobundle)](https://www.npmjs.com/package/nanobundle)
 [![Integration](https://github.com/cometkim/nanobundle/actions/workflows/integration.yml/badge.svg)](https://github.com/cometkim/nanobundle/actions/workflows/integration.yml)
 [![codecov](https://codecov.io/gh/cometkim/nanobundle/branch/main/graph/badge.svg?token=6Oj3oxqiyQ)](https://codecov.io/gh/cometkim/nanobundle)
@@ -8,8 +8,6 @@
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 Perfect build tool for libraries, powered by [esbuild]
-
-**Nanobundle is currently testing in RC version, feel free to leave feedback on the issue tracker!**
 
 ## Features
 
