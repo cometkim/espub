@@ -246,7 +246,7 @@ See [Node.js docs](https://nodejs.org/api/packages.html#packages_package_entry_p
     "./feature": {
       "node": "./feature-node.js", // conditional entry
       "default": "./feature.js"
-    }feature comparison
+    }
   }
 }
 ```
