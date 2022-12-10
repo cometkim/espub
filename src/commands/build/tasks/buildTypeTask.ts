@@ -78,6 +78,8 @@ export async function buildTypeTask({
   const { result } = await parseNative(context.tsconfigPath);
   const compilerOptions: CompilerOptions = {
     ...result.options,
+    rootDir: context.rootDir,
+    outDir: context.outDir,
     allowJs: true,
     composite: false,
     incremental: false,
