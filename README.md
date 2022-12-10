@@ -40,7 +40,7 @@ That's it, then just run `yarn build` or `npm run build`. What a magic ✨
 
 nanobundle is smart enough to automatically determine the location of the appropriate source files from the entries specified in your `package.json`.
 
-It searches based on the `--root-dir` and `--out-dir` on the CLI flags ( Defaults to `src` and `lib`) but respects `tsconfig.json` if present.
+It searches based on the `--root-dir` and `--out-dir` on the CLI flags (defaults to `src` and `lib`) but respects `tsconfig.json` if present.
 
 ### Recipes
 
@@ -51,13 +51,15 @@ More interestingly, it supports all of Node.js' notoriously complex **[Condition
   
   ```jsonc
   {
-    "type": "module"
-    "main": "./lib/index.js"    // => src/index.ts
-    "module": "./lib/index.js"  // => src/index.ts
-    "exports": "./lib/index.js" // => src/index.ts
+    "type": "module",
+    "main": "./lib/index.js",    // => src/index.ts
+    "module": "./lib/index.js",  // => src/index.ts
+    "exports": "./lib/index.js"  // => src/index.ts
   }
-  ```    
+  ```
+
 </details>
+
 
 <details>
   <summary>Dual-package exports</summary>
@@ -69,12 +71,14 @@ More interestingly, it supports all of Node.js' notoriously complex **[Condition
         "types": "./lib/index.d.ts",     // => src/index.ts
         "require": "./lib/index.js",     // => src/index.ts
         "import": "./lib/index.mjs"      // => src/index.mts or src/index.ts
-      },:sparkles:
+      },
       "./package.json": "./package.json" // => package.json
     }
   }
   ```
+
 </details>
+
 
 <details>
   <summary>Mutliple platform support</summary>
@@ -95,7 +99,9 @@ More interestingly, it supports all of Node.js' notoriously complex **[Condition
     }
   }
   ```
+
 </details>
+
 
 <details>
   <summary>Server/Client submodules</summary>
@@ -103,14 +109,14 @@ More interestingly, it supports all of Node.js' notoriously complex **[Condition
   ```jsonc
   {
     "exports": {
-      ".": "./lib/common.js"           // => src/common.ts
+      ".": "./lib/common.js",          // => src/common.ts
       "./server": {
         "types": "./lib/server.d.ts",  // => src/server.ts
         "require": "./lib/server.cjs", // => src/server.cts or src/server.ts
         "import": "./lib/server.mjs"   // => src/server.mts or src/server.ts
       },
       "./client": {
-        "types": "./lib/client.d.ts",  // => src/client.ts
+        "types": "./lib/client.d.ts",      // => src/client.ts
         "require": "./lib/client.min.cjs", // => src/client.cts or src/client.ts, output will be minified:sparkles:
         "import": "./lib/client.min.mjs"   // => src/client.mts or src/client.ts, output will be minified
       },
@@ -118,7 +124,9 @@ More interestingly, it supports all of Node.js' notoriously complex **[Condition
     }
   }
   ```
+
 </details>
+
 
 <details>
   <summary>Development-only code for debugging</summary>
@@ -131,6 +139,7 @@ More interestingly, it supports all of Node.js' notoriously complex **[Condition
     }
   }
   ```
+
 </details>
 
 
