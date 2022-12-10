@@ -254,7 +254,7 @@ You can use conditional exports for dealing with **[Dual Package Hazard](https:/
 ```
 
 ### Import Maps
-
+	￼	￼
 nanobundle supports [Import Maps](https://wicg.github.io/import-maps/)
 
 You can specify import alias by your `package.json`, or by a separated json file with the `--import-map` option.
@@ -322,16 +322,16 @@ Conditional entries with Node.js community condition `production` or `developmen
 
 ## Feature Comparison
 
-| Build tool           | 0 Config                    | Respect `package.json` | TypeScript `.d.ts` generation | Concurrency | Multiple Entries    | Conditional Exports | Import Maps       | CSS Support       | Plugins     | Dev(watch) mode |
-| :------------------- | --------------------------: | ---------------------: | ----------------------------: | ----------: | ------------------: | ------------------: | ----------------: | ----------------: | ----------: | --------------: |
-| **nanobundle**       | ✔️                           | ✔️                      | ✔️                             | ✔️           | ✔️                   | ✔️                   | ✔️                 | ✖️ (planned)       | ✖️ (planned) | ✖️ (planned)     |
-| [microbundle]        | ✔️                           | ✔️                      | ✔️                             | ✔️           | ✖️                   | 🟡 (only flat)      | ✖️                 | ✔️                 | ✖️           | ✔️               |
-| [tsup]               | 🟡 (mostly by custom file)  | ✖️                      | ✔️                             | ✔️           | ✔️ (by custom file)  | ✖️                   | 🟡 (with plugin)  | 🟡 (experimental) | ✔️           | ✔️               |
-| [estrella]           | ✖️                           | ✖️                      | ✔️                             | ✔️           | ✖️                   | ✖️                   | ✖️                 | ✖️                 | ✖️           | ✔️               |
-| [esbuild]            | ✖️                           | ✖️                      | ✖️                             | ✔️           | ✔️                   | ✖️                   | ✖️                 | ✔️                 | ✔️           | ✔️               |
-| [Rollup]             | ✖️                           | ✖️                      | 🟡 (with plugin)              | ✔️           | ✔️                   | 🟡 (by code)        | 🟡 (with plugin)  | ✔️                 | ✔️           | ✔️               |
-| [Vite (lib mode)]    | ✖️                           | ✖️                      | 🟡 (with plugin)              | ✔️           | ✔️                   | 🟡 (by code)        | 🟡 (with plugin)  | ✔️                 | ✔️           | ✔️               |
-| [Parcel (lib mode)]  | ✔️                           | ✔️                      | ✔️                             | ✔️           | ✖️                   | ✖️                   | ✖️                 | ✔️                 | ✖️           | ✔️               |
+| Build tool           | 0 Config                         | Respect `package.json` | TypeScript `.d.ts` generation | Concurrency | Multiple Entries    | Conditional Exports  | Import Maps            | CSS Support            | Plugins     | Dev(watch) mode |
+| :------------------- | -------------------------------: | ---------------------: | ----------------------------: | ----------: | ------------------: | -------------------: | ---------------------: | ---------------------: | ----------: | --------------: |
+| **nanobundle**       | ✔️                                | ✔️                      | ✔️                             | ✔️           | ✔️                   | ✔️                    | ✔️                      | ✖️ (planned)            | ✖️ (planned) | ✖️ (planned)     |
+| [microbundle]        | ✔️                                | ✔️                      | ✔️                             | ✔️           | ✖️                   | 🟡 <br> (only flat)  | ✖️                      | ✔️                      | ✖️           | ✔️               |
+| [tsup]               | 🟡 <br> (mostly by custom file)  | ✖️                      | ✔️                             | ✔️           | ✔️ (by custom file)  | ✖️                    | 🟡 <br> (with plugin)  | 🟡 <br> (experimental) | ✔️           | ✔️               |
+| [estrella]           | ✖️                                | ✖️                      | ✔️                             | ✔️           | ✖️                   | ✖️                    | ✖️                      | ✖️                      | ✖️           | ✔️               |
+| [esbuild]            | ✖️                                | ✖️                      | ✖️                             | ✔️           | ✔️                   | ✖️                    | ✖️                      | ✔️                      | ✔️           | ✔️               |
+| [Rollup]             | ✖️                                | ✖️                      | 🟡 <br> (with plugin)         | ✔️           | ✔️                   | 🟡 <br> (by code)    | 🟡 <br> (with plugin)  | ✔️                      | ✔️           | ✔️               |
+| [Vite (lib mode)]    | ✖️                                | ✖️                      | 🟡 <br> (with plugin)         | ✔️           | ✔️                   | 🟡 <br> (by code)    | 🟡 <br> (with plugin)  | ✔️                      | ✔️           | ✔️               |
+| [Parcel (lib mode)]  | ✔️                                | ✔️                      | ✔️                             | ✔️           | ✖️                   | ✖️                    | ✖️                      | ✔️                      | ✖️           | ✔️               |
 
 
 ## Contributors ✨
