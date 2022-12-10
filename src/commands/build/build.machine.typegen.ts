@@ -75,9 +75,9 @@ export interface Typegen0 {
   };
   missingImplementations: {
     actions: never;
-    services: never;
-    guards: never;
     delays: never;
+    guards: never;
+    services: never;
   };
   eventsCausingActions: {
     assignBuildBundleError: "error.platform.buildMachine.buildEntries.buildBundleEntries.build:invocation[0]";
@@ -96,6 +96,11 @@ export interface Typegen0 {
     reportBuildErrors: "done.state.buildMachine.buildEntries";
     reportBuildStart: "BUILD";
   };
+  eventsCausingDelays: {};
+  eventsCausingGuards: {
+    hasBinEntries: "done.invoke.buildMachine.reportEmitResults:invocation[0]";
+    hasBuildErrors: "done.state.buildMachine.buildEntries";
+  };
   eventsCausingServices: {
     buildBundleTask: "BUILD";
     buildFileTask: "BUILD";
@@ -107,11 +112,6 @@ export interface Typegen0 {
     emitTask: "done.state.buildMachine.buildEntries";
     reportEmitResults: "done.invoke.buildMachine.emitEntries:invocation[0]";
   };
-  eventsCausingGuards: {
-    hasBinEntries: "done.invoke.buildMachine.reportEmitResults:invocation[0]";
-    hasBuildErrors: "done.state.buildMachine.buildEntries";
-  };
-  eventsCausingDelays: {};
   matchesStates:
     | "bootstrap"
     | "buildEntries"
