@@ -84,7 +84,6 @@ export async function buildTypeTask({
     skipLibCheck: true,
     declaration: true,
     emitDeclarationOnly: true,
-    noEmitOnError: true,
   };
 
   if (compilerOptions.noEmit) {
