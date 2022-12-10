@@ -40,30 +40,30 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/core@npm:^7.12.10":
-  version: 7.20.2
-  resolution: "@babel/core@npm:7.20.2"
+"@babel/core@npm:^7.19.3":
+  version: 7.20.5
+  resolution: "@babel/core@npm:7.20.5"
   dependencies:
     "@ampproject/remapping": ^2.1.0
     "@babel/code-frame": ^7.18.6
-    "@babel/generator": ^7.20.2
+    "@babel/generator": ^7.20.5
     "@babel/helper-compilation-targets": ^7.20.0
     "@babel/helper-module-transforms": ^7.20.2
-    "@babel/helpers": ^7.20.1
-    "@babel/parser": ^7.20.2
+    "@babel/helpers": ^7.20.5
+    "@babel/parser": ^7.20.5
     "@babel/template": ^7.18.10
-    "@babel/traverse": ^7.20.1
-    "@babel/types": ^7.20.2
+    "@babel/traverse": ^7.20.5
+    "@babel/types": ^7.20.5
     convert-source-map: ^1.7.0
     debug: ^4.1.0
     gensync: ^1.0.0-beta.2
     json5: ^2.2.1
     semver: ^6.3.0
-  checksum: 98faaaef26103a276a30a141b951a93bc8418d100d1f668bf7a69d12f3e25df57958e8b6b9100d95663f720db62da85ade736f6629a5ebb1e640251a1b43c0e4
+  checksum: 9547f1e6364bc58c3621e3b17ec17f0d034ff159e5a520091d9381608d40af3be4042dd27c20ad7d3e938422d75850ac56a3758d6801d65df701557af4bd244b
   languageName: node
   linkType: hard
 
-"@babel/generator@npm:^7.20.1, @babel/generator@npm:^7.20.2":
+"@babel/generator@npm:^7.20.1":
   version: 7.20.4
   resolution: "@babel/generator@npm:7.20.4"
   dependencies:
@@ -71,6 +71,17 @@ __metadata:
     "@jridgewell/gen-mapping": ^0.3.2
     jsesc: ^2.5.1
   checksum: 967b59f18e5ce999e5a741825bcecb2be4bbfc1824a92c21b47d0b5694e0eb09314a70f8b9142e9591c149c7fb83d51f73ae8fbd96d30a42666425889e51ceb1
+  languageName: node
+  linkType: hard
+
+"@babel/generator@npm:^7.20.5":
+  version: 7.20.5
+  resolution: "@babel/generator@npm:7.20.5"
+  dependencies:
+    "@babel/types": ^7.20.5
+    "@jridgewell/gen-mapping": ^0.3.2
+    jsesc: ^2.5.1
+  checksum: 31c10d1e122f08cf755a24bd6f5d197f47eceba03f1133759687d00ab72d210e60ba4011da42f368b6e9fa85cbfda7dc4adb9889c2c20cc5c34bb2d57c1deab7
   languageName: node
   linkType: hard
 
@@ -185,14 +196,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/helpers@npm:^7.20.1":
-  version: 7.20.1
-  resolution: "@babel/helpers@npm:7.20.1"
+"@babel/helpers@npm:^7.20.5":
+  version: 7.20.6
+  resolution: "@babel/helpers@npm:7.20.6"
   dependencies:
     "@babel/template": ^7.18.10
-    "@babel/traverse": ^7.20.1
-    "@babel/types": ^7.20.0
-  checksum: be35f78666bdab895775ed94dbeb098f7b4fa08ce4cfb0c3a9e69b7220cce56960dcdc2b14f5df9d3b80388d4bf7df155c97f6cf6768c0138f4e6931d0f44955
+    "@babel/traverse": ^7.20.5
+    "@babel/types": ^7.20.5
+  checksum: f03ec6eb2bf8dc7cdfe2569ee421fd9ba6c7bac6c862d90b608ccdd80281ebe858bc56ca175fc92b3ac50f63126b66bbd5ec86f9f361729289a20054518f1ac5
   languageName: node
   linkType: hard
 
@@ -218,12 +229,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/parser@npm:^7.18.10, @babel/parser@npm:^7.20.1, @babel/parser@npm:^7.20.2":
+"@babel/parser@npm:^7.18.10, @babel/parser@npm:^7.20.1":
   version: 7.20.3
   resolution: "@babel/parser@npm:7.20.3"
   bin:
     parser: ./bin/babel-parser.js
   checksum: 33bcdb45de65a3cf27ed376cb34f32be3c3485a10e3252f8d0126f6a034efc3145c0d219e57fcd5a8956361552008bc30b9bae4a723823fb3633027071be8a45
+  languageName: node
+  linkType: hard
+
+"@babel/parser@npm:^7.19.4, @babel/parser@npm:^7.20.5":
+  version: 7.20.5
+  resolution: "@babel/parser@npm:7.20.5"
+  bin:
+    parser: ./bin/babel-parser.js
+  checksum: e8d514ce0aa74d56725bd102919a49fa367afef9cd8208cf52f670f54b061c4672f51b4b7980058ab1f5fe73615fe4dc90720ab47bbcebae07ad08d667eda318
   languageName: node
   linkType: hard
 
@@ -256,6 +276,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/traverse@npm:^7.19.4, @babel/traverse@npm:^7.20.5":
+  version: 7.20.5
+  resolution: "@babel/traverse@npm:7.20.5"
+  dependencies:
+    "@babel/code-frame": ^7.18.6
+    "@babel/generator": ^7.20.5
+    "@babel/helper-environment-visitor": ^7.18.9
+    "@babel/helper-function-name": ^7.19.0
+    "@babel/helper-hoist-variables": ^7.18.6
+    "@babel/helper-split-export-declaration": ^7.18.6
+    "@babel/parser": ^7.20.5
+    "@babel/types": ^7.20.5
+    debug: ^4.1.0
+    globals: ^11.1.0
+  checksum: c7fed468614aab1cf762dda5df26e2cfcd2b1b448c9d3321ac44786c4ee773fb0e10357e6593c3c6a648ae2e0be6d90462d855998dc10e3abae84de99291e008
+  languageName: node
+  linkType: hard
+
 "@babel/traverse@npm:^7.20.1":
   version: 7.20.1
   resolution: "@babel/traverse@npm:7.20.1"
@@ -282,6 +320,17 @@ __metadata:
     "@babel/helper-validator-identifier": ^7.19.1
     to-fast-properties: ^2.0.0
   checksum: 57e76e5f21876135f481bfd4010c87f2d38196bb0a2bc60a28d6e55e3afa90cdd9accf164e4cb71bdfb620517fa0a0cb5600cdce36c21d59fdaccfbb899c024c
+  languageName: node
+  linkType: hard
+
+"@babel/types@npm:^7.19.4, @babel/types@npm:^7.20.5":
+  version: 7.20.5
+  resolution: "@babel/types@npm:7.20.5"
+  dependencies:
+    "@babel/helper-string-parser": ^7.19.4
+    "@babel/helper-validator-identifier": ^7.19.1
+    to-fast-properties: ^2.0.0
+  checksum: 773f0a1ad9f6ca5c5beaf751d1d8d81b9130de87689d1321fc911d73c3b1167326d66f0ae086a27fb5bfc8b4ee3ffebf1339be50d3b4d8015719692468c31f2d
   languageName: node
   linkType: hard
 
@@ -792,41 +841,45 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@xstate/cli@npm:^0.3.3":
-  version: 0.3.3
-  resolution: "@xstate/cli@npm:0.3.3"
+"@xstate/cli@npm:^0.4.0":
+  version: 0.4.0
+  resolution: "@xstate/cli@npm:0.4.0"
   dependencies:
-    "@babel/core": ^7.12.10
-    "@xstate/machine-extractor": 0.7.1
-    "@xstate/tools-shared": 1.2.3
+    "@babel/core": ^7.19.3
+    "@xstate/machine-extractor": ^0.8.0
+    "@xstate/tools-shared": ^2.0.0
     chokidar: ^3.5.3
     commander: ^8.0.0
-    xstate: ^4.29.0
+    xstate: ^4.33.4
   bin:
     xstate: bin/bin.js
-  checksum: 0522d91c4bd8251402f2f715d60aa4dc3156e0e895827c3c873d9904a987dad32dfcd133697823881b65d8fb8d29e1d5c9aa57356a3f32f7b507290f2dfd1898
+  checksum: 18987308dbd08e353c0c2c285c87e5617f25bdd25f0e4816d294c37dab2cf9f8bb459e1719403bd7a7a24de3bd27bb9f5a568a47b658989aba1eb79a807d5214
   languageName: node
   linkType: hard
 
-"@xstate/machine-extractor@npm:0.7.1":
-  version: 0.7.1
-  resolution: "@xstate/machine-extractor@npm:0.7.1"
-  peerDependencies:
-    "@babel/core": ^7
-    xstate: ^4
-  checksum: f22218f306dc16e8b58bb522ac67c987794dda36529330daea206fb716bb89440541c780f601b8a4b403f5994b1e84b8328c130a2f53d5c84cf84ad82aa61c49
-  languageName: node
-  linkType: hard
-
-"@xstate/tools-shared@npm:1.2.3":
-  version: 1.2.3
-  resolution: "@xstate/tools-shared@npm:1.2.3"
+"@xstate/machine-extractor@npm:^0.8.0":
+  version: 0.8.0
+  resolution: "@xstate/machine-extractor@npm:0.8.0"
   dependencies:
-    "@xstate/machine-extractor": 0.7.1
+    "@babel/parser": ^7.19.4
+    "@babel/traverse": ^7.19.4
+    "@babel/types": ^7.19.4
+    recast: ^0.21.2
+  peerDependencies:
+    xstate: ^4
+  checksum: cf073098f8169cdbf23f4f24c1ea500ae57b3853ffbbc0166d09ac8cbd6f3a4cd21585d7b85601add567e03bacc2a3220c3858a7a8f3ec27402990d3839243dd
+  languageName: node
+  linkType: hard
+
+"@xstate/tools-shared@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "@xstate/tools-shared@npm:2.0.0"
+  dependencies:
+    "@xstate/machine-extractor": ^0.8.0
   peerDependencies:
     prettier: ^2.3.1
     xstate: ^4
-  checksum: 191205b0f86912995242c9e7017737c1496744dd799aa42bf0c3082700eaddcea14d00b0014ffcfad7d989ec5ca8e2789e9f5eab8c90d06bdf1430d4a98e91a9
+  checksum: 5f1aab8422cfb1034f03c70e10202b1e732ad02307344078af154ff21893d86c76d33358df73ca7283a31b37d03ef238aa09f8900d5a8f61812213fd58359615
   languageName: node
   linkType: hard
 
@@ -998,6 +1051,15 @@ __metadata:
   version: 1.1.0
   resolution: "assertion-error@npm:1.1.0"
   checksum: fd9429d3a3d4fd61782eb3962ae76b6d08aa7383123fca0596020013b3ebd6647891a85b05ce821c47d1471ed1271f00b0545cf6a4326cf2fc91efcc3b0fbecf
+  languageName: node
+  linkType: hard
+
+"ast-types@npm:0.15.2":
+  version: 0.15.2
+  resolution: "ast-types@npm:0.15.2"
+  dependencies:
+    tslib: ^2.0.1
+  checksum: 24f0d86bf9e4c8dae16fa24b13c1776f2c2677040bcfbd4eb4f27911db49020be4876885e45e6cfcc548ed4dfea3a0742d77e3346b84fae47379cb0b89e9daa0
   languageName: node
   linkType: hard
 
@@ -2049,7 +2111,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esprima@npm:^4.0.0":
+"esprima@npm:^4.0.0, esprima@npm:~4.0.0":
   version: 4.0.1
   resolution: "esprima@npm:4.0.1"
   bin:
@@ -3140,7 +3202,7 @@ __metadata:
     "@types/node": ^17.0.18
     "@types/semver": ^7.3.13
     "@vitest/coverage-c8": ^0.25.6
-    "@xstate/cli": ^0.3.3
+    "@xstate/cli": ^0.4.0
     all-contributors-cli: ^6.24.0
     browserslist: ^4.21.4
     c8: ^7.12.0
@@ -3701,6 +3763,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"recast@npm:^0.21.2":
+  version: 0.21.5
+  resolution: "recast@npm:0.21.5"
+  dependencies:
+    ast-types: 0.15.2
+    esprima: ~4.0.0
+    source-map: ~0.6.1
+    tslib: ^2.0.1
+  checksum: 03cc7f57562238ba258d468be67bf7446ce7a707bc87a087891dad15afead46c36e9aaeedf2130e2ab5a465244a9c62bfd4127849761cf8f4085abe2f3e5f485
+  languageName: node
+  linkType: hard
+
 "redent@npm:^3.0.0":
   version: 3.0.0
   resolution: "redent@npm:3.0.0"
@@ -4047,7 +4121,7 @@ resolve@^1.10.0:
   languageName: node
   linkType: hard
 
-"source-map@npm:^0.6.1":
+"source-map@npm:^0.6.1, source-map@npm:~0.6.1":
   version: 0.6.1
   resolution: "source-map@npm:0.6.1"
   checksum: 59ce8640cf3f3124f64ac289012c2b8bd377c238e316fb323ea22fbfe83da07d81e000071d7242cad7a23cd91c7de98e4df8830ec3f133cb6133a5f6e9f67bc2
@@ -4342,6 +4416,13 @@ resolve@^1.10.0:
   version: 1.14.1
   resolution: "tslib@npm:1.14.1"
   checksum: dbe628ef87f66691d5d2959b3e41b9ca0045c3ee3c7c7b906cc1e328b39f199bb1ad9e671c39025bd56122ac57dfbf7385a94843b1cc07c60a4db74795829acd
+  languageName: node
+  linkType: hard
+
+"tslib@npm:^2.0.1":
+  version: 2.4.1
+  resolution: "tslib@npm:2.4.1"
+  checksum: 19480d6e0313292bd6505d4efe096a6b31c70e21cf08b5febf4da62e95c265c8f571f7b36fcc3d1a17e068032f59c269fab3459d6cd3ed6949eafecf64315fca
   languageName: node
   linkType: hard
 
@@ -4765,14 +4846,7 @@ resolve@^1.10.0:
   languageName: node
   linkType: hard
 
-"xstate@npm:^4.29.0":
-  version: 4.34.0
-  resolution: "xstate@npm:4.34.0"
-  checksum: 465062f73133ef33bdd6e7f160e893b72454c252a51f0975c68415ee17a77bbcdf541e7711aad2e82d14ba5cb2b865419bd4f8e51918efe8f756a47470375225
-  languageName: node
-  linkType: hard
-
-"xstate@npm:^4.35.0":
+"xstate@npm:^4.33.4, xstate@npm:^4.35.0":
   version: 4.35.0
   resolution: "xstate@npm:4.35.0"
   checksum: 7bf1a3874eb11cdbbd22ceb5743e3abb62db416b1f7769522c2911f49dd3e9f6ad681f18c7800351bfb3f09c586a5bcfb06b773b6befb5f128d05447a6e1a328
