@@ -17,12 +17,12 @@ export class BuildTypeTaskError extends NanobundleError {
 
 export class BuildTypeTaskTsError extends NanobundleError {
   constructor(ts: typeof import('typescript'), host: CompilerHost, diagnostics: readonly Diagnostic[]) {
-    const message = dedent`
-    [error] TypeScript compilation failed
-
-      ${ts.formatDiagnosticsWithColorAndContext(diagnostics, host).split('\n').join('\n  ')}
-    `;
-
+    let message: string = '[error] TypeScript compilation failed';
+    if (formatUtils.colorEnabled) {
+      message += `  ${ts.formatDiagnosticsWithColorAndContext(diagnostics, host).split('\n').join('\n  ')}`;
+    } else {
+      message += `  ${ts.formatDiagnostics(diagnostics, host).split('\n').join('\n  ')}`
+    }
     super(message);
   }
 }
