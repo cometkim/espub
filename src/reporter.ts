@@ -1,7 +1,7 @@
 import { formatWithOptions } from 'node:util';
 import kleur from 'kleur';
 
-import { colorEnabled } from './formatUtils';
+import * as formatUtils from './formatUtils';
 import { NanobundleError } from './errors';
 
 export interface Reporter {
@@ -17,7 +17,7 @@ export class ConsoleReporter implements Reporter {
   #level: number;
   #console: Console;
 
-  color = colorEnabled;
+  color = formatUtils.colorEnabled;
   level: 'default' | 'debug' = 'debug';
 
   constructor(console: Console, level = 0) {
@@ -26,12 +26,7 @@ export class ConsoleReporter implements Reporter {
   }
 
   #indent(msg: string): string {
-    const tabStr = '  ';
-    const padding = tabStr.repeat(this.#level);
-    return msg
-      .split('\n')
-      .map(msg => `${padding}${msg}`)
-      .join('\n');
+    return formatUtils.indent(msg, this.#level);
   }
 
   debug(msg: string, ...args: any[]): void {

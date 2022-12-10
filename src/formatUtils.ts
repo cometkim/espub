@@ -10,6 +10,15 @@ export const colorEnabled = !NODE_DISABLE_COLORS && NO_COLOR == null && TERM !==
   FORCE_COLOR != null && FORCE_COLOR !== '0' || isTTY
 );
 
+export function indent(msg: string, level: number): string {
+  const tab = '  ';
+  const padding = tab.repeat(level);
+  return msg
+    .split('\n')
+    .map(msg => `${padding}${msg}`)
+    .join('\n');
+}
+
 export function format(msg: string, ...args: any[]): string {
   return formatWithOptions({ colors: colorEnabled }, msg, ...args);
 }

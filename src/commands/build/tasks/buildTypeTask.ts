@@ -17,12 +17,16 @@ export class BuildTypeTaskError extends NanobundleError {
 
 export class BuildTypeTaskTsError extends NanobundleError {
   constructor(ts: typeof import('typescript'), host: CompilerHost, diagnostics: readonly Diagnostic[]) {
-    let message: string = '[error] TypeScript compilation failed';
-    if (formatUtils.colorEnabled) {
-      message += `  ${ts.formatDiagnosticsWithColorAndContext(diagnostics, host).split('\n').join('\n  ')}`;
-    } else {
-      message += `  ${ts.formatDiagnostics(diagnostics, host).split('\n').join('\n  ')}`
-    }
+    const message = dedent`
+      [error] TypeScript compilation failed
+
+        ${formatUtils.indent(
+          formatUtils.colorEnabled
+            ? ts.formatDiagnosticsWithColorAndContext(diagnostics, host)
+            : ts.formatDiagnostics(diagnostics, host),
+          4,
+        )}
+    `;
     super(message);
   }
 }
@@ -64,7 +68,7 @@ export async function buildTypeTask({
     throw new BuildTypeTaskError(dedent`
       Couldn't load TypeScript API
 
-      Try ${formatUtils.command('npm i -D typescript')} or ${formatUtils.command('yarn add -D typescript')} and build again.
+        Try ${formatUtils.command('npm i -D typescript')} or ${formatUtils.command('yarn add -D typescript')} and build again.
 
     `);
   }
