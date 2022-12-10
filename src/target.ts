@@ -14,7 +14,8 @@ const browsersToTargets = {
   'and_chr': 'chrome',
   'and_ff': 'firefox',
 
-  // 'deno': 'deno',
+  // FIXME: better compat mode
+  'deno': 'chrome',
 } as const;
 
 const supportedBrowsers = new Set(Object.keys(browsersToTargets));

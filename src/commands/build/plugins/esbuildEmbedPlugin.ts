@@ -1,19 +1,19 @@
-import type { Plugin } from 'esbuild';
-import type { Reporter } from '../report';
-import { isFileSystemReference } from '../utils';
+import { type Plugin } from 'esbuild';
+
+import { type Context } from '../../../context';
+import * as fsUtils from '../../../fsUtils';
 
 type PluginOptions = {
-  reporter: Reporter,
-  standalone: boolean,
-  externalDependencies: string[],
-  forceExternalDependencies: string[],
+  context: Context,
 };
 
 export function makePlugin({
-  reporter,
-  standalone,
-  externalDependencies,
-  forceExternalDependencies,
+  context: {
+    reporter,
+    standalone,
+    externalDependencies,
+    forceExternalDependencies,
+  },
 }: PluginOptions): Plugin {
   const ownedModule = (packageName: string, modulePath: string) => {
     return packageName === modulePath || modulePath.startsWith(packageName + '/');
@@ -39,7 +39,7 @@ export function makePlugin({
       let dependOnNode = false;
 
       build.onResolve({ filter: /.*/ }, async args => {
-        if (isFileSystemReference(args.path)) {
+        if (fsUtils.isFileSystemReference(args.path)) {
           return;
         }
 
@@ -55,7 +55,7 @@ export function makePlugin({
       });
 
       build.onEnd(() => {
-        if (dependOnNode) {
+        if (standalone && dependOnNode) {
           reporter.warn('Not completely standalone bundle, while the code depends on some Node.js APIs.');
         }
       });

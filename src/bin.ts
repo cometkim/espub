@@ -1,45 +1,27 @@
 #!/usr/bin/env node
 
-import { performance } from 'node:perf_hooks';
-import * as fs from 'node:fs';
 import * as path from 'node:path';
-import { parseNative } from 'tsconfck';
-import type {
-  Program as TSProgram,
-  CompilerOptions as TSCompilerOptions,
-} from 'typescript';
+import { parse as parseTsConfig } from 'tsconfck';
+import dedent from 'string-dedent';
 
-import type { Reporter } from './report';
 import { cli } from './cli';
-import { loadConfig } from './config';
+import { ConsoleReporter } from './reporter';
 import { loadTargets } from './target';
-import { loadImportMaps, normalizeImportMaps, validateImportMaps } from './importMaps';
-import { getEntriesFromConfig } from './entry';
-import { buildCommand } from './commands/build';
-import { makePlugin as makeEmbedPlugin } from './plugins/esbuildEmbedPlugin';
-import { makePlugin as makeImportMapsPlugin } from './plugins/esbuildImportMapsPlugin';
+import { loadManifest } from './manifest';
+import { NanobundleConfigError, parseConfig } from './context';
+import { getEntriesFromContext } from './entry';
+import * as formatUtils from './formatUtils';
+import { NanobundleError } from './errors';
+
+import { buildCommand } from './commands/build/build';
 
 const { flags, input } = cli;
 const [command] = input;
-const noop = () => {};
-const debugEnabled = process.env.DEBUG === 'true';
 
-const {
-  cwd: basePath,
-  external: forceExternalDependencies,
-  minify,
-  sourcemap,
-  standalone,
-} = flags;
+const reporter = new ConsoleReporter(console);
+reporter.level = process.env.DEBUG === 'true' ? 'debug' : 'default';
 
-const reporter: Reporter = {
-  debug: debugEnabled ? console.debug : noop,
-  info: console.info,
-  warn: console.warn,
-  error: console.error,
-};
-
-const resolvePath = (file: string) => path.resolve(basePath, file);
+const resolve = (cwd: string, subpath: string) => path.resolve(cwd, subpath);
 
 try {
   switch (command) {
@@ -48,137 +30,89 @@ try {
     }
 
     case 'build': {
-      const startedAt = performance.now();
+      const manifest = await loadManifest({
+        cwd: flags.cwd,
+        resolve,
+      });
+      reporter.debug('loaded manifest %o', manifest);
+      reporter.info(dedent`
+        build ${formatUtils.highlight(manifest.name || 'unnamed')} package
 
-      const config = await loadConfig({ resolvePath });
-      const sourceFile = config.source && resolvePath(config.source);
-      if (!sourceFile || !fs.existsSync(sourceFile)) {
-        throw new Error('`"source"` field must be specified in the package.json');
+      `);
+
+      const tsconfigResult = await parseTsConfig(flags.tsconfig, {
+        resolveWithEmptyIfConfigNotFound: true,
+      });
+      const tsconfigPath = (
+        tsconfigResult.tsconfigFile !== 'no_tsconfig_file_found'
+          ? tsconfigResult.tsconfigFile
+          : undefined
+      );
+      if (tsconfigPath) {
+        reporter.debug(`loaded tsconfig from ${tsconfigPath}`);
+      }
+      const tsconfig = (
+        tsconfigResult.tsconfigFile !== 'no_tsconfig_file_found'
+          ? tsconfigResult.tsconfig
+          : undefined
+      );
+      if (tsconfig) {
+        reporter.debug('loaded tsconfig %o', tsconfig);
       }
 
-      reporter.debug(`build ${config.name || 'unnamed'} package`);
-      reporter.debug(`load source from ${sourceFile}`);
+      const targets = await loadTargets({ basePath: flags.cwd });
+      reporter.debug(`loaded targets ${targets.join(', ')}`);
 
-      const externalDependencies = [
-        ...(config.dependencies ? Object.keys(config.dependencies) : []),
-        ...(config.peerDependencies ? Object.keys(config.peerDependencies) : []),
-        ...forceExternalDependencies,
-      ];
-      const importMaps = await loadImportMaps(
-        flags.importMaps,
-        { resolvePath },
-      );
-      const webImportMaps = validateImportMaps(
-        normalizeImportMaps(importMaps, 'web'),
-        { resolvePath },
-      );
-      const nodeImportMaps = validateImportMaps(
-        normalizeImportMaps(importMaps, 'node'),
-        { resolvePath },
-      );
-      const embedPlugin = makeEmbedPlugin({
-        reporter,
-        standalone,
-        externalDependencies,
-        forceExternalDependencies,
-      });
-      const webImportMapsPlugin = makeImportMapsPlugin({
-        name: 'web',
-        imports: webImportMaps.imports,
-        resolvePath,
-      });
-      const nodeImportMapsPlugin = makeImportMapsPlugin({
-        name: 'node',
-        imports: nodeImportMaps.imports,
-        resolvePath,
-      });
-      const webPlugins = [
-        webImportMapsPlugin,
-        embedPlugin,
-      ];
-      const nodePlugins = [
-        nodeImportMapsPlugin,
-        embedPlugin,
-      ];
-
-      let tsconfig: string | undefined;
-      let tsProgram: TSProgram | undefined;
-      if (flags.dts && config.types) {
-        const ts = await import('typescript').then(mod => mod.default);
-        const tsconfigResult = await parseNative(flags.tsconfig);
-
-        tsconfig = tsconfigResult.tsconfigFile;
-        reporter.debug(`load tsconfig from ${tsconfig}`);
-
-        const compilerOptions: TSCompilerOptions = {
-          ...tsconfigResult.result.options,
-
-          allowJs: true,
-          incremental: false,
-          skipLibCheck: true,
-          declaration: true,
-          emitDeclarationOnly: true,
-        };
-
-        if (compilerOptions.noEmit) {
-          reporter.warn('Ignored `compilerOptions.noEmit` since the package required `types` entry.');
-          reporter.warn('You can still disable emitting declaration via `--dts=false` option');
-          compilerOptions.noEmit = false;
-        }
-
-        const host = ts.createCompilerHost(compilerOptions);
-        tsProgram = ts.createProgram([sourceFile], compilerOptions, host);
-      }
-
-      const targets = await loadTargets({ basePath });
-      reporter.debug(`targets to ${targets.join(', ')}`);
-
-      const entries = getEntriesFromConfig({
-        config,
-        reporter,
-        resolvePath,
-      });
-
-      await buildCommand({
-        reporter,
-        sourceFile,
-        entries,
+      const context = parseConfig({
+        flags,
         targets,
+        manifest,
         tsconfig,
-        resolvePath,
-        minify,
-        sourcemap,
-        webPlugins,
-        nodePlugins,
+        tsconfigPath,
+        resolve,
+        reporter,
+      });
+      reporter.debug(`loaded context %o`, context);
+
+      const entries = getEntriesFromContext({
+        context,
+        reporter,
+        resolve,
       });
 
-      if (tsProgram) {
-        reporter.info('Emitting .d.ts files...');
+      if (
+        entries.some(entry => entry.module === 'dts') &&
+        tsconfigPath == null
+      ) {
+        throw new NanobundleConfigError(dedent`
+          You have set ${formatUtils.key('types')} entry. But no ${formatUtils.path('tsconfig.json')} found.
 
-        const { emittedFiles } = tsProgram.emit();
-        reporter.debug('emitted', emittedFiles);
+            Please create ${formatUtils.path('tsconfig.json')} file in the current directory, or pass its path to ${formatUtils.command('--tsconfig')} argument.
+
+        `);
       }
 
-      const endedAt = performance.now();
-      const elapsedTime = (endedAt - startedAt).toFixed(1);
-      reporter.info(`\n⚡ Done in ${elapsedTime}ms.`);
+      reporter.debug(`parsed entries %o`, entries);
 
+      await buildCommand({ context, entries });
       break;
     }
 
-    case 'watch': {
-      throw new Error('sorry, not implemeted yet');
-    }
-
     default: {
-      throw new Error(`
-Command "${command}" is not available.
+      throw new NanobundleError(dedent`
+        Command "${command}" is not available.
 
-Run \`nanobundle --help\` for more detail.`,
-      );
+          Run ${formatUtils.command('nanobundle --help')} for usage.
+      `);
     }
   }
 } catch (error) {
-  reporter.error(error);
+  if (error instanceof NanobundleError) {
+    if (error.message) {
+      reporter.error(error.message);
+    }
+  } else {
+    reporter.captureException(error);
+  }
   process.exit(1);
 }

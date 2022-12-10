@@ -1,29 +1,32 @@
-import type { Plugin } from 'esbuild';
-import { isFileSystemReference } from '../utils';
+import { type Plugin } from 'esbuild';
 
-type Imports = Record<string, string>;
+import { type Context } from '../../../context';
+import * as fsUtils from '../../../fsUtils';
+import { type ImportMaps } from '../importMaps';
 
 type PluginOptions = {
-  name: string,
-  imports: Imports,
-  resolvePath: (path: string) => string,
+  context: Context,
+  importMaps: ImportMaps,
 };
 
 export function makePlugin({
-  name,
-  imports,
-  resolvePath,
+  context,
+  importMaps: {
+    imports,
+  },
 }: PluginOptions): Plugin {
-  const isExternalPath = (path: string) => !isFileSystemReference(path);
+  const isExternalPath = (path: string) => !fsUtils.isFileSystemReference(path);
   return {
-    name: 'nanobundle/import-maps/' + name,
+    name: `@nanobundle/import-maps`,
     setup(build) {
       build.onResolve({ filter: /.*/ }, args => {
         if (imports[args.path]) {
           const modulePath = imports[args.path];
           const external = isExternalPath(modulePath);
           return {
-            path: external ? modulePath : resolvePath(modulePath),
+            path: external
+              ? modulePath
+              : context.resolve(context.cwd, modulePath),
             external,
           };
         }
@@ -35,7 +38,9 @@ export function makePlugin({
             const modulePath = args.path.replace(fromPrefix, toPrefix);
             const external = isExternalPath(modulePath);
             return {
-              path: external ? modulePath : resolvePath(modulePath),
+              path: external
+                ? modulePath
+                : context.resolve(context.cwd, modulePath),
               external,
             };
           }

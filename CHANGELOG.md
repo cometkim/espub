@@ -1,5 +1,163 @@
 # nanobundle
 
+## 1.0.0
+
+### Major Changes
+
+- c6fad2b: v1 features
+
+  - support multiple entries
+  - support nested conditional exports
+  - source inference from rootDir and outDir
+  - enable tree-shaking by default
+  - pretty reporter
+
+### Patch Changes
+
+- 8ad0d33: more debug logs
+- 7426fd6: fix build flags and help text
+- a7c3312: Fix internal error handling
+- d14d8d5: add padding to warn/error messages
+- a187ab5: fix implicit types entry not to be conflicted with others
+- 7af4bf4: polished error messages and validation
+- ad38773: Fix flag test on jsx options
+- a57385d: fix result to be reported properly
+- c2d75a8: fix boolean flag handling
+- c3284bc: prettify result report
+- 1f5c2d3: fix sourcemap output path
+- c910f0c: fix indentation on typescript diagnostics
+- 7762b4a: Support Node.js resolution for import maps
+- 6976909: fix dts generation
+- 67b74ef: Fix TypeScript build task
+- ea2782f: Support JSX sources
+- a414231: change pathLike string colors"
+- 781557a: fix things
+- 47f8eef: more compact logs
+- fde48ba: polished reporting and diagnostics
+- e6d2499: fix dts build option
+- 84c8214: Fix to make it failed on type errors
+- 2075f16: compact reporting while on verbose mode
+- 31124fe: fix to --no-dts properly skip buildTypeTask
+- d5ed671: Fix jsx transform to work with additional options
+- d4e84bc: update depdencies
+- 4918a88: Fix TypeScript declartion build and prettify reporting
+- 12d5305: normalize ts rootDir and outDir
+
+## 1.0.0-rc.15
+
+### Patch Changes
+
+- 47f8eef: more compact logs
+
+## 1.0.0-rc.14
+
+### Patch Changes
+
+- c910f0c: fix indentation on typescript diagnostics
+- 6976909: fix dts generation
+- fde48ba: polished reporting and diagnostics
+- 84c8214: Fix to make it failed on type errors
+- 2075f16: compact reporting while on verbose mode
+- 12d5305: normalize ts rootDir and outDir
+
+## 1.0.0-rc.13
+
+### Patch Changes
+
+- ad38773: Fix flag test on jsx options
+- d5ed671: Fix jsx transform to work with additional options
+
+## 1.0.0-rc.12
+
+### Patch Changes
+
+- ea2782f: Support JSX sources
+
+## 1.0.0-rc.11
+
+### Patch Changes
+
+- 7762b4a: Support Node.js resolution for import maps
+
+## 1.0.0-rc.10
+
+### Patch Changes
+
+- 7af4bf4: polished error messages and validation
+- c2d75a8: fix boolean flag handling
+- 31124fe: fix to --no-dts properly skip buildTypeTask
+
+## 1.0.0-rc.9
+
+### Patch Changes
+
+- a7c3312: Fix internal error handling
+
+## 1.0.0-rc.8
+
+### Patch Changes
+
+- a414231: change pathLike string colors"
+- d4e84bc: update depdencies
+- 4918a88: Fix TypeScript declartion build and prettify reporting
+
+## 1.0.0-rc.7
+
+### Patch Changes
+
+- 67b74ef: Fix TypeScript build task
+
+## 1.0.0-rc.6
+
+### Patch Changes
+
+- a57385d: fix result to be reported properly
+
+## 1.0.0-rc.5
+
+### Patch Changes
+
+- c3284bc: prettify result report
+
+## 1.0.0-rc.4
+
+### Patch Changes
+
+- 7426fd6: fix build flags and help text
+- 1f5c2d3: fix sourcemap output path
+- e6d2499: fix dts build option
+
+## 1.0.0-rc.3
+
+### Patch Changes
+
+- 781557a: fix things
+
+## 1.0.0-rc.2
+
+### Patch Changes
+
+- d14d8d5: add padding to warn/error messages
+- a187ab5: fix implicit types entry not to be conflicted with others
+
+## 1.0.0-rc.1
+
+### Patch Changes
+
+- 8ad0d33: more debug logs
+
+## 1.0.0-rc.0
+
+### Major Changes
+
+- c6fad2b: v1 features
+
+  - support multiple entries
+  - support nested conditional exports
+  - source inference from rootDir and outDir
+  - enable tree-shaking by default
+  - pretty reporter
+
 ## 0.0.28
 
 ### Patch Changes
