@@ -821,13 +821,21 @@ export const Message = {
         "import": "${importPath}"
 
     Solution 1. Explicitly set ${formatUtils.key('types')} entry
+      
+      For example like this
+
+      + "types": "${requirePath.replace(/\.(m|c)?js$/, '.d.ts')}",
+        "require": "${requirePath}",
+        "import": "${importPath}"
+
+      Or like this
 
         "require": {
-          "types": "${requirePath.replace(/\.(m|c)?js$/, '.d.$1ts')}",
+      +   "types": "${requirePath.replace(/\.(m|c)?js$/, '.d.$1ts')}",
           "default": "${requirePath}"
         },
         "import": {
-          "types": "${importPath.replace(/\.(m|c)?js$/, '.d.$1ts')}",
+      +   "types": "${importPath.replace(/\.(m|c)?js$/, '.d.$1ts')}",
           "default": "${importPath}"
         }
 
@@ -884,6 +892,7 @@ export const Message = {
 
   RECOMMEND_EXPORTS: () => dedent`
     Using ${formatUtils.key('exports')} field is highly recommended.
+
       See ${formatUtils.hyperlink('https://nodejs.org/api/packages.html')} for more detail.
 
   `,

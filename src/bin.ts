@@ -35,6 +35,10 @@ try {
         resolve,
       });
       reporter.debug('loaded manifest %o', manifest);
+      reporter.info(dedent`
+        build ${formatUtils.highlight(manifest.name || 'unnamed')} package
+
+      `);
 
       const tsconfigResult = await parseTsConfig(flags.tsconfig, {
         resolveWithEmptyIfConfigNotFound: true,

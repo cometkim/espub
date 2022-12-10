@@ -47,6 +47,8 @@ Options
 
   --no-dts             Disable TypeScript .d.ts build
 
+  --verbose            Set to report build result more verbosely
+
   --help               Display this message
 `, {
   importMeta: import.meta,
@@ -100,6 +102,10 @@ Options
     },
     jsxImportSource: {
       type: 'string',
+    },
+    verbose: {
+      type: 'boolean',
+      default: false,
     },
   },
 });

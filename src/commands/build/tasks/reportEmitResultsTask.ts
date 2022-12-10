@@ -42,7 +42,7 @@ export async function reportEmitResultsTask({
 
   if (typeOutputs.length > 0) {
     context.reporter.info(dedent`
-      TypeScript declarations generated:
+      ${typeOutputs.length} declaration ${typeOutputs.length === 1 ? 'file is' : 'files are'} generated:
 
         📦 ${typeOutputs.map(output => formatUtils.path(relPath(output.path))).join('\n  📦 ')}
 

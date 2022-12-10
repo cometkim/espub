@@ -10,6 +10,7 @@ export interface Reporter {
   warn(msg: string, ...args: any[]): void;
   error(msg: string, ...args: any[]): void;
   captureException(exn: unknown): void;
+  createChildReporter(): Reporter;
 }
 
 export class ConsoleReporter implements Reporter {

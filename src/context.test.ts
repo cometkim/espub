@@ -14,6 +14,9 @@ class ViReporter implements Reporter {
   warn = vi.fn();
   error = vi.fn();
   captureException = vi.fn();
+  createChildReporter() {
+    return new ViReporter();
+  }
 }
 
 describe('parseConfig', () => {
@@ -21,6 +24,7 @@ describe('parseConfig', () => {
   const resolve: PathResolver = vi.fn();
   const defaultFlags: Flags = {
     cwd: '/project',
+    verbose: false,
     platform: undefined,
     rootDir: undefined,
     outDir: undefined,
@@ -61,6 +65,7 @@ describe('parseConfig', () => {
 
     expect(result).toEqual<Context>({
       cwd: '/project',
+      verbose: false,
       module: 'commonjs',
       platform: 'neutral',
       sourcemap: true,
@@ -99,6 +104,7 @@ describe('parseConfig', () => {
 
       expect(result).toEqual<Context>({
         cwd: '/project',
+        verbose: false,
         module: 'commonjs',
         platform: 'neutral',
         sourcemap: true,
@@ -136,6 +142,7 @@ describe('parseConfig', () => {
 
       expect(result).toEqual<Context>({
         cwd: '/project',
+        verbose: false,
         module: 'commonjs',
         platform: 'neutral',
         sourcemap: true,
@@ -193,6 +200,7 @@ describe('parseConfig', () => {
 
       expect(result).toEqual<Context>({
         cwd: '/project',
+        verbose: false,
         module: 'commonjs',
         platform: 'node',
         sourcemap: true,
@@ -232,6 +240,7 @@ describe('parseConfig', () => {
 
       expect(result).toEqual<Context>({
         cwd: '/project',
+        verbose: false,
         module: 'commonjs',
         platform: 'node',
         sourcemap: true,
@@ -278,6 +287,7 @@ describe('parseConfig', () => {
 
       expect(result).toEqual<Context>({
         cwd: '/project',
+        verbose: false,
         module: 'commonjs',
         platform: 'neutral',
         sourcemap: true,
@@ -320,6 +330,7 @@ describe('parseConfig', () => {
 
       expect(result).toEqual<Context>({
         cwd: '/project',
+        verbose: false,
         module: 'commonjs',
         platform: 'neutral',
         sourcemap: true,
@@ -359,6 +370,7 @@ describe('parseConfig', () => {
 
       expect(result).toEqual<Context>({
         cwd: '/project',
+        verbose: false,
         module: 'commonjs',
         platform: 'neutral',
         sourcemap: true,
@@ -402,6 +414,7 @@ describe('parseConfig', () => {
 
       expect(result).toEqual<Context>({
         cwd: '/project',
+        verbose: false,
         module: 'commonjs',
         platform: 'neutral',
         sourcemap: true,
@@ -444,6 +457,7 @@ describe('parseConfig', () => {
 
       expect(result).toEqual<Context>({
         cwd: '/project',
+        verbose: false,
         module: 'commonjs',
         platform: 'neutral',
         sourcemap: true,
@@ -489,6 +503,7 @@ describe('parseConfig', () => {
 
       expect(result).toEqual<Context>({
         cwd: '/project',
+        verbose: false,
         module: 'commonjs',
         platform: 'neutral',
         sourcemap: true,
@@ -538,6 +553,7 @@ describe('parseConfig', () => {
 
       expect(result).toEqual<Context>({
         cwd: '/project',
+        verbose: false,
         module: 'commonjs',
         platform: 'neutral',
         sourcemap: true,

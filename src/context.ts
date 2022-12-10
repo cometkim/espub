@@ -17,6 +17,7 @@ export class NanobundleConfigError extends NanobundleError {
 
 export type Context = {
   cwd: string,
+  verbose: boolean,
   module: Entry['module'],
   platform: Entry['platform'],
   sourcemap: boolean,
@@ -59,6 +60,7 @@ export function parseConfig({
   tsconfigPath: resolvedTsConfigPath,
 }: Config): Context {
   const cwd = path.resolve(flags.cwd);
+  const verbose = flags.verbose;
   const sourcemap = !flags.noSourcemap;
   const standalone = flags.standalone;
   const tsconfigPath = resolvedTsConfigPath;
@@ -169,6 +171,7 @@ export function parseConfig({
 
   return {
     cwd,
+    verbose,
     module,
     platform,
     sourcemap,

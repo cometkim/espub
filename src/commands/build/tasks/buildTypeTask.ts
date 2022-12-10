@@ -86,6 +86,7 @@ export async function buildTypeTask({
   if (compilerOptions.noEmit) {
     context.reporter.warn(dedent`
       Ignored ${formatUtils.key('noEmit')} specified in your tsconfig.json
+
         You can disable emitting declaration via ${formatUtils.command('--no-dts')} flag.
 
     `);
@@ -99,7 +100,7 @@ export async function buildTypeTask({
     context.reporter.warn(dedent`
       nanobundle recommends to use ${formatUtils.literal('Node16')} or ${formatUtils.literal('NodeNext')} for ${formatUtils.key('compilerOptions.moduleResolution')}
 
-        See ${formatUtils.hyperlink('https://www.typescriptlang.org/docs/handbook/esm-node.html')} for usage.
+        See ${formatUtils.hyperlink('https://www.typescriptlang.org/docs/handbook/esm-node.html')} for more detail.
 
     `);
   }
@@ -113,6 +114,8 @@ export async function buildTypeTask({
     outputMap.set(filename, Buffer.from(content, 'utf-8'));
   };
 
+  const otherDiagnostics: Diagnostic[] = [];
+
   for (const entry of typeEntries) {
     const program = ts.createProgram(entry.sourceFile, compilerOptions, host);
     context.reporter.debug(`created ts program from %o`, entry.sourceFile);
@@ -122,7 +125,7 @@ export async function buildTypeTask({
       ts.getPreEmitDiagnostics(program).concat(result.diagnostics),
     );
 
-    const errrorDignostics: Diagnostic[] = [];
+    const errrorDiagnostics: Diagnostic[] = [];
 
     for (const diagnostic of allDiagnostics) {
       if (diagnosticIgnores.includes(diagnostic.code)) {
@@ -130,28 +133,31 @@ export async function buildTypeTask({
       }
       switch (diagnostic.category) {
         case ts.DiagnosticCategory.Error: {
-          errrorDignostics.push(diagnostic);
-          break;
-        }
-        case ts.DiagnosticCategory.Warning: {
-          const formattedMessage = ts.formatDiagnostic(diagnostic, host);
-          context.reporter.warn(formattedMessage);
+          errrorDiagnostics.push(diagnostic);
           break;
         }
         default: {
-          const formattedMessage = ts.formatDiagnostic(diagnostic, host);
-          context.reporter.info(formattedMessage);
+          otherDiagnostics.push(diagnostic);
           break;
         }
       }
     }
-    if (errrorDignostics.length > 0) {
+
+    if (errrorDiagnostics.length > 0) {
       throw new BuildTypeTaskTsError(
         ts,
         host,
-        errrorDignostics,
+        errrorDiagnostics,
       );
     }
+  }
+
+  if (otherDiagnostics.length > 0) {
+    context.reporter.warn(
+      formatUtils.colorEnabled
+        ? ts.formatDiagnosticsWithColorAndContext(otherDiagnostics, host)
+        : ts.formatDiagnostics(otherDiagnostics, host),
+    );
   }
 
   const outputFiles = [...outputMap.entries()]

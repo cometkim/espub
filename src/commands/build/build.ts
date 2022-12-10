@@ -1,8 +1,6 @@
 import { performance } from 'node:perf_hooks';
 import { interpret } from 'xstate';
-import dedent from 'string-dedent';
 
-import * as formatUtils from '../../formatUtils';
 import { type Context } from '../../context';
 import { type Entry } from '../../entry';
 import { NanobundleError } from '../../errors';
@@ -31,13 +29,7 @@ export async function buildCommand({
       }),
   );
   service.start();
-
-  context.reporter.info(dedent`
-    build ${formatUtils.highlight(context.manifest.name || 'unnamed')} package
-
-  `);
   service.send('BUILD');
-
   return new Promise((resolve, reject) => {
     service.onDone(() => {
       const state = service.getSnapshot();

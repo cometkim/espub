@@ -23,7 +23,6 @@ type EmitTaskResult = {
 };
 
 export async function emitTask({
-  context,
   outputFiles,
 }: EmitTaskOptions): Promise<EmitTaskResult> {
   const subtasks: Array<Promise<void>> = [];

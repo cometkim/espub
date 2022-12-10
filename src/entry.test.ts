@@ -1,7 +1,6 @@
 import * as path from 'node:path';
 import {
   describe,
-  afterEach,
   test,
   expect,
   vi,
@@ -23,6 +22,9 @@ class ViReporter implements Reporter {
   warn = vi.fn();
   error = vi.fn();
   captureException = vi.fn();
+  createChildReporter() {
+    return new ViReporter();
+  }
 }
 
 const defaultTargets: string[] = [
@@ -34,12 +36,16 @@ const defaultTargets: string[] = [
 describe('getEntriesFromContext', () => {
   const defaultFlags: Flags = {
     cwd: '/project',
+    verbose: false,
     rootDir: undefined,
     outDir: undefined,
     tsconfig: 'tsconfig.json',
     importMaps: 'package.json',
     external: [],
     jsx: undefined,
+    jsxFactory: undefined,
+    jsxFragment: undefined,
+    jsxImportSource: undefined,
     standalone: false,
     sourcemap: true,
     dts: false,
@@ -738,12 +744,16 @@ describe('getEntriesFromContext', () => {
     const getEntriesFromManifest = (manifest: Manifest) => {
       const defaultFlags: Flags = {
         cwd: '/project',
+        verbose: false,
         rootDir: 'src',
         outDir: '.',
         tsconfig: 'tsconfig.json',
         importMaps: 'package.json',
         external: [],
         jsx: undefined,
+        jsxFactory: undefined,
+        jsxFragment: undefined,
+        jsxImportSource: undefined,
         standalone: false,
         sourcemap: true,
         dts: false,
@@ -1050,12 +1060,16 @@ describe('getEntriesFromContext', () => {
 describe('getEntriesFromContext - in TypeScript project', () => {
   const defaultFlags: Flags = {
     cwd: '/project',
+    verbose: false,
     rootDir: undefined,
     outDir: undefined,
     tsconfig: 'tsconfig.json',
     importMaps: 'package.json',
     external: [],
     jsx: undefined,
+    jsxFactory: undefined,
+    jsxFragment: undefined,
+    jsxImportSource: undefined,
     standalone: false,
     sourcemap: true,
     dts: true,
@@ -1745,12 +1759,16 @@ describe('getEntriesFromContext - in TypeScript project', () => {
 describe('common usecases', () => {
   const defaultFlags: Flags = {
     cwd: '/project',
+    verbose: false,
     rootDir: 'src',
     outDir: 'lib',
     tsconfig: 'tsconfig.json',
     importMaps: 'package.json',
     external: [],
     jsx: undefined,
+    jsxFactory: undefined,
+    jsxFragment: undefined,
+    jsxImportSource: undefined,
     standalone: false,
     sourcemap: true,
     dts: true,

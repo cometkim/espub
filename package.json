@@ -19,7 +19,7 @@
     "prepack": "yarn build",
     "build": "node build.mjs",
     "build:self": "node bin.min.mjs build --platform=node",
-    "dev": "vitest --watch",
+    "type-check": "tsc --noEmit --skipLibCheck",
     "test": "vitest",
     "changeset": "changeset"
   },
