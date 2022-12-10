@@ -20,12 +20,12 @@ export class BuildTypeTaskTsError extends NanobundleError {
     const message = dedent`
       [error] TypeScript compilation failed
 
-        ${formatUtils.indent(
-          formatUtils.colorEnabled
-            ? ts.formatDiagnosticsWithColorAndContext(diagnostics, host)
-            : ts.formatDiagnostics(diagnostics, host),
-          4,
-        )}
+      ${formatUtils.indent(
+        formatUtils.colorEnabled
+          ? ts.formatDiagnosticsWithColorAndContext(diagnostics, host)
+          : ts.formatDiagnostics(diagnostics, host),
+        1,
+      )}
     `;
     super(message);
   }
