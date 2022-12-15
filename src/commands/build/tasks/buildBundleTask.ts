@@ -72,7 +72,7 @@ export async function buildBundleTask({
 
   const errors = results.flatMap(result => result.errors);
   if (errors.length > 0) {
-    throw new BuildBundleTaskError('Some errors occur while runnign esbuild', errors);
+    throw new BuildBundleTaskError('Some errors occur while running esbuild', errors);
   }
 
   const warnings = results.flatMap(result => result.warnings);
