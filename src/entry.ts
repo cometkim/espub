@@ -92,7 +92,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
 
     if (entryPath.includes('*')) {
       throw new NanobundleEntryError(
-        Message.SUBPATH_PATTERN(entryPath)
+        Message.SUBPATH_PATTERN(entryPath),
       );
     }
 
@@ -237,6 +237,19 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
       }
     }
 
+    const sourceFile = [...sourceFileCandidates];
+    if (useJsx) {
+      sourceFile.sort((a, b) => {
+        if (a.endsWith('x') && b.endsWith('x')) {
+          return 0;
+        } else if (a.endsWith('x')) {
+          return -1;
+        } else {
+          return 1;
+        }
+      });
+    }
+
     entryMap.set(entryPath, {
       key,
       entryPath,
@@ -245,7 +258,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
       sourcemap,
       platform,
       module,
-      sourceFile: [...sourceFileCandidates],
+      sourceFile,
       outputFile: resolvedOutputFile,
     });
   }
