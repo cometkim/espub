@@ -71,6 +71,8 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
   const useTsSource = tsconfigPath != null;
   const useJsSource = !(useTsSource && resolvedRootDir === resolvedOutDir);
 
+  const preserveJsx = context.jsx === 'preserve';
+
   const entryMap = new Map<Entry["entryPath"], Entry>();
 
   function addEntry(target: EntryTarget) {
@@ -142,12 +144,13 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
     const sourceFileCandidates = new Set<string>();
 
     const resolvedOutputFile = resolvePath(entryPath);
+
     let resolvedSourceFile = resolvedOutputFile.replace(
       resolvedOutDir,
       resolvedRootDir,
     );
 
-    const minifyPattern = /\.min(?<ext>\.(m|c)?js)$/;
+    const minifyPattern = /\.min(?<ext>\.(m|c)?jsx?)$/;
     const minifyMatch = resolvedSourceFile.match(minifyPattern);
     const minify = defaultMinify || Boolean(minifyMatch);
     const ext = minifyMatch?.groups?.ext;
@@ -155,7 +158,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
       resolvedSourceFile = resolvedSourceFile.replace(minifyPattern, ext);
     }
 
-    if (!resolvedOutputFile.endsWith('js')) {
+    if (!/jsx?$/.test(resolvedSourceFile)) {
       switch (module) {
         case 'commonjs': {
           useJsx && useTsSource && sourceFileCandidates.add(`${resolvedSourceFile}.ctsx`);
@@ -184,25 +187,25 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
 
     switch (module) {
       case 'commonjs': {
-        useJsx && useTsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?js$/, '.ctsx'));
-        useTsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?js$/, '.cts'));
-        useJsx && useJsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?js$/, '.cjsx'));
-        useJsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?js$/, '.cjs'));
-        useJsx && useTsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?js$/, '.tsx'));
-        useTsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?js$/, '.ts'));
-        useJsx && useJsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?js$/, '.jsx'));
-        useJsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?js$/, '.js'));
+        useJsx && useTsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?jsx?$/, '.ctsx'));
+        useTsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?jsx?$/, '.cts'));
+        useJsx && useJsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?jsx?$/, '.cjsx'));
+        useJsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?jsx?$/, '.cjs'));
+        useJsx && useTsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?jsx?$/, '.tsx'));
+        useTsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?jsx?$/, '.ts'));
+        useJsx && useJsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?jsx?$/, '.jsx'));
+        useJsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?jsx?$/, '.js'));
         break;
       }
       case 'esmodule': {
-        useJsx && useTsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?js$/, '.mtsx'));
-        useTsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?js$/, '.mts'));
-        useJsx && useJsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?js$/, '.mjsx'));
-        useJsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?js$/, '.mjs'));
-        useJsx && useTsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?js$/, '.tsx'));
-        useTsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?js$/, '.ts'));
-        useJsx && useJsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?js$/, '.jsx'));
-        useJsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?js$/, '.js'));
+        useJsx && useTsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?jsx?$/, '.mtsx'));
+        useTsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?jsx?$/, '.mts'));
+        useJsx && useJsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?jsx?$/, '.mjsx'));
+        useJsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?jsx?$/, '.mjs'));
+        useJsx && useTsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?jsx?$/, '.tsx'));
+        useTsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?jsx?$/, '.ts'));
+        useJsx && useJsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?jsx?$/, '.jsx'));
+        useJsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?jsx?$/, '.js'));
         break;
       }
       case 'dts': {
@@ -272,6 +275,11 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
   }) {
     const ext = path.extname(entryPath);
     switch (ext) {
+      case '.cjsx': {
+        if (!preserveJsx) {
+          reporter.warn(Message.NO_NEED_JSX(entryPath));
+        }
+      }
       case '.cjs': {
         addEntry({
           key,
@@ -283,6 +291,11 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
           entryPath,
         });
         break;
+      }
+      case '.mjsx': {
+        if (!preserveJsx) {
+          reporter.warn(Message.NO_NEED_JSX(entryPath));
+        }
       }
       case '.mjs': {
         addEntry({
@@ -318,7 +331,11 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
         });
         break;
       }
-      // case '.js':
+      case '.jsx': {
+        if (!preserveJsx) {
+          reporter.warn(Message.NO_NEED_JSX(entryPath));
+        }
+      }
       default: {
         addEntry({
           key,
@@ -340,8 +357,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
     key: string;
     entryPath: string;
   }) {
-    const ext = path.extname(entryPath);
-    if (ext === '.js' || ext === '.mjs') {
+    if (/\.m?jsx?$/.test(entryPath)) {
       addEntry({
         key,
         sourcemap,
@@ -462,6 +478,11 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
 
       const ext = path.extname(entryPath);
       switch (ext) {
+        case '.cjsx': {
+          if (!preserveJsx) {
+            reporter.warn(Message.NO_NEED_JSX(entryPath));
+          }
+        }
         case '.cjs': {
           addEntry({
             key,
@@ -473,6 +494,11 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
             entryPath,
           });
           break;
+        }
+        case '.mjsx': {
+          if (!preserveJsx) {
+            reporter.warn(Message.NO_NEED_JSX(entryPath));
+          }
         }
         case '.mjs': {
           addEntry({
@@ -510,7 +536,11 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
           });
           break;
         }
-        // case '.js':
+        case '.jsx': {
+          if (!preserveJsx) {
+            reporter.warn(Message.NO_NEED_JSX(entryPath));
+          }
+        }
         default: {
           addEntry({
             key,
@@ -785,15 +815,15 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
     }
   }
 
-  return Array.from(entryMap.values());
+  const entries = [...entryMap.values()];
+  return entries;
 };
 
 function inferDtsEntry(entryPath: string): string {
-  return entryPath.replace(/(\.min)?\.(m|c)?js$/, '.d.$2ts');
+  return entryPath.replace(/(\.min)?\.(m|c)?jsx?$/, '.d.$2ts');
 }
 
 export class NanobundleEntryError extends NanobundleError {
-
 }
 
 export const Message = {
@@ -921,6 +951,10 @@ export const Message = {
 
     Consider to specify ${formatUtils.key('types')} entry for it.
 
-  `
+  `,
+
+  NO_NEED_JSX: (path: string) => dedent`
+    ${formatUtils.path(path)} doesn't have to be \`.jsx\` unless you are using ${formatUtils.key('preserve')} mode.
+  `,
 
 } as const;

@@ -1684,6 +1684,98 @@ describe('getEntriesFromContext - in TypeScript project', () => {
       return { getEntries, context, reporter };
     };
 
+    test('allow jsx entries', () => {
+      expect(
+        getEntriesFromManifest({
+          name: 'my-package',
+          exports: {
+            '.': {
+              require: './lib/index.cjsx',
+              import: './lib/index.mjsx',
+              default: './lib/index.jsx',
+            },
+          },
+        }).getEntries(),
+      ).toEqual<Entry[]>([
+        {
+          key: 'exports["."].types',
+          module: 'dts',
+          mode: undefined,
+          minify: false,
+          sourcemap: true,
+          platform: 'neutral',
+          entryPath: './lib/index.d.ts',
+          sourceFile: [
+            '/project/src/index.ctsx',
+            '/project/src/index.tsx',
+            '/project/src/index.cts',
+            '/project/src/index.ts',
+          ],
+          outputFile: '/project/lib/index.d.ts',
+        },
+        {
+          key: 'exports["."].require',
+          module: 'commonjs',
+          mode: undefined,
+          minify: false,
+          sourcemap: true,
+          platform: 'neutral',
+          entryPath: './lib/index.cjsx',
+          sourceFile: [
+            '/project/src/index.ctsx',
+            '/project/src/index.cjsx',
+            '/project/src/index.tsx',
+            '/project/src/index.jsx',
+            '/project/src/index.cts',
+            '/project/src/index.cjs',
+            '/project/src/index.ts',
+            '/project/src/index.js',
+          ],
+          outputFile: '/project/lib/index.cjsx',
+        },
+        {
+          key: 'exports["."].import',
+          module: 'esmodule',
+          mode: undefined,
+          minify: false,
+          sourcemap: true,
+          platform: 'neutral',
+          entryPath: './lib/index.mjsx',
+          sourceFile: [
+            '/project/src/index.mtsx',
+            '/project/src/index.mjsx',
+            '/project/src/index.tsx',
+            '/project/src/index.jsx',
+            '/project/src/index.mts',
+            '/project/src/index.mjs',
+            '/project/src/index.ts',
+            '/project/src/index.js',
+          ],
+          outputFile: '/project/lib/index.mjsx',
+        },
+        {
+          key: 'exports["."].default',
+          module: 'commonjs',
+          mode: undefined,
+          minify: false,
+          sourcemap: true,
+          platform: 'neutral',
+          entryPath: './lib/index.jsx',
+          sourceFile: [
+            '/project/src/index.ctsx',
+            '/project/src/index.cjsx',
+            '/project/src/index.tsx',
+            '/project/src/index.jsx',
+            '/project/src/index.cts',
+            '/project/src/index.cjs',
+            '/project/src/index.ts',
+            '/project/src/index.js',
+          ],
+          outputFile: '/project/lib/index.jsx',
+        },
+      ]);
+    });
+
     test('conditional exports', () => {
       expect(
         getEntriesFromManifest({
