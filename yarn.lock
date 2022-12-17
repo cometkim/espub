@@ -744,6 +744,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nanobundle/tsconfck@npm:^2.0.1-fix.73-1":
+  version: 2.0.1-fix.73-1
+  resolution: "@nanobundle/tsconfck@npm:2.0.1-fix.73-1"
+  peerDependencies:
+    typescript: ^4.3.5
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  bin:
+    tsconfck: bin/tsconfck.js
+  checksum: 233abb201ee0c091a59767a6695a6c09df97e3a4dd7175c733cc7e82020d441340cc1b2de2c1b435b604f51522d36f394fca76aa76f09ee3bf3185c3f9383558
+  languageName: node
+  linkType: hard
+
 "@nodelib/fs.scandir@npm:2.1.5":
   version: 2.1.5
   resolution: "@nodelib/fs.scandir@npm:2.1.5"
@@ -3070,6 +3084,7 @@ __metadata:
   dependencies:
     "@changesets/cli": ^2.20.0
     "@cometjs/core": ^2.1.0
+    "@nanobundle/tsconfck": ^2.0.1-fix.73-1
     "@types/node": ^18.0.0
     "@types/semver": ^7.3.13
     "@vitest/coverage-c8": ^0.25.6
@@ -3084,7 +3099,6 @@ __metadata:
     pretty-bytes: ^6.0.0
     semver: ^7.3.8
     string-dedent: ^3.0.1
-    tsconfck: ^2.0.1
     typescript: ^4.9.3
     vite: ^4.0.0
     vitest: ^0.25.4
@@ -4221,20 +4235,6 @@ __metadata:
   version: 4.0.2
   resolution: "trim-newlines@npm:4.0.2"
   checksum: 1eef206eb77361856dff0b827e5811baf64574bb21e81b7ad643fe321c5c19b0a452dd83e9afc31206993fcff9bb90a379925d7b5915f887de1ca7da5b57933a
-  languageName: node
-  linkType: hard
-
-"tsconfck@npm:^2.0.1":
-  version: 2.0.1
-  resolution: "tsconfck@npm:2.0.1"
-  peerDependencies:
-    typescript: ^4.3.5
-  peerDependenciesMeta:
-    typescript:
-      optional: true
-  bin:
-    tsconfck: bin/tsconfck.js
-  checksum: 9d98edfea40f58bf64ee14a0cf9a28f0051c36762362ca31bd22f7a2aaf7f7fda6cad590fe5f30d9a5d22e94ae58ffdcfce5674d13f958e539ae927eb26c5f47
   languageName: node
   linkType: hard
 
