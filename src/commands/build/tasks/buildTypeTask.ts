@@ -1,5 +1,5 @@
 import dedent from 'string-dedent';
-import { parseNative } from 'tsconfck';
+import { parseNative } from '@nanobundle/tsconfck';
 import {
   type CompilerOptions,
   type CompilerHost,
