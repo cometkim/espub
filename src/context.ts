@@ -61,7 +61,7 @@ export function parseConfig({
 }: Config): Context {
   const cwd = path.resolve(flags.cwd);
   const verbose = flags.verbose;
-  const sourcemap = !flags.noSourcemap;
+  const sourcemap = flags.sourcemap;
   const standalone = flags.standalone;
   const tsconfigPath = resolvedTsConfigPath;
   const importMapsPath = flags.importMaps;
