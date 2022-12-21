@@ -158,6 +158,8 @@ More interestingly, it supports all of Node.js' notoriously complex **[Condition
     --version            Display current version
 
     --cwd                Use an alternative working directory
+    
+    --clean              Clean outputs before build
 
     --tsconfig           Specify the path to a custom tsconfig.json
 
