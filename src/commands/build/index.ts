@@ -10,11 +10,13 @@ import { buildMachine } from './build.machine';
 type BuildCommandOptions = {
   context: Context,
   entries: Entry[],
+  cleanFirst?: boolean,
 };
 
 export async function buildCommand({
   context,
   entries,
+  cleanFirst = false,
 }: BuildCommandOptions): Promise<void> {
   const service = interpret(
     buildMachine
@@ -29,7 +31,13 @@ export async function buildCommand({
       }),
   );
   service.start();
+
+  if (cleanFirst) {
+    service.send('CLEAN');
+  }
+
   service.send('BUILD');
+
   return new Promise((resolve, reject) => {
     service.onDone(() => {
       const state = service.getSnapshot();

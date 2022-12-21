@@ -97,7 +97,11 @@ try {
         build ${formatUtils.highlight(manifest.name || 'unnamed')} package
 
       `);
-      await buildCommand({ context, entries });
+      await buildCommand({
+        context,
+        entries,
+        cleanFirst: flags.clean,
+      });
     }
 
     if (command === 'clean') {
@@ -105,7 +109,10 @@ try {
         clean ${formatUtils.highlight(manifest.name || 'unnamed')} package
 
       `);
-      await cleanCommand({ context, entries });
+      await cleanCommand({
+        context,
+        entries,
+      });
     }
 
   } else {

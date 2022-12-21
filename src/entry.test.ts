@@ -36,6 +36,7 @@ const defaultTargets: string[] = [
 describe('getEntriesFromContext', () => {
   const defaultFlags: Flags = {
     cwd: '/project',
+    clean: false,
     verbose: false,
     rootDir: undefined,
     outDir: undefined,
@@ -744,6 +745,7 @@ describe('getEntriesFromContext', () => {
     const getEntriesFromManifest = (manifest: Manifest) => {
       const defaultFlags: Flags = {
         cwd: '/project',
+        clean: false,
         verbose: false,
         rootDir: 'src',
         outDir: '.',
@@ -1060,6 +1062,7 @@ describe('getEntriesFromContext', () => {
 describe('getEntriesFromContext - in TypeScript project', () => {
   const defaultFlags: Flags = {
     cwd: '/project',
+    clean: false,
     verbose: false,
     rootDir: undefined,
     outDir: undefined,
@@ -1851,6 +1854,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
 describe('common usecases', () => {
   const defaultFlags: Flags = {
     cwd: '/project',
+    clean: false,
     verbose: false,
     rootDir: 'src',
     outDir: 'lib',

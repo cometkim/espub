@@ -15,6 +15,8 @@ Options
 
   --cwd                Use an alternative working directory
 
+  --clean              Clean outputs before build
+
   --tsconfig           Specify the path to a custom tsconfig.json
 
   --import-maps        Specify import map file path (default: package.json)
@@ -57,6 +59,10 @@ Options
     cwd: {
       type: 'string',
       default: process.cwd(),
+    },
+    clean: {
+      type: 'boolean',
+      default: false,
     },
     rootDir: {
       type: 'string',

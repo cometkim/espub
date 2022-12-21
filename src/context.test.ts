@@ -24,6 +24,7 @@ describe('parseConfig', () => {
   const resolve: PathResolver = vi.fn();
   const defaultFlags: Flags = {
     cwd: '/project',
+    clean: false,
     verbose: false,
     platform: undefined,
     rootDir: undefined,
