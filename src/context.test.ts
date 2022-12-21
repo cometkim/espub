@@ -38,7 +38,7 @@ describe('parseConfig', () => {
     external: [],
     standalone: false,
     dts: true,
-    sourcemap: true,
+    sourcemap: undefined,
   };
   const defaultManifest: Manifest = {
     name: 'package'
@@ -637,10 +637,54 @@ describe('parseConfig', () => {
       });
     });
 
+    test('respect sourceMap in compilerOptions', () => {
+      const result = parseConfig({
+        flags: defaultFlags,
+        manifest: defaultManifest,
+        targets: defaultTargets,
+        reporter,
+        resolve,
+        tsconfigPath: 'tsconfig.json',
+        tsconfig: {
+          ...defaultTsConfig,
+          compilerOptions: {
+            ...defaultTsConfig.compilerOptions,
+            sourceMap: false,
+          },
+        },
+      });
+
+      expect(result).toEqual<Context>({
+        cwd: '/project',
+        verbose: false,
+        module: 'commonjs',
+        platform: 'neutral',
+        sourcemap: false,
+        declaration: true,
+        standalone: false,
+        rootDir: 'src',
+        outDir: 'lib',
+        tsconfigPath: 'tsconfig.json',
+        importMapsPath: 'package.json',
+        jsx: undefined,
+        jsxDev: false,
+        jsxFactory: 'React.createElement',
+        jsxFragment: 'Fragment',
+        jsxImportSource: 'react',
+        externalDependencies: [],
+        forceExternalDependencies: [],
+        manifest: defaultManifest,
+        targets: defaultTargets,
+        reporter,
+        resolve,
+      });
+    });
+
     test('flags precedense over tsconfig', () => {
       const result = parseConfig({
         flags: {
           ...defaultFlags,
+          sourcemap: false,
           jsx: 'preserve',
           rootDir: 'flags-src',
           outDir: 'flags-lib',
@@ -654,6 +698,7 @@ describe('parseConfig', () => {
           ...defaultTsConfig,
           compilerOptions: {
             ...defaultTsConfig.compilerOptions,
+            sourceMap: true,
             jsx: 'react-jsxdev',
             rootDir: 'tsconfig-src',
             outDir: 'tsconfig-lib',
@@ -666,7 +711,7 @@ describe('parseConfig', () => {
         verbose: false,
         module: 'commonjs',
         platform: 'neutral',
-        sourcemap: true,
+        sourcemap: false,
         declaration: true,
         standalone: false,
         rootDir: 'flags-src',
