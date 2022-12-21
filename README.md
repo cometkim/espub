@@ -152,6 +152,7 @@ More interestingly, it supports all of Node.js' notoriously complex **[Condition
 
   Available Commands
     build    Build once and exit
+    clean    Remove outputs
 
   Options
     --version            Display current version
