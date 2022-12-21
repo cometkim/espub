@@ -16,7 +16,7 @@ export class CleanupTaskError extends NanobundleError {
 
 type CleanupTaskOptions = {
   context: Context,
-  outputFiles: OutputFile[],
+  outputFiles: Array<Pick<OutputFile, 'path' | 'sourcePath'>>,
 };
 
 type CleanupTaskResult = {
@@ -29,7 +29,7 @@ export async function cleanupTask({
   const resolvedOutDir = context.resolve(context.cwd, context.outDir);
   const relativeOutDir = path.relative(context.cwd, resolvedOutDir);
 
-  if (relativeOutDir !== context.cwd && !relativeOutDir.startsWith('..')) {
+  if (relativeOutDir !== '' && !relativeOutDir.startsWith('..')) {
     context.reporter.info(`Cleanup ${formatUtils.path('./' + relativeOutDir)}`);
     await fs.rm(resolvedOutDir, { recursive: true, force: true });
     return {};
