@@ -730,20 +730,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nanobundle/tsconfck@npm:^2.0.1-fix.73-1":
-  version: 2.0.1-fix.73-1
-  resolution: "@nanobundle/tsconfck@npm:2.0.1-fix.73-1"
-  peerDependencies:
-    typescript: ^4.3.5
-  peerDependenciesMeta:
-    typescript:
-      optional: true
-  bin:
-    tsconfck: bin/tsconfck.js
-  checksum: 233abb201ee0c091a59767a6695a6c09df97e3a4dd7175c733cc7e82020d441340cc1b2de2c1b435b604f51522d36f394fca76aa76f09ee3bf3185c3f9383558
-  languageName: node
-  linkType: hard
-
 "@nodelib/fs.scandir@npm:2.1.5":
   version: 2.1.5
   resolution: "@nodelib/fs.scandir@npm:2.1.5"
@@ -2860,7 +2846,6 @@ __metadata:
   dependencies:
     "@changesets/cli": ^2.20.0
     "@cometjs/core": ^2.1.0
-    "@nanobundle/tsconfck": ^2.0.1-fix.73-1
     "@types/node": ^18.0.0
     "@types/semver": ^7.3.13
     "@vitest/coverage-c8": ^0.26.0
