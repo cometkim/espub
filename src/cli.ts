@@ -8,6 +8,7 @@ Usage
 
 Available Commands
   build    Build once and exit
+  clean    Remove outputs
 
 Options
   --version            Display current version
