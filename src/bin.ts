@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import * as path from 'node:path';
-import { parse as parseTsConfig } from '@nanobundle/tsconfck';
+import { parse as parseTsConfig } from 'tsconfck';
 import dedent from 'string-dedent';
 
 import { cli } from './cli';
