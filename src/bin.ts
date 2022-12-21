@@ -13,7 +13,7 @@ import { getEntriesFromContext } from './entry';
 import * as formatUtils from './formatUtils';
 import { NanobundleError } from './errors';
 
-import { buildCommand } from './commands/build/build';
+import { buildCommand } from './commands/build';
 
 const { flags, input } = cli;
 const [command] = input;
