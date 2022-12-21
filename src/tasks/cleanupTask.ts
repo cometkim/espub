@@ -1,9 +1,9 @@
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
 
-import * as formatUtils from '../../../formatUtils';
-import { NanobundleError } from '../../../errors';
-import { type Context } from '../../../context';
+import * as formatUtils from '../formatUtils';
+import { NanobundleError } from '../errors';
+import { type Context } from '../context';
 import { type OutputFile } from '../outputFile';
 
 export class CleanupTaskError extends NanobundleError {
@@ -16,7 +16,7 @@ export class CleanupTaskError extends NanobundleError {
 
 type CleanupTaskOptions = {
   context: Context,
-  outputFiles: OutputFile[],
+  outputFiles: Array<Pick<OutputFile, 'path' | 'sourcePath'>>,
 };
 
 type CleanupTaskResult = {
@@ -29,8 +29,8 @@ export async function cleanupTask({
   const resolvedOutDir = context.resolve(context.cwd, context.outDir);
   const relativeOutDir = path.relative(context.cwd, resolvedOutDir);
 
-  if (relativeOutDir !== context.cwd && !relativeOutDir.startsWith('..')) {
-    context.reporter.info(`Cleanup ${formatUtils.path('./' + relativeOutDir)}`);
+  if (relativeOutDir !== '' && !relativeOutDir.startsWith('..')) {
+    context.reporter.info(`🗑️  ${formatUtils.path('./' + relativeOutDir)}`);
     await fs.rm(resolvedOutDir, { recursive: true, force: true });
     return {};
   }
@@ -38,10 +38,10 @@ export async function cleanupTask({
   const subtasks: Array<Promise<void>> = [];
   for (const file of outputFiles) {
     if (file.path === file.sourcePath) {
-      context.reporter.debug(`src=dest for ${file.path}, seem to a bug`);
+      context.reporter.debug(`src=dest for ${file.path}, skipping`);
       continue;
     }
-    context.reporter.info(`Cleanup ${formatUtils.path(file.path)}`);
+    context.reporter.info(`🗑️  ${formatUtils.path('./' + path.relative(context.cwd, file.path))}`);
     subtasks.push(fs.rm(file.path, { force: true }));
   }
 

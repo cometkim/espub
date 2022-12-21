@@ -1,6 +1,6 @@
 import * as fs from 'node:fs/promises';
 
-import { type Context } from '../../../context';
+import { type Context } from '../context';
 import { type BundleEntry } from '../entryGroup';
 
 type ChmodBinTaskOptions = {

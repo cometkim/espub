@@ -1,6 +1,6 @@
-import type { OverrideProps } from '@cometjs/core';
+import { type OverrideProps } from '@cometjs/core';
 
-import type { Entry } from '../../entry';
+import { type Entry } from './entry';
 
 export type BundleEntry = OverrideProps<Entry, {
   module: 'esmodule' | 'commonjs',

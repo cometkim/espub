@@ -4,8 +4,8 @@ import { promisify } from 'node:util';
 import dedent from 'string-dedent';
 import prettyBytes from 'pretty-bytes';
 
-import * as formatUtils from '../../../formatUtils';
-import { type Context } from '../../../context';
+import * as formatUtils from '../formatUtils';
+import { type Context } from '../context';
 import { type OutputFile } from '../outputFile';
 
 const gzip = promisify(zlib.gzip);
@@ -28,8 +28,13 @@ export async function reportEmitResultsTask({
 
   const bundles = bundleOutputs
     .filter(bundle => !bundle.path.endsWith('.map'))
-
   const lastBundle = bundles.at(-1);
+  const plural = bundles.length !== 1;
+
+  context.reporter.info(dedent`
+    ${plural ? 'Bundles' : 'A bundle'} generated
+
+  `);
 
   for (const bundle of bundles) {
     const [gzipped, brotlied] = await Promise.all([
@@ -48,7 +53,8 @@ export async function reportEmitResultsTask({
 
   if (typeOutputs.length > 0) {
     context.reporter.info(dedent`
-      Also ${typeOutputs.length} declaration ${typeOutputs.length === 1 ? 'file is' : 'files are'} generated
+      Also ${typeOutputs.length} declaration ${plural ? 'files are' : 'file is'} generated
+
       ${context.verbose
         ? `  📦 ${typeOutputs.map(output => formatUtils.path(relPath(output.path))).join('\n  📦 ')}\n`
         : ''

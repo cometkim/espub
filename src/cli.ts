@@ -8,11 +8,14 @@ Usage
 
 Available Commands
   build    Build once and exit
+  clean    Remove outputs
 
 Options
   --version            Display current version
 
   --cwd                Use an alternative working directory
+
+  --clean              Clean outputs before build
 
   --tsconfig           Specify the path to a custom tsconfig.json
 
@@ -56,6 +59,10 @@ Options
     cwd: {
       type: 'string',
       default: process.cwd(),
+    },
+    clean: {
+      type: 'boolean',
+      default: false,
     },
     rootDir: {
       type: 'string',

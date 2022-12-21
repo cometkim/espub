@@ -1,8 +1,8 @@
 import * as fs from 'fs/promises';
 
-import { type Context } from '../../context';
-import * as fsUtils from '../../fsUtils';
-import { type ConditionalImports } from '../../manifest';
+import { type Context } from './context';
+import * as fsUtils from './fsUtils';
+import { type ConditionalImports } from './manifest';
 
 import { type BundleOptions } from './entryGroup';
 
