@@ -1,8 +1,8 @@
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
 
-import { NanobundleError } from '../../../errors';
-import { type Context } from '../../../context';
+import { NanobundleError } from '../errors';
+import { type Context } from '../context';
 import { type OutputFile } from '../outputFile';
 
 export class EmitTaskError extends NanobundleError {

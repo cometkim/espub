@@ -1,7 +1,7 @@
 import { type Plugin } from 'esbuild';
 
-import { type Context } from '../../../context';
-import * as fsUtils from '../../../fsUtils';
+import { type Context } from '../context';
+import * as fsUtils from '../fsUtils';
 import { type ImportMaps } from '../importMaps';
 
 type PluginOptions = {

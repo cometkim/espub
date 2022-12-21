@@ -1,11 +1,11 @@
 import * as fs from 'node:fs/promises';
 import dedent from 'string-dedent';
 
-import * as formatUtils from '../../../formatUtils';
-import { type Context } from '../../../context';
+import * as formatUtils from '../formatUtils';
+import { type Context } from '../context';
 import { type FileEntry } from '../entryGroup';
 import { type OutputFile } from '../outputFile';
-import { NanobundleError } from '../../../errors';
+import { NanobundleError } from '../errors';
 
 export class BuildFileTaskError extends NanobundleError {
   reasons: any[];

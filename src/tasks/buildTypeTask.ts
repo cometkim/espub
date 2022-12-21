@@ -6,9 +6,9 @@ import {
   type Diagnostic,
 } from 'typescript';
 
-import * as formatUtils from '../../../formatUtils';
-import { NanobundleError } from '../../../errors';
-import { type Context } from '../../../context';
+import * as formatUtils from '../formatUtils';
+import { NanobundleError } from '../errors';
+import { type Context } from '../context';
 import { type TypeEntry } from '../entryGroup';
 import { type OutputFile } from '../outputFile';
 

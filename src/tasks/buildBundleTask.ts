@@ -2,10 +2,10 @@ import * as path from 'node:path';
 import * as esbuild from 'esbuild';
 import dedent from 'string-dedent';
 
-import { type Context } from '../../../context';
-import { NanobundleError } from '../../../errors';
-import * as fsUtils from '../../../fsUtils';
-import * as formatUtils from '../../../formatUtils';
+import { type Context } from '../context';
+import { NanobundleError } from '../errors';
+import * as fsUtils from '../fsUtils';
+import * as formatUtils from '../formatUtils';
 import {
   groupBundleEntries,
   optionsFromHash,

@@ -4,8 +4,8 @@ import { promisify } from 'node:util';
 import dedent from 'string-dedent';
 import prettyBytes from 'pretty-bytes';
 
-import * as formatUtils from '../../../formatUtils';
-import { type Context } from '../../../context';
+import * as formatUtils from '../formatUtils';
+import { type Context } from '../context';
 import { type OutputFile } from '../outputFile';
 
 const gzip = promisify(zlib.gzip);

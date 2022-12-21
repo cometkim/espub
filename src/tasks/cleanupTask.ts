@@ -1,9 +1,9 @@
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
 
-import * as formatUtils from '../../../formatUtils';
-import { NanobundleError } from '../../../errors';
-import { type Context } from '../../../context';
+import * as formatUtils from '../formatUtils';
+import { NanobundleError } from '../errors';
+import { type Context } from '../context';
 import { type OutputFile } from '../outputFile';
 
 export class CleanupTaskError extends NanobundleError {
