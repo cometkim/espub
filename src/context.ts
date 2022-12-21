@@ -61,7 +61,6 @@ export function parseConfig({
 }: Config): Context {
   const cwd = path.resolve(flags.cwd);
   const verbose = flags.verbose;
-  const sourcemap = flags.sourcemap;
   const standalone = flags.standalone;
   const tsconfigPath = resolvedTsConfigPath;
   const importMapsPath = flags.importMaps;
@@ -88,6 +87,14 @@ export function parseConfig({
       ? 'esmodule'
       : 'commonjs'
   );
+
+  let sourcemap: Context['sourcemap'] = true;
+  if (tsconfig?.compilerOptions?.sourceMap != null) {
+    sourcemap = tsconfig.compilerOptions.sourceMap;
+  }
+  if (flags.sourcemap != null) {
+    sourcemap = flags.sourcemap;
+  }
 
   let platform: Entry['platform'] = 'neutral';
   if (['node', 'deno', 'web'].includes(flags.platform || '')) {

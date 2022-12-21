@@ -92,7 +92,6 @@ Options
     },
     sourcemap: {
       type: 'boolean',
-      default: true,
     },
     dts: {
       type: 'boolean',
