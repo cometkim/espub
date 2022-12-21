@@ -30,7 +30,7 @@ export async function cleanupTask({
   const relativeOutDir = path.relative(context.cwd, resolvedOutDir);
 
   if (relativeOutDir !== '' && !relativeOutDir.startsWith('..')) {
-    context.reporter.info(`Cleanup ${formatUtils.path('./' + relativeOutDir)}`);
+    context.reporter.info(`🗑️  ${formatUtils.path('./' + relativeOutDir)}`);
     await fs.rm(resolvedOutDir, { recursive: true, force: true });
     return {};
   }

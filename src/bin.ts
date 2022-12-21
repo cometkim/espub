@@ -93,10 +93,6 @@ try {
     reporter.debug(`parsed entries %o`, entries);
 
     if (command === 'build') {
-      reporter.info(dedent`
-        build ${formatUtils.highlight(manifest.name || 'unnamed')} package
-
-      `);
       await buildCommand({
         context,
         entries,
@@ -105,10 +101,6 @@ try {
     }
 
     if (command === 'clean') {
-      reporter.info(dedent`
-        clean ${formatUtils.highlight(manifest.name || 'unnamed')} package
-
-      `);
       await cleanCommand({
         context,
         entries,

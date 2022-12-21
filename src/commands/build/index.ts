@@ -1,7 +1,9 @@
+import dedent from 'string-dedent';
 import { performance } from 'node:perf_hooks';
 import { interpret } from 'xstate';
 
 import { type Context } from '../../context';
+import * as formatUtils from '../../formatUtils';
 import { type Entry } from '../../entry';
 import { NanobundleError } from '../../errors';
 
@@ -18,6 +20,11 @@ export async function buildCommand({
   entries,
   cleanFirst = false,
 }: BuildCommandOptions): Promise<void> {
+  context.reporter.info(dedent`
+    Build ${formatUtils.highlight(context.manifest.name || 'unnamed')} package
+
+  `);
+
   const service = interpret(
     buildMachine
       .withContext({
@@ -34,9 +41,14 @@ export async function buildCommand({
 
   if (cleanFirst) {
     service.send('CLEAN');
+    service.onTransition(state => {
+      if (state.can('BUILD')) {
+        service.send('BUILD');
+      }
+    });
+  } else {
+    service.send('BUILD');
   }
-
-  service.send('BUILD');
 
   return new Promise((resolve, reject) => {
     service.onDone(() => {
