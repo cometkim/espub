@@ -1,5 +1,27 @@
 # nanobundle
 
+## 1.1.0
+
+### Minor Changes
+
+- 41414c0: Add --clean flag to build command
+- 8561c0b: Prioritize jsx extension over module format if enabled
+- 36c9d4b: upgrade esbuild
+- 41414c0: Add `nanobundle clean` command
+- a77652d: Allow JSX extension entries (resolves #76)
+
+### Patch Changes
+
+- 6aca469: Fix to respect tsconfig's sourceMap option
+- 6aca469: Fix the `--no-sourcemap` option to work properly
+- 31ae8d3: Fix crash on project using Node16 and NodeNext in tsconfig.json
+
+  For this, nanobundle temporarily uses forked version of tsconfck package.
+
+- 41414c0: fix directory cleanup don't remove cwd
+- 39ead88: chore: error message typo
+- 2dcbba7: update tsconfck
+
 ## 1.0.0
 
 ### Major Changes

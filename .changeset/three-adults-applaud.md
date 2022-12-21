@@ -1,5 +1,0 @@
----
-"nanobundle": minor
----
-
-upgrade esbuild
