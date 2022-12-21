@@ -101,6 +101,10 @@ try {
     }
 
     if (command === 'clean') {
+      reporter.info(dedent`
+        clean ${formatUtils.highlight(manifest.name || 'unnamed')} package
+
+      `);
       await cleanCommand({ context, entries });
     }
 

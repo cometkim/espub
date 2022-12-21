@@ -38,10 +38,10 @@ export async function cleanupTask({
   const subtasks: Array<Promise<void>> = [];
   for (const file of outputFiles) {
     if (file.path === file.sourcePath) {
-      context.reporter.debug(`src=dest for ${file.path}, seem to a bug`);
+      context.reporter.debug(`src=dest for ${file.path}, skipping`);
       continue;
     }
-    context.reporter.info(`Cleanup ${formatUtils.path(file.path)}`);
+    context.reporter.info(`🗑️  ${formatUtils.path('./' + path.relative(context.cwd, file.path))}`);
     subtasks.push(fs.rm(file.path, { force: true }));
   }
 
