@@ -375,7 +375,7 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 MIT
 
 [microbundle]: https://github.com/developit/microbundle
-[tsup]: https://tsup.egoist.sh/
+[tsup]: https://tsup.egoist.dev/
 [estrella]: https://github.com/rsms/estrella
 [esbuild]: https://esbuild.github.io/
 [Rollup]: https://rollupjs.org/guide/
