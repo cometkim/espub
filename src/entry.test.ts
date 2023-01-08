@@ -2015,4 +2015,70 @@ describe('common usecases', () => {
       },
     ]);
   });
+
+  test('browser specific entry', () => {
+    expect(
+      getEntriesFromManifest({
+        name: 'my-package',
+        exports: {
+          '.': {
+            browser: './index.browser.min.js',
+            default: './index.js',
+          },
+        },
+      }).getEntries(),
+    ).toEqual<Entry[]>([
+      {
+        key: 'exports["."].types',
+        module: 'dts',
+        mode: undefined,
+        minify: false,
+        sourcemap: true,
+        platform: 'neutral',
+        entryPath: './index.d.ts',
+        sourceFile: [
+          '/project/index.cts',
+          '/project/index.ts',
+        ],
+        outputFile: '/project/index.d.ts',
+      },
+      {
+        key: 'exports["."].browser',
+        module: 'commonjs',
+        mode: undefined,
+        minify: true,
+        sourcemap: true,
+        platform: 'browser',
+        entryPath: './index.browser.min.js',
+        sourceFile: [
+          '/project/index.browser.cts',
+          '/project/index.browser.cjs',
+          '/project/index.browser.ts',
+          '/project/index.browser.js',
+          '/project/index.cts',
+          '/project/index.cjs',
+          '/project/index.ts',
+          '/project/index.js',
+        ],
+        outputFile: '/project/index.browser.min.js',
+      },
+      {
+        key: 'exports["."].default',
+        module: 'commonjs',
+        mode: undefined,
+        minify: false,
+        sourcemap: true,
+        platform: 'neutral',
+        entryPath: './index.js',
+        sourceFile: [
+          '/project/index.cts',
+          '/project/index.cjs',
+          '/project/index.ts',
+          '/project/index.js',
+        ],
+        outputFile: '/project/index.js',
+      },
+    ]);
+  });
+
 });

@@ -22,6 +22,7 @@ export type Entry = {
 
 type EntryTarget = {
   key: string,
+  parentKey?: string,
   entryPath: string,
   platform: Entry['platform'],
   sourcemap: Entry['sourcemap'],
@@ -78,6 +79,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
   function addEntry(target: EntryTarget) {
     const {
       key,
+      parentKey,
       sourcemap,
       entryPath,
       platform,
@@ -195,6 +197,17 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
         useTsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?jsx?$/, '.ts'));
         useJsx && useJsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?jsx?$/, '.jsx'));
         useJsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?jsx?$/, '.js'));
+        if (parentKey) {
+          let resolvedSourceFileWithoutCondition = resolvedSourceFile.replace('.' + parentKey, '');
+          useJsx && useTsSource && sourceFileCandidates.add(resolvedSourceFileWithoutCondition.replace(/\.c?jsx?$/, '.ctsx'));
+          useTsSource && sourceFileCandidates.add(resolvedSourceFileWithoutCondition.replace(/\.c?jsx?$/, '.cts'));
+          useJsx && useJsSource && sourceFileCandidates.add(resolvedSourceFileWithoutCondition.replace(/\.c?jsx?$/, '.cjsx'));
+          useJsSource && sourceFileCandidates.add(resolvedSourceFileWithoutCondition.replace(/\.c?jsx?$/, '.cjs'));
+          useJsx && useTsSource && sourceFileCandidates.add(resolvedSourceFileWithoutCondition.replace(/\.c?jsx?$/, '.tsx'));
+          useTsSource && sourceFileCandidates.add(resolvedSourceFileWithoutCondition.replace(/\.c?jsx?$/, '.ts'));
+          useJsx && useJsSource && sourceFileCandidates.add(resolvedSourceFileWithoutCondition.replace(/\.c?jsx?$/, '.jsx'));
+          useJsSource && sourceFileCandidates.add(resolvedSourceFileWithoutCondition.replace(/\.c?jsx?$/, '.js'));
+        }
         break;
       }
       case 'esmodule': {
@@ -206,6 +219,17 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
         useTsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?jsx?$/, '.ts'));
         useJsx && useJsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?jsx?$/, '.jsx'));
         useJsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?jsx?$/, '.js'));
+        if (parentKey) {
+          let resolvedSourceFileWithoutCondition = resolvedSourceFile.replace('.' + parentKey, '');
+          useJsx && useTsSource && sourceFileCandidates.add(resolvedSourceFileWithoutCondition.replace(/\.m?jsx?$/, '.mtsx'));
+          useTsSource && sourceFileCandidates.add(resolvedSourceFileWithoutCondition.replace(/\.m?jsx?$/, '.mts'));
+          useJsx && useJsSource && sourceFileCandidates.add(resolvedSourceFileWithoutCondition.replace(/\.m?jsx?$/, '.mjsx'));
+          useJsSource && sourceFileCandidates.add(resolvedSourceFileWithoutCondition.replace(/\.m?jsx?$/, '.mjs'));
+          useJsx && useTsSource && sourceFileCandidates.add(resolvedSourceFileWithoutCondition.replace(/\.m?jsx?$/, '.tsx'));
+          useTsSource && sourceFileCandidates.add(resolvedSourceFileWithoutCondition.replace(/\.m?jsx?$/, '.ts'));
+          useJsx && useJsSource && sourceFileCandidates.add(resolvedSourceFileWithoutCondition.replace(/\.m?jsx?$/, '.jsx'));
+          useJsSource && sourceFileCandidates.add(resolvedSourceFileWithoutCondition.replace(/\.m?jsx?$/, '.js'));
+        }
         break;
       }
       case 'dts': {
@@ -466,6 +490,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
       if (parentKey === 'types') {
         addEntry({
           key,
+          parentKey,
           sourcemap,
           platform,
           mode,
@@ -486,6 +511,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
         case '.cjs': {
           addEntry({
             key,
+            parentKey,
             sourcemap,
             platform,
             mode,
@@ -503,6 +529,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
         case '.mjs': {
           addEntry({
             key,
+            parentKey,
             sourcemap,
             platform,
             mode,
@@ -515,6 +542,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
         case '.node': {
           addEntry({
             key,
+            parentKey,
             sourcemap,
             platform: 'node',
             mode,
@@ -527,6 +555,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
         case '.json': {
           addEntry({
             key,
+            parentKey,
             sourcemap,
             platform,
             mode,
@@ -544,6 +573,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
         default: {
           addEntry({
             key,
+            parentKey,
             sourcemap,
             platform,
             mode,
