@@ -1,5 +1,12 @@
 # nanobundle
 
+## 1.2.0
+
+### Minor Changes
+
+- ae45ed3: Add --no-bundle flag to disable bundle build
+- 27b11c3: Allow source file with specific conditiona key
+
 ## 1.1.0
 
 ### Minor Changes
