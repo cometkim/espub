@@ -49,6 +49,7 @@ describe('getEntriesFromContext', () => {
     jsxImportSource: undefined,
     standalone: false,
     sourcemap: true,
+    bundle: true,
     dts: false,
     platform: undefined,
   };
@@ -758,6 +759,7 @@ describe('getEntriesFromContext', () => {
         jsxImportSource: undefined,
         standalone: false,
         sourcemap: true,
+        bundle: true,
         dts: false,
         platform: undefined,
       };
@@ -1075,6 +1077,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
     jsxImportSource: undefined,
     standalone: false,
     sourcemap: true,
+    bundle: true,
     dts: true,
     platform: undefined,
   };
@@ -1867,6 +1870,7 @@ describe('common usecases', () => {
     jsxImportSource: undefined,
     standalone: false,
     sourcemap: true,
+    bundle: true,
     dts: true,
     platform: undefined,
   };

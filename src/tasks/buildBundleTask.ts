@@ -43,6 +43,11 @@ export async function buildBundleTask({
   context,
   bundleEntries,
 }: BuildBundleTaskOptions): Promise<BuildBundleTaskResult> {
+  if (!context.bundle) {
+    context.reporter.debug('buildBundleTask skipped since bundle=false');
+    return { outputFiles: [] };
+  }
+
   if (bundleEntries.length > 0) {
     context.reporter.debug(`start buildBundleTask for ${bundleEntries.length} entries`);
   } else {

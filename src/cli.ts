@@ -48,6 +48,8 @@ Options
 
   --no-sourcemap       Disable source map generation
 
+  --no-bundle          Disable ESBuild bundle and other files build
+
   --no-dts             Disable TypeScript .d.ts build
 
   --verbose            Set to report build result more verbosely
@@ -92,6 +94,10 @@ Options
     },
     sourcemap: {
       type: 'boolean',
+    },
+    bundle: {
+      type: 'boolean',
+      default: true,
     },
     dts: {
       type: 'boolean',

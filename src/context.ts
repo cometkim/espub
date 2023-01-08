@@ -21,6 +21,7 @@ export type Context = {
   module: Entry['module'],
   platform: Entry['platform'],
   sourcemap: boolean,
+  bundle: boolean,
   declaration: boolean,
   jsx: 'transform' | 'preserve' | 'automatic' | undefined,
   jsxDev: boolean,
@@ -60,6 +61,7 @@ export function parseConfig({
   tsconfigPath: resolvedTsConfigPath,
 }: Config): Context {
   const cwd = path.resolve(flags.cwd);
+  const bundle = flags.bundle;
   const verbose = flags.verbose;
   const standalone = flags.standalone;
   const tsconfigPath = resolvedTsConfigPath;
@@ -182,6 +184,7 @@ export function parseConfig({
     module,
     platform,
     sourcemap,
+    bundle,
     declaration,
     jsx,
     jsxDev,

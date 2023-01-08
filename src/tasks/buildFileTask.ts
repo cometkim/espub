@@ -28,6 +28,11 @@ export async function buildFileTask({
   context,
   fileEntries,
 }: BuildFileTaskOptions): Promise<BuildFileTaskResult> {
+  if (!context.bundle) {
+    context.reporter.debug('buildFileTask skipped since bundle=false');
+    return { outputFiles: [] };
+  }
+
   if (fileEntries.length > 0) {
     context.reporter.debug(`start buildFileTask for ${fileEntries.length} entries`);
   } else {
