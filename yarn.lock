@@ -858,13 +858,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitest/coverage-c8@npm:^0.26.0":
-  version: 0.26.0
-  resolution: "@vitest/coverage-c8@npm:0.26.0"
+"@vitest/coverage-c8@npm:^0.27.0":
+  version: 0.27.0
+  resolution: "@vitest/coverage-c8@npm:0.27.0"
   dependencies:
     c8: ^7.12.0
-    vitest: 0.26.0
-  checksum: 7382271ab5cdd666e1f55043885efa7b5ec8d755073bdc3f380940365c86daa2e49b693b1f942ba647b7ea92cb51697a9e74d07a9055f90d7ca88048b6507e97
+    vitest: 0.27.0
+  checksum: 19632cd22be33d80e17597203d1cf664005b7bafd22b3aac3f4001e2f5f87b5651b0c3f58461e6d568e5d8327f4dcea61e788e1482826971729a5bc0540fe57b
   languageName: node
   linkType: hard
 
@@ -1188,6 +1188,13 @@ __metadata:
   bin:
     c8: bin/c8.js
   checksum: 3b7fa9ad7cff2cb0bb579467e6b544498fbd46e9353a809ad3b8cf749df4beadd074cde277356b0552f3c8055b1b3ec3ebaf2209e9ad4bdefed92dbf64d283ab
+  languageName: node
+  linkType: hard
+
+"cac@npm:^6.7.14":
+  version: 6.7.14
+  resolution: "cac@npm:6.7.14"
+  checksum: 45a2496a9443abbe7f52a49b22fbe51b1905eff46e03fd5e6c98e3f85077be3f8949685a1849b1a9cd2bc3e5567dfebcf64f01ce01847baf918f1b37c839791a
   languageName: node
   linkType: hard
 
@@ -2841,7 +2848,7 @@ __metadata:
     "@cometjs/core": ^2.1.0
     "@types/node": ^18.0.0
     "@types/semver": ^7.3.13
-    "@vitest/coverage-c8": ^0.26.0
+    "@vitest/coverage-c8": ^0.27.0
     "@xstate/cli": ^0.4.0
     all-contributors-cli: ^6.24.0
     browserslist: ^4.21.4
@@ -2856,7 +2863,7 @@ __metadata:
     tsconfck: ^2.0.2
     typescript: ^4.9.3
     vite: ^4.0.0
-    vitest: ^0.26.0
+    vitest: ^0.27.0
     xstate: ^4.35.0
   peerDependencies:
     typescript: ^3.7.0 || ^4.0.0
@@ -4183,19 +4190,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite-node@npm:0.26.0":
-  version: 0.26.0
-  resolution: "vite-node@npm:0.26.0"
+"vite-node@npm:0.27.0":
+  version: 0.27.0
+  resolution: "vite-node@npm:0.27.0"
   dependencies:
+    cac: ^6.7.14
     debug: ^4.3.4
     mlly: ^1.0.0
     pathe: ^0.2.0
+    picocolors: ^1.0.0
     source-map: ^0.6.1
     source-map-support: ^0.5.21
     vite: ^3.0.0 || ^4.0.0
   bin:
     vite-node: vite-node.mjs
-  checksum: a938cc96a297f75841564210e6b18c0c56dab8c59eb944cef8435a4a3c1b998400e5a9ef9945e86ac83cf6d321c05129173301e9f56ba58f9ea267c238bf0bf9
+  checksum: 946d410750640ad0ab2d41f1a8faed42b3c004dd323532bd3d630d5ce41e0a3f56b03fb955afbfb1165b861488cace7093ad82aeedbadf2f631bf388d9140e9b
   languageName: node
   linkType: hard
 
@@ -4237,25 +4246,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitest@npm:0.26.0, vitest@npm:^0.26.0":
-  version: 0.26.0
-  resolution: "vitest@npm:0.26.0"
+"vitest@npm:0.27.0, vitest@npm:^0.27.0":
+  version: 0.27.0
+  resolution: "vitest@npm:0.27.0"
   dependencies:
     "@types/chai": ^4.3.4
     "@types/chai-subset": ^1.3.3
     "@types/node": "*"
     acorn: ^8.8.1
     acorn-walk: ^8.2.0
+    cac: ^6.7.14
     chai: ^4.3.7
     debug: ^4.3.4
     local-pkg: ^0.4.2
+    picocolors: ^1.0.0
     source-map: ^0.6.1
     strip-literal: ^1.0.0
     tinybench: ^2.3.1
     tinypool: ^0.3.0
     tinyspy: ^1.0.2
     vite: ^3.0.0 || ^4.0.0
-    vite-node: 0.26.0
+    vite-node: 0.27.0
   peerDependencies:
     "@edge-runtime/vm": "*"
     "@vitest/browser": "*"
@@ -4275,7 +4286,7 @@ __metadata:
       optional: true
   bin:
     vitest: vitest.mjs
-  checksum: 5a603e57f6016d77dedc39d9cb61e618bf84fd08e955cdd299001f5213018fb446d1d88916fc70d1ff8184c72592ed88a773d36e38b29d713bae9960f6249836
+  checksum: 46e68b74ce691dd95210991338c6ef7498b1f816c26388066f789f803e1b64ab5ea9ab89e9efcf244c1bcd7a76c281a9467d79380ac3506abfd2cd79c72d37e2
   languageName: node
   linkType: hard
 
