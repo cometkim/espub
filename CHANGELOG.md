@@ -1,5 +1,11 @@
 # nanobundle
 
+## 1.2.1
+
+### Patch Changes
+
+- 7f4d5c1: Fix output filenames for CSS bundles
+
 ## 1.2.0
 
 ### Minor Changes
