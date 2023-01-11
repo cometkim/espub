@@ -138,7 +138,11 @@ async function buildBundleGroup({
       `, []);
     }
     entryPointsEntries.push([
-      path.relative(baseDir, entry.outputFile),
+      path.relative(
+        baseDir,
+        // FIXME: add normal CSS bundle support instead of this ad-hoc handling
+        entry.outputFile.replace(/\.css$/, ''),
+      ),
       sourceFile,
     ]);
   }
