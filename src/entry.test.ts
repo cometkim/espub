@@ -2085,4 +2085,84 @@ describe('common usecases', () => {
     ]);
   });
 
+  test('css entry', () => {
+    // Reported from Twitter
+    // See https://twitter.com/been_dev/status/1613111180373151744
+    expect(
+      getEntriesFromManifest({
+        name: 'my-package',
+        exports: {
+          '.': {
+            types: './index.d.ts',
+            require: './index.cjs',
+            import: './index.mjs',
+          },
+          './colors.css': './colors.css',
+        },
+      }).getEntries(),
+    ).toEqual<Entry[]>([
+      {
+        key: 'exports["."].types',
+        module: 'dts',
+        mode: undefined,
+        minify: false,
+        sourcemap: true,
+        platform: 'neutral',
+        entryPath: './index.d.ts',
+        sourceFile: [
+          '/project/index.ts',
+        ],
+        outputFile: '/project/index.d.ts',
+      },
+      {
+        key: 'exports["."].require',
+        module: 'commonjs',
+        mode: undefined,
+        minify: false,
+        sourcemap: true,
+        platform: 'neutral',
+        entryPath: './index.cjs',
+        sourceFile: [
+          '/project/index.cts',
+          '/project/index.cjs',
+          '/project/index.ts',
+          '/project/index.js',
+        ],
+        outputFile: '/project/index.cjs',
+      },
+      {
+        key: 'exports["."].import',
+        module: 'esmodule',
+        mode: undefined,
+        minify: false,
+        sourcemap: true,
+        platform: 'neutral',
+        entryPath: './index.mjs',
+        sourceFile: [
+          '/project/index.mts',
+          '/project/index.mjs',
+          '/project/index.ts',
+          '/project/index.js',
+        ],
+        outputFile: '/project/index.mjs',
+      },
+      {
+        key: 'exports["./colors.css"]',
+        module: 'commonjs',
+        mode: undefined,
+        minify: false,
+        sourcemap: true,
+        platform: 'neutral',
+        entryPath: './colors.css',
+        sourceFile: [
+          '/project/colors.css.cts',
+          '/project/colors.css.cjs',
+          '/project/colors.css.ts',
+          '/project/colors.css.js',
+          '/project/colors.css',
+        ],
+        outputFile: '/project/colors.css',
+      },
+    ]);
+  });
 });
