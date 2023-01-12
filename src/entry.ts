@@ -163,9 +163,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
     if (!/jsx?$/.test(resolvedSourceFile)) {
       switch (module) {
         case 'commonjs': {
-          useJsx && useTsSource && sourceFileCandidates.add(`${resolvedSourceFile}.ctsx`);
           useTsSource && sourceFileCandidates.add(`${resolvedSourceFile}.cts`);
-          useJsx && useJsSource && sourceFileCandidates.add(`${resolvedSourceFile}.cjsx`);
           useJsSource && sourceFileCandidates.add(`${resolvedSourceFile}.cjs`);
           useJsx && useTsSource && sourceFileCandidates.add(`${resolvedSourceFile}.tsx`);
           useTsSource && sourceFileCandidates.add(`${resolvedSourceFile}.ts`);
@@ -174,9 +172,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
           break;
         }
         case 'esmodule': {
-          useJsx && useTsSource && sourceFileCandidates.add(`${resolvedSourceFile}.mtsx`);
           useTsSource && sourceFileCandidates.add(`${resolvedSourceFile}.mts`);
-          useJsx && useJsSource && sourceFileCandidates.add(`${resolvedSourceFile}.mjsx`);
           useJsSource && sourceFileCandidates.add(`${resolvedSourceFile}.mjs`);
           useJsx && useTsSource && sourceFileCandidates.add(`${resolvedSourceFile}.tsx`);
           useTsSource && sourceFileCandidates.add(`${resolvedSourceFile}.ts`);
@@ -189,9 +185,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
 
     switch (module) {
       case 'commonjs': {
-        useJsx && useTsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?jsx?$/, '.ctsx'));
         useTsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?jsx?$/, '.cts'));
-        useJsx && useJsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?jsx?$/, '.cjsx'));
         useJsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?jsx?$/, '.cjs'));
         useJsx && useTsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?jsx?$/, '.tsx'));
         useTsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?jsx?$/, '.ts'));
@@ -199,9 +193,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
         useJsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.c?jsx?$/, '.js'));
         if (parentKey) {
           let resolvedSourceFileWithoutCondition = resolvedSourceFile.replace('.' + parentKey, '');
-          useJsx && useTsSource && sourceFileCandidates.add(resolvedSourceFileWithoutCondition.replace(/\.c?jsx?$/, '.ctsx'));
           useTsSource && sourceFileCandidates.add(resolvedSourceFileWithoutCondition.replace(/\.c?jsx?$/, '.cts'));
-          useJsx && useJsSource && sourceFileCandidates.add(resolvedSourceFileWithoutCondition.replace(/\.c?jsx?$/, '.cjsx'));
           useJsSource && sourceFileCandidates.add(resolvedSourceFileWithoutCondition.replace(/\.c?jsx?$/, '.cjs'));
           useJsx && useTsSource && sourceFileCandidates.add(resolvedSourceFileWithoutCondition.replace(/\.c?jsx?$/, '.tsx'));
           useTsSource && sourceFileCandidates.add(resolvedSourceFileWithoutCondition.replace(/\.c?jsx?$/, '.ts'));
@@ -211,9 +203,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
         break;
       }
       case 'esmodule': {
-        useJsx && useTsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?jsx?$/, '.mtsx'));
         useTsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?jsx?$/, '.mts'));
-        useJsx && useJsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?jsx?$/, '.mjsx'));
         useJsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?jsx?$/, '.mjs'));
         useJsx && useTsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?jsx?$/, '.tsx'));
         useTsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?jsx?$/, '.ts'));
@@ -221,9 +211,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
         useJsSource && sourceFileCandidates.add(resolvedSourceFile.replace(/\.m?jsx?$/, '.js'));
         if (parentKey) {
           let resolvedSourceFileWithoutCondition = resolvedSourceFile.replace('.' + parentKey, '');
-          useJsx && useTsSource && sourceFileCandidates.add(resolvedSourceFileWithoutCondition.replace(/\.m?jsx?$/, '.mtsx'));
           useTsSource && sourceFileCandidates.add(resolvedSourceFileWithoutCondition.replace(/\.m?jsx?$/, '.mts'));
-          useJsx && useJsSource && sourceFileCandidates.add(resolvedSourceFileWithoutCondition.replace(/\.m?jsx?$/, '.mjsx'));
           useJsSource && sourceFileCandidates.add(resolvedSourceFileWithoutCondition.replace(/\.m?jsx?$/, '.mjs'));
           useJsx && useTsSource && sourceFileCandidates.add(resolvedSourceFileWithoutCondition.replace(/\.m?jsx?$/, '.tsx'));
           useTsSource && sourceFileCandidates.add(resolvedSourceFileWithoutCondition.replace(/\.m?jsx?$/, '.ts'));
@@ -235,11 +223,9 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
       case 'dts': {
         if (!useTsSource) break;
         if (preferredModule === 'commonjs') {
-          useJsx && sourceFileCandidates.add(resolvedSourceFile.replace(/\.d\.c?ts$/, '.ctsx'));
           sourceFileCandidates.add(resolvedSourceFile.replace(/\.d\.c?ts$/, '.cts'));
         }
         if (preferredModule === 'esmodule') {
-          useJsx && sourceFileCandidates.add(resolvedSourceFile.replace(/\.d\.m?ts$/, '.mtsx'));
           sourceFileCandidates.add(resolvedSourceFile.replace(/\.d\.m?ts$/, '.mts'));
         }
         useJsx && sourceFileCandidates.add(resolvedSourceFile.replace(/\.d\.(m|c)?ts$/, '.tsx'));
@@ -299,11 +285,6 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
   }) {
     const ext = path.extname(entryPath);
     switch (ext) {
-      case '.cjsx': {
-        if (!preserveJsx) {
-          reporter.warn(Message.NO_NEED_JSX(entryPath));
-        }
-      }
       case '.cjs': {
         addEntry({
           key,
@@ -315,11 +296,6 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
           entryPath,
         });
         break;
-      }
-      case '.mjsx': {
-        if (!preserveJsx) {
-          reporter.warn(Message.NO_NEED_JSX(entryPath));
-        }
       }
       case '.mjs': {
         addEntry({
@@ -503,11 +479,6 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
 
       const ext = path.extname(entryPath);
       switch (ext) {
-        case '.cjsx': {
-          if (!preserveJsx) {
-            reporter.warn(Message.NO_NEED_JSX(entryPath));
-          }
-        }
         case '.cjs': {
           addEntry({
             key,
@@ -520,11 +491,6 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
             entryPath,
           });
           break;
-        }
-        case '.mjsx': {
-          if (!preserveJsx) {
-            reporter.warn(Message.NO_NEED_JSX(entryPath));
-          }
         }
         case '.mjs': {
           addEntry({
@@ -795,8 +761,8 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
 
   if (manifest.exports) {
     addConditionalEntry({
-      key: "exports",
-      parentKey: "exports",
+      key: 'exports',
+      parentKey: 'exports',
       platform: defaultPlatform,
       mode: defaultMode,
       module: defaultModule,

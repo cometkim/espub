@@ -426,34 +426,40 @@ describe('getEntriesFromContext', () => {
   test('conditional exports', () => {
     expect(
       getEntriesFromManifest({
-        name: "my-package",
+        name: 'my-package',
         exports: {
-          require: "./lib/require.js",
-          import: "./lib/import.js",
+          require: './lib/require.js',
+          import: './lib/import.js',
         },
       }).getEntries(),
     ).toEqual<Entry[]>([
       {
-        key: "exports.require",
-        module: "commonjs",
+        key: 'exports.require',
+        module: 'commonjs',
         mode: undefined,
         minify: false,
         sourcemap: true,
-        platform: "neutral",
-        entryPath: "./lib/require.js",
-        sourceFile: ["/project/src/require.cjs", "/project/src/require.js"],
-        outputFile: "/project/lib/require.js",
+        platform: 'neutral',
+        entryPath: './lib/require.js',
+        sourceFile: [
+          '/project/src/require.cjs',
+          '/project/src/require.js',
+        ],
+        outputFile: '/project/lib/require.js',
       },
       {
-        key: "exports.import",
-        module: "esmodule",
+        key: 'exports.import',
+        module: 'esmodule',
         mode: undefined,
         minify: false,
         sourcemap: true,
-        platform: "neutral",
-        entryPath: "./lib/import.js",
-        sourceFile: ["/project/src/import.mjs", "/project/src/import.js"],
-        outputFile: "/project/lib/import.js",
+        platform: 'neutral',
+        entryPath: './lib/import.js',
+        sourceFile: [
+          '/project/src/import.mjs',
+          '/project/src/import.js',
+        ],
+        outputFile: '/project/lib/import.js',
       },
     ]);
 
@@ -1033,7 +1039,6 @@ describe('getEntriesFromContext', () => {
           platform: 'neutral',
           entryPath: './lib/index.cjs',
           sourceFile: [
-            '/project/src/index.cjsx',
             '/project/src/index.jsx',
             '/project/src/index.cjs',
             '/project/src/index.js',
@@ -1049,7 +1054,6 @@ describe('getEntriesFromContext', () => {
           platform: 'neutral',
           entryPath: './lib/index.mjs',
           sourceFile: [
-            '/project/src/index.mjsx',
             '/project/src/index.jsx',
             '/project/src/index.mjs',
             '/project/src/index.js',
@@ -1694,73 +1698,12 @@ describe('getEntriesFromContext - in TypeScript project', () => {
       expect(
         getEntriesFromManifest({
           name: 'my-package',
-          exports: {
-            '.': {
-              require: './lib/index.cjsx',
-              import: './lib/index.mjsx',
-              default: './lib/index.jsx',
-            },
-          },
+          exports: './lib/index.jsx',
+          types: './lib/index.d.ts',
         }).getEntries(),
       ).toEqual<Entry[]>([
         {
-          key: 'exports["."].types',
-          module: 'dts',
-          mode: undefined,
-          minify: false,
-          sourcemap: true,
-          platform: 'neutral',
-          entryPath: './lib/index.d.ts',
-          sourceFile: [
-            '/project/src/index.ctsx',
-            '/project/src/index.tsx',
-            '/project/src/index.cts',
-            '/project/src/index.ts',
-          ],
-          outputFile: '/project/lib/index.d.ts',
-        },
-        {
-          key: 'exports["."].require',
-          module: 'commonjs',
-          mode: undefined,
-          minify: false,
-          sourcemap: true,
-          platform: 'neutral',
-          entryPath: './lib/index.cjsx',
-          sourceFile: [
-            '/project/src/index.ctsx',
-            '/project/src/index.cjsx',
-            '/project/src/index.tsx',
-            '/project/src/index.jsx',
-            '/project/src/index.cts',
-            '/project/src/index.cjs',
-            '/project/src/index.ts',
-            '/project/src/index.js',
-          ],
-          outputFile: '/project/lib/index.cjsx',
-        },
-        {
-          key: 'exports["."].import',
-          module: 'esmodule',
-          mode: undefined,
-          minify: false,
-          sourcemap: true,
-          platform: 'neutral',
-          entryPath: './lib/index.mjsx',
-          sourceFile: [
-            '/project/src/index.mtsx',
-            '/project/src/index.mjsx',
-            '/project/src/index.tsx',
-            '/project/src/index.jsx',
-            '/project/src/index.mts',
-            '/project/src/index.mjs',
-            '/project/src/index.ts',
-            '/project/src/index.js',
-          ],
-          outputFile: '/project/lib/index.mjsx',
-        },
-        {
-          key: 'exports["."].default',
+          key: 'exports',
           module: 'commonjs',
           mode: undefined,
           minify: false,
@@ -1768,8 +1711,6 @@ describe('getEntriesFromContext - in TypeScript project', () => {
           platform: 'neutral',
           entryPath: './lib/index.jsx',
           sourceFile: [
-            '/project/src/index.ctsx',
-            '/project/src/index.cjsx',
             '/project/src/index.tsx',
             '/project/src/index.jsx',
             '/project/src/index.cts',
@@ -1778,6 +1719,21 @@ describe('getEntriesFromContext - in TypeScript project', () => {
             '/project/src/index.js',
           ],
           outputFile: '/project/lib/index.jsx',
+        },
+        {
+          key: 'types',
+          module: 'dts',
+          mode: undefined,
+          minify: false,
+          sourcemap: true,
+          platform: 'neutral',
+          entryPath: './lib/index.d.ts',
+          sourceFile: [
+            '/project/src/index.tsx',
+            '/project/src/index.cts',
+            '/project/src/index.ts',
+          ],
+          outputFile: '/project/lib/index.d.ts',
         },
       ]);
     });
@@ -1818,8 +1774,6 @@ describe('getEntriesFromContext - in TypeScript project', () => {
           platform: 'neutral',
           entryPath: './lib/index.cjs',
           sourceFile: [
-            '/project/src/index.ctsx',
-            '/project/src/index.cjsx',
             '/project/src/index.tsx',
             '/project/src/index.jsx',
             '/project/src/index.cts',
@@ -1838,8 +1792,6 @@ describe('getEntriesFromContext - in TypeScript project', () => {
           platform: 'neutral',
           entryPath: './lib/index.mjs',
           sourceFile: [
-            '/project/src/index.mtsx',
-            '/project/src/index.mjsx',
             '/project/src/index.tsx',
             '/project/src/index.jsx',
             '/project/src/index.mts',
@@ -2209,8 +2161,6 @@ describe('common usecases', () => {
         platform: 'neutral',
         entryPath: './lib/index.js',
         sourceFile: [
-          '/project/src/index.mtsx',
-          '/project/src/index.mjsx',
           '/project/src/index.tsx',
           '/project/src/index.jsx',
           '/project/src/index.mts',
@@ -2229,7 +2179,6 @@ describe('common usecases', () => {
         platform: 'neutral',
         entryPath: './lib/index.d.ts',
         sourceFile: [
-          '/project/src/index.mtsx',
           '/project/src/index.tsx',
           '/project/src/index.mts',
           '/project/src/index.ts',
