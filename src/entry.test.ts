@@ -2165,4 +2165,77 @@ describe('common usecases', () => {
       },
     ]);
   });
+
+  test('ESM first module with jsx=react', () => {
+    const entriesFromManifest = (manifest: Manifest) => {
+      const reporter = new ViReporter();
+      const context = parseConfig({
+        flags: defaultFlags,
+        targets: defaultTargets,
+        manifest,
+        reporter,
+        resolve,
+        tsconfigPath: 'tsconfig.json',
+        tsconfig: {
+          compilerOptions: {
+            jsx: 'react',
+          },
+        },
+      });
+      const getEntries = () => getEntriesFromContext({
+        context,
+        resolve,
+        reporter,
+      });
+      return { getEntries, context, reporter };
+    };
+
+    expect(
+      entriesFromManifest({
+        name: 'my-package',
+        type: 'module',
+        types: './lib/index.d.ts',
+        main: './lib/index.js',
+        module: './lib/index.js',
+        exports: './lib/index.js',
+      }).getEntries(),
+    ).toEqual<Entry[]>([
+      {
+        key: 'exports',
+        module: 'esmodule',
+        mode: undefined,
+        minify: false,
+        sourcemap: true,
+        platform: 'neutral',
+        entryPath: './lib/index.js',
+        sourceFile: [
+          '/project/src/index.mtsx',
+          '/project/src/index.mjsx',
+          '/project/src/index.tsx',
+          '/project/src/index.jsx',
+          '/project/src/index.mts',
+          '/project/src/index.mjs',
+          '/project/src/index.ts',
+          '/project/src/index.js',
+        ],
+        outputFile: '/project/lib/index.js',
+      },
+      {
+        key: 'types',
+        module: 'dts',
+        mode: undefined,
+        minify: false,
+        sourcemap: true,
+        platform: 'neutral',
+        entryPath: './lib/index.d.ts',
+        sourceFile: [
+          '/project/src/index.mtsx',
+          '/project/src/index.tsx',
+          '/project/src/index.mts',
+          '/project/src/index.ts',
+        ],
+        outputFile: '/project/lib/index.d.ts',
+      },
+    ]);
+  });
 });
