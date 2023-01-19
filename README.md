@@ -86,11 +86,11 @@ More interestingly, it supports all of Node.js' notoriously complex **[Condition
     "exports": {
       ".": {
         "node": {
-          "require": "./lib/index.node.cjs",  // => src/index.node.cts or src/index.node.ts
-          "import": "./lib/index.node.mjs"    // => src/index.node.mts or src/index.node.ts
+          "require": "./lib/index.node.cjs",  // => src/index.cts or src/index.ts
+          "import": "./lib/index.node.mjs"    // => src/index.mts or src/index.ts
         },
-        "deno": "./lib/index.deno.mjs",       // => src/index.deno.mts or src/index.deno.ts
-        "browser": "./lib/index.browser.mjs", // => src/index.browser.mts or src/index.browser.ts
+        "deno": "./lib/index.deno.mjs",       // => src/index.mts or src/index.ts
+        "browser": "./lib/index.browser.mjs", // => src/index.mts or src/index.ts
         "default": "./lib/index.js"           // => src/index.ts
       },
       "./package.json": "./package.json"      // => package.json
