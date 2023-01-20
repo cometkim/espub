@@ -70,7 +70,7 @@ export function parseConfig({
   const verbose = flags.verbose;
   const standalone = flags.standalone;
   const tsconfigPath = resolvedTsConfigPath;
-  const importMapsPath = flags.importMaps;
+  const importMapsPath = path.resolve(cwd, flags.importMaps);
   const forceExternalDependencies = flags.external;
   const externalDependencies = [
     ...(manifest.dependencies ? Object.keys(manifest.dependencies) : []),
