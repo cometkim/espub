@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-import * as path from 'node:path';
 import { parse as parseTsConfig } from 'tsconfck';
 import dedent from 'string-dedent';
 
@@ -22,8 +21,6 @@ const [command] = input;
 const reporter = new ConsoleReporter(console);
 reporter.level = process.env.DEBUG === 'true' ? 'debug' : 'default';
 
-const resolve = (cwd: string, subpath: string) => path.resolve(cwd, subpath);
-
 if (!command) {
   cli.showHelp(0);
 }
@@ -32,10 +29,7 @@ const supportedCommands = ['build', 'clean'];
 
 try {
   if (supportedCommands.includes(command)) {
-    const manifest = await loadManifest({
-      cwd: flags.cwd,
-      resolve,
-    });
+    const manifest = await loadManifest({ basePath: flags.cwd });
     reporter.debug('loaded manifest %o', manifest);
 
     const tsconfigResult = await parseTsConfig(flags.tsconfig, {
@@ -67,7 +61,6 @@ try {
       manifest,
       tsconfig,
       tsconfigPath,
-      resolve,
       reporter,
     });
     reporter.debug(`loaded context %o`, context);
@@ -75,7 +68,6 @@ try {
     const entries = getEntriesFromContext({
       context,
       reporter,
-      resolve,
     });
 
     if (

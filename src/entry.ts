@@ -34,14 +34,12 @@ type EntryTarget = {
 interface GetEntriesFromContext {
   (props: {
     context: Context;
-    resolve: (cwd: string, path: string) => string;
     reporter: Reporter;
   }): Entry[];
 }
 export const getEntriesFromContext: GetEntriesFromContext = ({
   context,
   reporter,
-  resolve: resolvePathFrom,
 }) => {
   const defaultMinify: Entry['minify'] = false;
   const defaultMode: Entry['mode'] = undefined;
@@ -64,9 +62,8 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
     file: undefined,
   } as const)[defaultModule];
 
-  const resolvePath = (path: string) => resolvePathFrom(cwd, path);
-  const resolvedRootDir = resolvePath(rootDir);
-  const resolvedOutDir = resolvePath(outDir);
+  const resolvedRootDir = context.resolvePath(rootDir);
+  const resolvedOutDir = context.resolvePath(outDir);
 
   const useJsx = jsx != null;
   const useTsSource = tsconfigPath != null;
@@ -145,7 +142,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
 
     const sourceFileCandidates = new Set<string>();
 
-    const resolvedOutputFile = resolvePath(entryPath);
+    const resolvedOutputFile = context.resolvePath(entryPath);
 
     let resolvedSourceFile = resolvedOutputFile.replace(
       resolvedOutDir,

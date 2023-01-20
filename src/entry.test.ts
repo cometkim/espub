@@ -54,28 +54,23 @@ describe('getEntriesFromContext', () => {
     platform: undefined,
   };
 
-  const getEntriesFromManifest = (manifest: Manifest) => {
+  const entriesFromManifest = (manifest: Manifest) => {
     const reporter = new ViReporter();
     const context = parseConfig({
       flags: defaultFlags,
       targets: defaultTargets,
       manifest,
       reporter,
-      resolve,
     });
     return {
       context,
       reporter,
-      getEntries: () => getEntriesFromContext({
-        context,
-        resolve,
-        reporter,
-      }),
+      getEntries: () => getEntriesFromContext({ context, reporter }),
     };
   };
 
   test('empty package', () => {
-    const { getEntries, reporter } = getEntriesFromManifest({
+    const { getEntries, reporter } = entriesFromManifest({
       name: 'my-package',
     });
     expect(getEntries()).toEqual<Entry[]>([]);
@@ -83,7 +78,7 @@ describe('getEntriesFromContext', () => {
   });
 
   test('main entry, implicit commonjs', () => {
-    const { getEntries, reporter } = getEntriesFromManifest({
+    const { getEntries, reporter } = entriesFromManifest({
       name: 'my-package',
       main: './lib/index.js',
     });
@@ -108,7 +103,7 @@ describe('getEntriesFromContext', () => {
   });
 
   test('main field, explicit commonjs', () => {
-    const { getEntries, reporter } = getEntriesFromManifest({
+    const { getEntries, reporter } = entriesFromManifest({
       name: 'my-package',
       type: 'commonjs',
       main: './lib/index.js',
@@ -134,7 +129,7 @@ describe('getEntriesFromContext', () => {
   });
 
   test('main field, explicit esmodule', () => {
-    const { getEntries, reporter } = getEntriesFromManifest({
+    const { getEntries, reporter } = entriesFromManifest({
       name: 'my-package',
       type: 'module',
       main: './lib/index.js',
@@ -160,7 +155,7 @@ describe('getEntriesFromContext', () => {
   });
 
   test('main field with module extension - module/cjs', () => {
-    const { getEntries, reporter } = getEntriesFromManifest({
+    const { getEntries, reporter } = entriesFromManifest({
       name: 'my-package',
       type: 'module',
       main: './lib/index.cjs',
@@ -186,7 +181,7 @@ describe('getEntriesFromContext', () => {
   });
 
   test('main field with module extension - commonjs/mjs', () => {
-    const { getEntries, reporter } = getEntriesFromManifest({
+    const { getEntries, reporter } = entriesFromManifest({
       name: 'my-package',
       type: 'commonjs',
       main: './lib/index.mjs',
@@ -212,7 +207,7 @@ describe('getEntriesFromContext', () => {
   });
 
   test('main field accepts json', () => {
-    const { getEntries } = getEntriesFromManifest({
+    const { getEntries } = entriesFromManifest({
       name: 'my-package',
       main: './lib/index.json',
     });
@@ -232,7 +227,7 @@ describe('getEntriesFromContext', () => {
   });
 
   test('main field accepts node addon', () => {
-    const { getEntries } = getEntriesFromManifest({
+    const { getEntries } = entriesFromManifest({
       name: 'my-package',
       main: './lib/index.node',
     });
@@ -252,7 +247,7 @@ describe('getEntriesFromContext', () => {
   });
 
   test('main field treat unknown extensions as a js file', () => {
-    const { getEntries } = getEntriesFromManifest({
+    const { getEntries } = entriesFromManifest({
       name: 'my-package',
       main: './lib/index.css',
     });
@@ -276,7 +271,7 @@ describe('getEntriesFromContext', () => {
   });
 
   test('module field', () => {
-    const { getEntries, reporter } = getEntriesFromManifest({
+    const { getEntries, reporter } = entriesFromManifest({
       name: 'my-package',
       main: './lib/main.js',
       module: './lib/module.js',
@@ -313,7 +308,7 @@ describe('getEntriesFromContext', () => {
   });
 
   test('throw if "main" and "module" is on conflict', () => {
-    const { getEntries } = getEntriesFromManifest({
+    const { getEntries } = entriesFromManifest({
       name: 'my-package',
       main: './lib/index.js',
       module: './lib/index.js',
@@ -322,7 +317,7 @@ describe('getEntriesFromContext', () => {
   });
 
   test('prefer "exports" over "module" on conflict', () => {
-    const { getEntries, reporter } = getEntriesFromManifest({
+    const { getEntries, reporter } = entriesFromManifest({
       name: 'my-package',
       exports: './lib/index.js',
       module: './lib/index.js',
@@ -353,7 +348,7 @@ describe('getEntriesFromContext', () => {
   });
 
   test('exports field', () => {
-    const { getEntries } = getEntriesFromManifest({
+    const { getEntries } = entriesFromManifest({
       name: 'my-package',
       exports: './lib/index.js',
     });
@@ -373,7 +368,7 @@ describe('getEntriesFromContext', () => {
   });
 
   test('exports field always precedense over main #1', () => {
-    const { getEntries, reporter } = getEntriesFromManifest({
+    const { getEntries, reporter } = entriesFromManifest({
       name: 'my-package',
       main: './lib/index.js',
       exports: './lib/index.js',
@@ -395,7 +390,7 @@ describe('getEntriesFromContext', () => {
   });
 
   test('exports field always precedense over main #2', () => {
-    const { getEntries, reporter } = getEntriesFromManifest({
+    const { getEntries, reporter } = entriesFromManifest({
       name: 'my-package',
       type: 'module',
       main: './lib/index.js',
@@ -425,7 +420,7 @@ describe('getEntriesFromContext', () => {
 
   test('conditional exports', () => {
     expect(
-      getEntriesFromManifest({
+      entriesFromManifest({
         name: 'my-package',
         exports: {
           require: './lib/require.js',
@@ -464,7 +459,7 @@ describe('getEntriesFromContext', () => {
     ]);
 
     expect(
-      getEntriesFromManifest({
+      entriesFromManifest({
         name: "my-package",
         exports: {
           ".": "./lib/index.js",
@@ -517,7 +512,7 @@ describe('getEntriesFromContext', () => {
 
   test("nested conditional exports", () => {
     expect(
-      getEntriesFromManifest({
+      entriesFromManifest({
         name: "my-package",
         exports: {
           ".": {
@@ -554,7 +549,7 @@ describe('getEntriesFromContext', () => {
 
   test("conditional exports community definitions", () => {
     expect(
-      getEntriesFromManifest({
+      entriesFromManifest({
         name: "my-package",
         exports: {
           ".": {
@@ -662,7 +657,7 @@ describe('getEntriesFromContext', () => {
   });
 
   test('bin entry', () => {
-    const { getEntries } = getEntriesFromManifest({
+    const { getEntries } = entriesFromManifest({
       name: 'my-package',
       bin: './lib/bin.js',
     });
@@ -685,7 +680,7 @@ describe('getEntriesFromContext', () => {
   });
 
   test('bin entry only accepts js', () => {
-    const { getEntries } = getEntriesFromManifest({
+    const { getEntries } = entriesFromManifest({
       name: 'my-package',
       bin: './lib/index.json',
     });
@@ -693,7 +688,7 @@ describe('getEntriesFromContext', () => {
   });
 
   test('multiple bin entries', () => {
-    const { getEntries } = getEntriesFromManifest({
+    const { getEntries } = entriesFromManifest({
       name: 'my-package',
       type: 'module',
       bin: {
@@ -749,7 +744,7 @@ describe('getEntriesFromContext', () => {
   });
 
   describe('getEntriesFromContext - when rootDir=./src, outDir=.', () => {
-    const getEntriesFromManifest = (manifest: Manifest) => {
+    const entriesFromManifest = (manifest: Manifest) => {
       const defaultFlags: Flags = {
         cwd: '/project',
         clean: false,
@@ -775,19 +770,14 @@ describe('getEntriesFromContext', () => {
         targets: defaultTargets,
         manifest,
         reporter,
-        resolve,
       });
-      const getEntries = () => getEntriesFromContext({
-        context,
-        resolve,
-        reporter,
-      });
+      const getEntries = () => getEntriesFromContext({ context, reporter });
       return { getEntries, context, reporter };
     };
 
     test('conditional exports', () => {
       expect(
-        getEntriesFromManifest({
+        entriesFromManifest({
           name: 'my-package',
           exports: {
             require: './require.js',
@@ -826,7 +816,7 @@ describe('getEntriesFromContext', () => {
       ]);
 
       expect(
-        getEntriesFromManifest({
+        entriesFromManifest({
           name: 'my-package',
           exports: {
             '.': './index.js',
@@ -882,7 +872,7 @@ describe('getEntriesFromContext', () => {
   });
 
   describe('getEntriesFromContext - when rootDir=., outDir=./lib', () => {
-    const getEntriesFromManifest = (manifest: Manifest) => {
+    const entriesFromManifest = (manifest: Manifest) => {
       const reporter = new ViReporter();
       const context = parseConfig({
         flags: {
@@ -893,19 +883,14 @@ describe('getEntriesFromContext', () => {
         targets: defaultTargets,
         manifest,
         reporter,
-        resolve,
       });
-      const getEntries = () => getEntriesFromContext({
-        context,
-        resolve,
-        reporter,
-      });
+      const getEntries = () => getEntriesFromContext({ context, reporter });
       return { getEntries, context, reporter };
     };
 
     test('conditional exports', () => {
       expect(
-        getEntriesFromManifest({
+        entriesFromManifest({
           name: 'my-package',
           exports: {
             require: './lib/require.js',
@@ -944,7 +929,7 @@ describe('getEntriesFromContext', () => {
       ]);
 
       expect(
-        getEntriesFromManifest({
+        entriesFromManifest({
           name: 'my-package',
           exports: {
             '.': './lib/index.js',
@@ -1000,7 +985,7 @@ describe('getEntriesFromContext', () => {
   });
 
   describe('getEntriesFromContext - jsx=preserve', () => {
-    const getEntriesFromManifest = (manifest: Manifest) => {
+    const entriesFromManifest = (manifest: Manifest) => {
       const reporter = new ViReporter();
       const context = parseConfig({
         flags: {
@@ -1010,19 +995,14 @@ describe('getEntriesFromContext', () => {
         targets: defaultTargets,
         manifest,
         reporter,
-        resolve,
       });
-      const getEntries = () => getEntriesFromContext({
-        context,
-        resolve,
-        reporter,
-      });
+      const getEntries = () => getEntriesFromContext({ context, reporter });
       return { getEntries, context, reporter };
     };
 
     test('conditional exports', () => {
       expect(
-        getEntriesFromManifest({
+        entriesFromManifest({
           name: 'my-package',
           exports: {
             require: './lib/index.cjs',
@@ -1086,28 +1066,23 @@ describe('getEntriesFromContext - in TypeScript project', () => {
     platform: undefined,
   };
 
-  const getEntriesFromManifest = (manifest: Manifest) => {
+  const entriesFromManifest = (manifest: Manifest) => {
     const reporter = new ViReporter();
     const context = parseConfig({
       flags: defaultFlags,
       targets: defaultTargets,
       manifest,
       reporter,
-      resolve,
       tsconfigPath: 'tsconfig.json',
       tsconfig: {},
     });
-    const getEntries = () => getEntriesFromContext({
-      context,
-      resolve,
-      reporter,
-    });
+    const getEntries = () => getEntriesFromContext({ context, reporter });
     return { getEntries, context, reporter };
   };
 
   test('types entry in root manifest', () => {
     expect(
-      getEntriesFromManifest({
+      entriesFromManifest({
         name: 'my-package',
         main: './lib/index.js',
         module: './lib/index.mjs',
@@ -1165,7 +1140,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
 
   test('conditional exports', () => {
     expect(
-      getEntriesFromManifest({
+      entriesFromManifest({
         name: 'my-package',
         exports: {
           '.': {
@@ -1226,7 +1201,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
 
   test('types entry must has .d.ts extension', () => {
     expect(
-      getEntriesFromManifest({
+      entriesFromManifest({
         name: 'my-package',
         types: './lib/index.ts',
       }).getEntries,
@@ -1235,7 +1210,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
 
   test('types entry must occur first in conditional exports', () => {
     expect(
-      getEntriesFromManifest({
+      entriesFromManifest({
         name: 'my-package',
         exports: {
           '.': {
@@ -1251,7 +1226,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
 
   test('explicit & implicit types entry', () => {
     expect(
-      getEntriesFromManifest({
+      entriesFromManifest({
         name: 'my-package',
         type: 'module',
         exports: {
@@ -1329,7 +1304,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
 
   test('implicit types from default entry', () => {
     expect(
-      getEntriesFromManifest({
+      entriesFromManifest({
         name: 'my-package',
         type: 'module',
         exports: {
@@ -1424,7 +1399,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
 
   test('implicit types from other entries', () => {
     expect(
-      getEntriesFromManifest({
+      entriesFromManifest({
         name: 'my-package',
         type: 'module',
         exports: {
@@ -1572,7 +1547,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
 
   test('types entry does not accept nesting', () => {
     expect(
-      getEntriesFromManifest({
+      entriesFromManifest({
         name: 'my-package',
         exports: {
           '.': {
@@ -1588,14 +1563,13 @@ describe('getEntriesFromContext - in TypeScript project', () => {
   });
 
   describe('getEntriesFromContext - when rootDir=outDir=.', () => {
-    const getEntriesFromManifest = (manifest: Manifest) => {
+    const entriesFromManifest = (manifest: Manifest) => {
       const reporter = new ViReporter();
       const context = parseConfig({
         flags: defaultFlags,
         targets: defaultTargets,
         manifest,
         reporter,
-        resolve,
         tsconfigPath: 'tsconfig.json',
         tsconfig: {
           compilerOptions: {
@@ -1604,17 +1578,13 @@ describe('getEntriesFromContext - in TypeScript project', () => {
           },
         },
       });
-      const getEntries = () => getEntriesFromContext({
-        context,
-        resolve,
-        reporter,
-      });
+      const getEntries = () => getEntriesFromContext({ context, reporter });
       return { getEntries, context, reporter };
     };
 
     test('conditional exports', () => {
       expect(
-        getEntriesFromManifest({
+        entriesFromManifest({
           name: 'my-package',
           exports: {
             '.': {
@@ -1671,14 +1641,13 @@ describe('getEntriesFromContext - in TypeScript project', () => {
   });
 
   describe('getEntriesFromContext - when jsx=preserve', () => {
-    const getEntriesFromManifest = (manifest: Manifest) => {
+    const entriesFromManifest = (manifest: Manifest) => {
       const reporter = new ViReporter();
       const context = parseConfig({
         flags: defaultFlags,
         targets: defaultTargets,
         manifest,
         reporter,
-        resolve,
         tsconfigPath: 'tsconfig.json',
         tsconfig: {
           compilerOptions: {
@@ -1686,17 +1655,13 @@ describe('getEntriesFromContext - in TypeScript project', () => {
           },
         },
       });
-      const getEntries = () => getEntriesFromContext({
-        context,
-        resolve,
-        reporter,
-      });
+      const getEntries = () => getEntriesFromContext({ context, reporter });
       return { getEntries, context, reporter };
     };
 
     test('allow jsx entries', () => {
       expect(
-        getEntriesFromManifest({
+        entriesFromManifest({
           name: 'my-package',
           exports: './lib/index.jsx',
           types: './lib/index.d.ts',
@@ -1740,7 +1705,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
 
     test('conditional exports', () => {
       expect(
-        getEntriesFromManifest({
+        entriesFromManifest({
           name: 'my-package',
           exports: {
             '.': {
@@ -1827,28 +1792,23 @@ describe('common usecases', () => {
     platform: undefined,
   };
 
-  const getEntriesFromManifest = (manifest: Manifest) => {
+  const entriesFromManifest = (manifest: Manifest) => {
     const reporter = new ViReporter();
     const context = parseConfig({
       flags: defaultFlags,
       targets: defaultTargets,
       manifest,
       reporter,
-      resolve,
       tsconfigPath: 'tsconfig.json',
       tsconfig: {},
     });
-    const getEntries = () => getEntriesFromContext({
-      context,
-      resolve,
-      reporter,
-    });
+    const getEntries = () => getEntriesFromContext({ context, reporter });
     return { getEntries, context, reporter };
   };
 
   test('server client entries', () => {
     expect(
-      getEntriesFromManifest({
+      entriesFromManifest({
         name: 'my-package',
 
         exports: {
@@ -1974,7 +1934,7 @@ describe('common usecases', () => {
 
   test('browser specific entry', () => {
     expect(
-      getEntriesFromManifest({
+      entriesFromManifest({
         name: 'my-package',
         exports: {
           '.': {
@@ -2041,7 +2001,7 @@ describe('common usecases', () => {
     // Reported from Twitter
     // See https://twitter.com/been_dev/status/1613111180373151744
     expect(
-      getEntriesFromManifest({
+      entriesFromManifest({
         name: 'my-package',
         exports: {
           '.': {
@@ -2126,7 +2086,6 @@ describe('common usecases', () => {
         targets: defaultTargets,
         manifest,
         reporter,
-        resolve,
         tsconfigPath: 'tsconfig.json',
         tsconfig: {
           compilerOptions: {
@@ -2134,11 +2093,7 @@ describe('common usecases', () => {
           },
         },
       });
-      const getEntries = () => getEntriesFromContext({
-        context,
-        resolve,
-        reporter,
-      });
+      const getEntries = () => getEntriesFromContext({ context, reporter });
       return { getEntries, context, reporter };
     };
 

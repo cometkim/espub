@@ -7,7 +7,7 @@ import { type Flags } from './cli';
 import { type Manifest } from './manifest';
 import { type Entry } from './entry';
 import { type Reporter } from './reporter';
-import { type PathResolver } from './common';
+import { type PathResolver, type RelativePathResolver } from './common';
 import * as formatUtils from './formatUtils';
 import { NanobundleError } from './errors';
 
@@ -38,7 +38,8 @@ export type Context = {
   manifest: Manifest,
   targets: string[],
   reporter: Reporter,
-  resolve: PathResolver,
+  resolvePath: PathResolver,
+  resolveRelativePath: RelativePathResolver,
 };
 
 export type Config = {
@@ -46,7 +47,6 @@ export type Config = {
   manifest: Manifest,
   targets: string[],
   reporter: Reporter,
-  resolve: PathResolver,
   tsconfig?: TSConfig,
   tsconfigPath?: string,
 };
@@ -56,11 +56,16 @@ export function parseConfig({
   manifest,
   targets: inputTargets,
   reporter,
-  resolve,
   tsconfig,
   tsconfigPath: resolvedTsConfigPath,
 }: Config): Context {
   const cwd = path.resolve(flags.cwd);
+  const resolvePath: PathResolver = (...paths: string[]) => path.resolve(cwd, ...paths);
+  const resolveRelativePath: RelativePathResolver = (targetPath: string, startsWithDot = false) => {
+    const relativePath = path.relative(cwd, targetPath);
+    if (startsWithDot) return `./${relativePath}`;
+    return relativePath;
+  }
   const bundle = flags.bundle;
   const verbose = flags.verbose;
   const standalone = flags.standalone;
@@ -201,6 +206,7 @@ export function parseConfig({
     manifest,
     targets,
     reporter,
-    resolve,
+    resolvePath,
+    resolveRelativePath,
   };
 };

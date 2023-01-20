@@ -26,7 +26,7 @@ export function makePlugin({
           return {
             path: external
               ? modulePath
-              : context.resolve(context.cwd, modulePath),
+              : context.resolvePath(modulePath),
             external,
           };
         }
@@ -40,7 +40,7 @@ export function makePlugin({
             return {
               path: external
                 ? modulePath
-                : context.resolve(context.cwd, modulePath),
+                : context.resolvePath(modulePath),
               external,
             };
           }

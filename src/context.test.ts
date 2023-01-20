@@ -1,7 +1,6 @@
 import { describe, test, expect, vi } from 'vitest';
 import { type TSConfig } from 'pkg-types';
 
-import { type PathResolver } from './common';
 import { type Context } from './context';
 import { type Flags } from './cli';
 import { type Manifest } from './manifest';
@@ -21,7 +20,6 @@ class ViReporter implements Reporter {
 
 describe('parseConfig', () => {
   const reporter = new ViReporter();
-  const resolve: PathResolver = vi.fn();
   const defaultFlags: Flags = {
     cwd: '/project',
     clean: false,
@@ -62,7 +60,6 @@ describe('parseConfig', () => {
       manifest: defaultManifest,
       targets: defaultTargets,
       reporter,
-      resolve,
     });
 
     expect(result).toEqual<Context>({
@@ -88,7 +85,8 @@ describe('parseConfig', () => {
       manifest: defaultManifest,
       targets: defaultTargets,
       reporter,
-      resolve,
+      resolvePath: expect.any(Function),
+      resolveRelativePath: expect.any(Function),
     });
   });
 
@@ -102,7 +100,6 @@ describe('parseConfig', () => {
         manifest: defaultManifest,
         targets: defaultTargets,
         reporter,
-        resolve,
       });
 
       expect(result).toEqual<Context>({
@@ -128,7 +125,8 @@ describe('parseConfig', () => {
         manifest: defaultManifest,
         targets: defaultTargets,
         reporter,
-        resolve,
+        resolvePath: expect.any(Function),
+        resolveRelativePath: expect.any(Function),
       });
     });
 
@@ -141,7 +139,6 @@ describe('parseConfig', () => {
         manifest: defaultManifest,
         targets: defaultTargets,
         reporter,
-        resolve,
       });
 
       expect(result).toEqual<Context>({
@@ -167,7 +164,8 @@ describe('parseConfig', () => {
         manifest: defaultManifest,
         targets: defaultTargets,
         reporter,
-        resolve,
+        resolvePath: expect.any(Function),
+        resolveRelativePath: expect.any(Function),
       });
     });
 
@@ -181,7 +179,6 @@ describe('parseConfig', () => {
         manifest: defaultManifest,
         targets: defaultTargets,
         reporter,
-        resolve,
       })).toThrowErrorMatchingSnapshot();
     });
   });
@@ -200,7 +197,6 @@ describe('parseConfig', () => {
         targets: defaultTargets,
         manifest,
         reporter,
-        resolve,
       });
 
       expect(result).toEqual<Context>({
@@ -228,7 +224,8 @@ describe('parseConfig', () => {
           'node16',
         ],
         reporter,
-        resolve,
+        resolvePath: expect.any(Function),
+        resolveRelativePath: expect.any(Function),
       });
     });
 
@@ -241,7 +238,6 @@ describe('parseConfig', () => {
         targets: defaultTargets,
         manifest: defaultManifest,
         reporter,
-        resolve,
       });
 
       expect(result).toEqual<Context>({
@@ -269,7 +265,8 @@ describe('parseConfig', () => {
           'node14',
         ],
         reporter,
-        resolve,
+        resolvePath: expect.any(Function),
+        resolveRelativePath: expect.any(Function),
       });
     });
   });
@@ -292,7 +289,6 @@ describe('parseConfig', () => {
         },
         targets: defaultTargets,
         reporter,
-        resolve,
       });
 
       expect(result).toEqual<Context>({
@@ -335,7 +331,8 @@ describe('parseConfig', () => {
         },
         targets: defaultTargets,
         reporter,
-        resolve,
+        resolvePath: expect.any(Function),
+        resolveRelativePath: expect.any(Function),
       });
     });
 
@@ -352,7 +349,6 @@ describe('parseConfig', () => {
         manifest: defaultManifest,
         targets: defaultTargets,
         reporter,
-        resolve,
       });
 
       expect(result).toEqual<Context>({
@@ -386,7 +382,8 @@ describe('parseConfig', () => {
         manifest: defaultManifest,
         targets: defaultTargets,
         reporter,
-        resolve,
+        resolvePath: expect.any(Function),
+        resolveRelativePath: expect.any(Function),
       });
     });
   });
@@ -398,7 +395,6 @@ describe('parseConfig', () => {
         manifest: defaultManifest,
         targets: defaultTargets,
         reporter,
-        resolve,
         tsconfigPath: 'tsconfig.json',
         tsconfig: defaultTsConfig,
       });
@@ -426,7 +422,8 @@ describe('parseConfig', () => {
         manifest: defaultManifest,
         targets: defaultTargets,
         reporter,
-        resolve,
+        resolvePath: expect.any(Function),
+        resolveRelativePath: expect.any(Function),
       });
     });
 
@@ -436,7 +433,6 @@ describe('parseConfig', () => {
         manifest: defaultManifest,
         targets: defaultTargets,
         reporter,
-        resolve,
         tsconfigPath: 'tsconfig.json',
         tsconfig: {
           compilerOptions: {
@@ -470,7 +466,8 @@ describe('parseConfig', () => {
         manifest: defaultManifest,
         targets: defaultTargets,
         reporter,
-        resolve,
+        resolvePath: expect.any(Function),
+        resolveRelativePath: expect.any(Function),
       });
     });
 
@@ -483,7 +480,6 @@ describe('parseConfig', () => {
         manifest: defaultManifest,
         targets: defaultTargets,
         reporter,
-        resolve,
         tsconfigPath: 'tsconfig.json',
         tsconfig: defaultTsConfig,
       });
@@ -511,7 +507,8 @@ describe('parseConfig', () => {
         manifest: defaultManifest,
         targets: defaultTargets,
         reporter,
-        resolve,
+        resolvePath: expect.any(Function),
+        resolveRelativePath: expect.any(Function),
       });
     });
 
@@ -521,7 +518,6 @@ describe('parseConfig', () => {
         manifest: defaultManifest,
         targets: defaultTargets,
         reporter,
-        resolve,
         tsconfigPath: 'tsconfig.json',
         tsconfig: {
           ...defaultTsConfig,
@@ -556,7 +552,8 @@ describe('parseConfig', () => {
         manifest: defaultManifest,
         targets: defaultTargets,
         reporter,
-        resolve,
+        resolvePath: expect.any(Function),
+        resolveRelativePath: expect.any(Function),
       });
     });
 
@@ -566,7 +563,6 @@ describe('parseConfig', () => {
         manifest: defaultManifest,
         targets: defaultTargets,
         reporter,
-        resolve,
         tsconfigPath: 'tsconfig.json',
         tsconfig: {
           ...defaultTsConfig,
@@ -600,7 +596,8 @@ describe('parseConfig', () => {
         manifest: defaultManifest,
         targets: defaultTargets,
         reporter,
-        resolve,
+        resolvePath: expect.any(Function),
+        resolveRelativePath: expect.any(Function),
       });
     });
 
@@ -610,7 +607,6 @@ describe('parseConfig', () => {
         manifest: defaultManifest,
         targets: defaultTargets,
         reporter,
-        resolve,
         tsconfigPath: 'tsconfig.json',
         tsconfig: {
           ...defaultTsConfig,
@@ -647,7 +643,8 @@ describe('parseConfig', () => {
         manifest: defaultManifest,
         targets: defaultTargets,
         reporter,
-        resolve,
+        resolvePath: expect.any(Function),
+        resolveRelativePath: expect.any(Function),
       });
     });
 
@@ -657,7 +654,6 @@ describe('parseConfig', () => {
         manifest: defaultManifest,
         targets: defaultTargets,
         reporter,
-        resolve,
         tsconfigPath: 'tsconfig.json',
         tsconfig: {
           ...defaultTsConfig,
@@ -691,7 +687,8 @@ describe('parseConfig', () => {
         manifest: defaultManifest,
         targets: defaultTargets,
         reporter,
-        resolve,
+        resolvePath: expect.any(Function),
+        resolveRelativePath: expect.any(Function),
       });
     });
 
@@ -707,7 +704,6 @@ describe('parseConfig', () => {
         manifest: defaultManifest,
         targets: defaultTargets,
         reporter,
-        resolve,
         tsconfigPath: 'tsconfig.json',
         tsconfig: {
           ...defaultTsConfig,
@@ -744,7 +740,8 @@ describe('parseConfig', () => {
         manifest: defaultManifest,
         targets: defaultTargets,
         reporter,
-        resolve,
+        resolvePath: expect.any(Function),
+        resolveRelativePath: expect.any(Function),
       });
     });
 
@@ -758,7 +755,6 @@ describe('parseConfig', () => {
         manifest: defaultManifest,
         targets: defaultTargets,
         reporter,
-        resolve,
         tsconfig: defaultTsConfig,
       })).not.toThrowError();
     });

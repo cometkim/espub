@@ -1,5 +1,4 @@
 import * as fs from 'node:fs/promises';
-import * as path from 'node:path';
 
 import * as formatUtils from '../formatUtils';
 import { NanobundleError } from '../errors';
@@ -26,8 +25,8 @@ export async function cleanupTask({
   context,
   outputFiles,
 }: CleanupTaskOptions): Promise<CleanupTaskResult> {
-  const resolvedOutDir = context.resolve(context.cwd, context.outDir);
-  const relativeOutDir = path.relative(context.cwd, resolvedOutDir);
+  const resolvedOutDir = context.resolvePath(context.outDir);
+  const relativeOutDir = context.resolveRelativePath(resolvedOutDir);
 
   if (relativeOutDir !== '' && !relativeOutDir.startsWith('..')) {
     context.reporter.info(`🗑️  ${formatUtils.path('./' + relativeOutDir)}`);
@@ -41,7 +40,7 @@ export async function cleanupTask({
       context.reporter.debug(`src=dest for ${file.path}, skipping`);
       continue;
     }
-    context.reporter.info(`🗑️  ${formatUtils.path('./' + path.relative(context.cwd, file.path))}`);
+    context.reporter.info(`🗑️  ${formatUtils.path('./' + context.resolveRelativePath(file.path))}`);
     subtasks.push(fs.rm(file.path, { force: true }));
   }
 

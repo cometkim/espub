@@ -1,4 +1,3 @@
-import * as path from 'node:path';
 import * as zlib from 'node:zlib';
 import { promisify } from 'node:util';
 import dedent from 'string-dedent';
@@ -24,8 +23,6 @@ export async function reportEmitResultsTask({
   fileOutputs,
   typeOutputs,
 }: ReportEmitResultsTaskOptions): Promise<void> {
-  const relPath = (filePath: string) => './' + path.relative(context.cwd, filePath);
-
   const bundles = bundleOutputs
     .filter(bundle => !bundle.path.endsWith('.map'))
   const lastBundle = bundles.at(-1);
@@ -42,7 +39,7 @@ export async function reportEmitResultsTask({
       brotli(bundle.content),
     ]);
     context.reporter.info(dedent`
-      📦 ${formatUtils.path(relPath(bundle.path))}${context.verbose ? '\n' + formatUtils.indent(dedent`
+      📦 ${formatUtils.path(context.resolveRelativePath(bundle.path, true))}${context.verbose ? '\n' + formatUtils.indent(dedent`
         Size      : ${prettyBytes(bundle.content.byteLength)}
         Size (gz) : ${prettyBytes(gzipped.byteLength)}
         Size (br) : ${prettyBytes(brotlied.byteLength)}
@@ -56,7 +53,7 @@ export async function reportEmitResultsTask({
       Also ${typeOutputs.length} declaration ${plural ? 'files are' : 'file is'} generated
 
       ${context.verbose
-        ? `  📦 ${typeOutputs.map(output => formatUtils.path(relPath(output.path))).join('\n  📦 ')}\n`
+        ? `  📦 ${typeOutputs.map(output => formatUtils.path(context.resolveRelativePath(output.path, true))).join('\n  📦 ')}\n`
         : ''
       }
     `);
@@ -65,7 +62,7 @@ export async function reportEmitResultsTask({
   if (fileOutputs.length > 0) {
     for (const file of fileOutputs) {
       context.reporter.info(dedent`
-        Copied ${formatUtils.path(relPath(file.sourcePath!))} to ${formatUtils.path(relPath(file.path))}
+        Copied ${formatUtils.path(context.resolveRelativePath(file.sourcePath!, true))} to ${formatUtils.path(context.resolveRelativePath(file.path, true))}
       `);
     }
     console.log();
