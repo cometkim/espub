@@ -15,7 +15,7 @@ export type ImportMaps = {
 };
 
 export async function loadImportMaps(context: Context): Promise<NodeImportMaps> {
-  const importMapsPath = context.resolve(context.cwd, context.importMapsPath);
+  const importMapsPath = context.resolvePath(context.importMapsPath);
   const { imports = {} } = await fs.readFile(importMapsPath, 'utf-8')
     .then(JSON.parse) as Partial<NodeImportMaps>;
   return { imports };
@@ -43,7 +43,7 @@ export async function validateImportMaps({
         // Instead, expecting it can be resolved as a Node.js module later
         continue;
       }
-      const resolvedPath = context.resolve(context.cwd, path);
+      const resolvedPath = context.resolvePath(path);
       const exist = await fsUtils.exists(resolvedPath);
       if (!exist) {
         throw new Error(`${resolvedPath} doesn't exist`);
