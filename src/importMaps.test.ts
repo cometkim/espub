@@ -1,17 +1,110 @@
-import { describe, test, expect } from 'vitest';
+import { describe, test, expect, vi } from 'vitest';
 
 
+import { type Context } from './context';
+import { NanobundleConfigError } from './errors';
+import { type Manifest } from './manifest';
+import { type Reporter } from './reporter';
 import {
+  replaceSubpathPattern,
+  validateImportMaps,
   normalizeImportMaps,
   type NodeImportMaps,
   type ValidNodeImportMaps,
 } from './importMaps';
 
-function validate(importMaps: NodeImportMaps): ValidNodeImportMaps {
-  return importMaps as unknown as ValidNodeImportMaps;
+class ViReporter implements Reporter {
+  debug = vi.fn();
+  info = vi.fn();
+  warn = vi.fn();
+  error = vi.fn();
+  captureException = vi.fn();
+  createChildReporter() {
+    return new ViReporter();
+  }
 }
 
+describe('validateImportMaps', () => {
+  const reporter = new ViReporter();
+  const defaultManifest: Manifest = {
+    name: 'package'
+  };
+  const defaultTargets: string[] = [
+    'chrome',
+    'firefox',
+    'safari',
+  ];
+  const defaultContext: Context = {
+    cwd: '/project',
+    verbose: false,
+    module: 'commonjs',
+    platform: 'neutral',
+    sourcemap: true,
+    bundle: true,
+    declaration: false,
+    standalone: false,
+    jsx: undefined,
+    jsxDev: false,
+    jsxFactory: 'React.createElement',
+    jsxFragment: 'Fragment',
+    jsxImportSource: 'react',
+    rootDir: 'src',
+    outDir: 'lib',
+    tsconfigPath: undefined,
+    importMapsPath: '/project/package.json',
+    externalDependencies: [],
+    forceExternalDependencies: [],
+    manifest: defaultManifest,
+    targets: defaultTargets,
+    reporter,
+    resolvePath: expect.any(Function),
+    resolveRelativePath: expect.any(Function),
+  };
+
+  test('subpath import pattern only allowed for Node.js-style imports', async () => {
+    await expect(validateImportMaps({
+      context: defaultContext,
+      importMaps: {
+        imports: {
+          'src/': 'dest/',
+        },
+      },
+    })).rejects.toThrowError(NanobundleConfigError);
+
+    await expect(validateImportMaps({
+      context: defaultContext,
+      importMaps: {
+        imports: {
+          './src/': './dest/',
+        },
+      },
+    })).rejects.toThrowError(NanobundleConfigError);
+
+    await expect(validateImportMaps({
+      context: defaultContext,
+      importMaps: {
+        imports: {
+          'src/*.js': 'dest/*.js',
+        },
+      },
+    })).rejects.toThrowError(NanobundleConfigError);
+
+    await expect(validateImportMaps({
+      context: defaultContext,
+      importMaps: {
+        imports: {
+          '#src/*.js': '#dest/*.js',
+        },
+      },
+    })).resolves.not.toThrow();
+  });
+});
+
 describe('normalizeImportMaps', () => {
+  function validate(importMaps: NodeImportMaps): ValidNodeImportMaps {
+    return importMaps as unknown as ValidNodeImportMaps;
+  }
+
   test('flat importMaps (as is)', () => {
     const nodeImportMaps = validate({
       imports: {
@@ -187,4 +280,79 @@ describe('normalizeImportMaps', () => {
       });
     });
   });
-})
+});
+
+describe('replaceSubpathPattern', () => {
+  test('replace', () => {
+    expect(
+      replaceSubpathPattern(
+        {
+          imports: {
+            '#test/': './src/test/',
+          }
+        },
+        '#test/module.js',
+      ),
+    ).toEqual('./src/test/module.js');
+
+    expect(
+      replaceSubpathPattern(
+        {
+          imports: {
+            '#test/*': './src/test/test.css',
+          },
+        },
+        '#test/module.js',
+      ),
+    ).toEqual('./src/test/test.css');
+
+    expect(
+      replaceSubpathPattern(
+        {
+          imports: {
+            '#test/*.js': './src/test/*.js',
+          },
+        },
+        '#test/module.js',
+      ),
+    ).toEqual('./src/test/module.js');
+  });
+
+  test('does not replace', () => {
+    expect(
+      replaceSubpathPattern(
+        {
+          imports: {
+            '#test1/': './src/test/',
+          },
+        },
+        '#test2/module.js',
+      ),
+    ).toEqual('#test2/module.js');
+
+    expect(
+      replaceSubpathPattern(
+        {
+          imports: {
+            '#test/*.js': './src/test/*.js',
+          },
+        },
+        '#test/module.css',
+      ),
+    ).toEqual('#test/module.css');
+  });
+
+  test('priority', () => {
+    expect(
+      replaceSubpathPattern(
+        {
+          imports: {
+            '#test/': './src/test1/',
+            '#test/module.js': './src/test2/module.js',
+          },
+        },
+        '#test/module.js',
+      ),
+    ).toEqual('./src/test2/module.js');
+  });
+});

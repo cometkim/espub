@@ -1,10 +1,15 @@
-import * as fs from 'fs/promises';
+import * as path from 'node:path';
+import * as fs from 'node:fs/promises';
 
 import { type Context } from './context';
+import * as formatUtils from './formatUtils';
 import * as fsUtils from './fsUtils';
 import { type ConditionalImports } from './manifest';
+import { NanobundleConfigError } from './errors';
 
 import { type BundleOptions } from './entryGroup';
+
+const importSubpathPattern = /^(?<dirname>.+\/)(?<filename>(?<base>[^\/]+?)(?<ext>\.[^\.]+)?)$/;
 
 export type NodeImportMaps = {
   imports: Exclude<ConditionalImports, string>,
@@ -15,8 +20,7 @@ export type ImportMaps = {
 };
 
 export async function loadImportMaps(context: Context): Promise<NodeImportMaps> {
-  const importMapsPath = context.resolvePath(context.importMapsPath);
-  const { imports = {} } = await fs.readFile(importMapsPath, 'utf-8')
+  const { imports = {} } = await fs.readFile(context.importMapsPath, 'utf-8')
     .then(JSON.parse) as Partial<NodeImportMaps>;
   return { imports };
 }
@@ -29,24 +33,38 @@ export async function validateImportMaps({
   context,
   importMaps,
 }: ValidateNodeImportMapsOptions): Promise<ValidNodeImportMaps> {
-  for (const path of Object.values(importMaps.imports)) {
-    if (typeof path === 'object') {
+  for (const [key, importPath] of Object.entries(importMaps.imports)) {
+    if (typeof importPath === 'object') {
       await validateImportMaps({
         context,
         importMaps: {
-          imports: path,
+          imports: importPath,
         },
       });
     } else {
-      if (!fsUtils.isFileSystemReference(path)) {
+      if (!key.startsWith('#')) {
+        if (
+          key.endsWith('/') ||
+          key.includes('*') ||
+          importPath.endsWith('/') ||
+          importPath.includes('*')
+        ) {
+          throw new NanobundleConfigError(
+            'Directory or subpath pattern imports is supported only for Node.js-style imports like #pattern',
+          );
+        }
+      }
+
+      if (!fsUtils.isFileSystemReference(importPath)) {
         // Loosen validation if path doesn't seems to be a file system reference
         // Instead, expecting it can be resolved as a Node.js module later
         continue;
       }
-      const resolvedPath = context.resolvePath(path);
+
+      const resolvedPath = path.resolve(path.dirname(context.importMapsPath), importPath);
       const exist = await fsUtils.exists(resolvedPath);
       if (!exist) {
-        throw new Error(`${resolvedPath} doesn't exist`);
+        throw new NanobundleConfigError(`${formatUtils.path(resolvedPath)} doesn't exist`);
       }
     }
   }
@@ -181,4 +199,51 @@ export function normalizeImportMaps(
   }
 
   return result;
+}
+
+export function replaceSubpathPattern(importMaps: ImportMaps, modulePath: string): string {
+  if (importMaps.imports[modulePath]) {
+    return importMaps.imports[modulePath];
+  }
+
+  const importsEntries = Object.entries(importMaps.imports)
+    .sort(([from, _to]) => {
+      if (from.includes('*')) {
+        return -1;
+      }
+      return 0;
+    });
+
+  const matchCache: Record<string, RegExpMatchArray | undefined> = {};
+
+  for (const [fromPrefix, toPrefix] of importsEntries) {
+    if (modulePath.startsWith(fromPrefix)) {
+      return modulePath.replace(fromPrefix, toPrefix);
+    }
+
+    const fromPrefixMatch = matchCache[fromPrefix] || fromPrefix.match(importSubpathPattern);
+    const toPrefixMatch = matchCache[toPrefix] || toPrefix.match(importSubpathPattern);
+    const modulePathMatch = matchCache[modulePath] || modulePath.match(importSubpathPattern);
+
+    if (fromPrefixMatch?.groups?.['dirname'] === modulePathMatch?.groups?.['dirname']) {
+      if (fromPrefixMatch?.groups?.['filename'] === '*') {
+        return (toPrefixMatch?.groups?.['dirname'] || '') +
+          (toPrefixMatch?.groups?.['base'] === '*'
+            ? modulePathMatch?.groups?.['filename'] + (toPrefixMatch?.groups?.['ext'] || '')
+            : (toPrefixMatch?.groups?.['filename'] || '')
+          );
+      }
+      if (fromPrefixMatch?.groups?.['base'] === '*') {
+        if (
+          fromPrefixMatch?.groups?.['ext'] === toPrefixMatch?.groups?.['ext'] &&
+          fromPrefixMatch?.groups?.['ext'] === modulePathMatch?.groups?.['ext']
+        ) {
+          return (toPrefixMatch?.groups?.['dirname'] || '') +
+            (modulePathMatch?.groups?.['filename'] || '');
+        }
+      }
+    }
+  }
+
+  return modulePath;
 }
