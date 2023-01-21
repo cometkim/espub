@@ -160,13 +160,14 @@ async function buildBundleGroup({
     jsxFragment: context.jsxFragment,
     jsxImportSource: context.jsxImportSource,
     treeShaking: true,
+    keepNames: true,
     target: context.targets,
     format: options.module === 'commonjs' ? 'cjs' : 'esm',
     sourcemap: options.sourcemap,
+    legalComments: 'linked',
     minify: options.minify,
     plugins: [],
     conditions: options.customConditions,
-    keepNames: true,
   };
 
   if (options.platform === 'deno') {
