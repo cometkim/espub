@@ -15,6 +15,7 @@ test('groupEntries should split different option set', () => {
       entryPath: "./lib/index.cjs",
       sourceFile: ["/project/src/index.cjs", "/project/src/index.js"],
       outputFile: "/project/lib/index.cjs",
+      customConditions: [],
     },
     {
       key: 'exports["."].node.import.development',
@@ -26,6 +27,7 @@ test('groupEntries should split different option set', () => {
       entryPath: "./lib/index.mjs",
       sourceFile: ["/project/src/index.mjs", "/project/src/index.js"],
       outputFile: "/project/lib/index.mjs",
+      customConditions: [],
     },
     {
       key: 'exports["."].node.import.production',
@@ -37,6 +39,7 @@ test('groupEntries should split different option set', () => {
       entryPath: "./lib/index.min.mjs",
       sourceFile: ["/project/src/index.mjs", "/project/src/index.js"],
       outputFile: "/project/lib/index.min.mjs",
+      customConditions: [],
     },
     {
       key: 'exports["."].browser.development',
@@ -48,6 +51,7 @@ test('groupEntries should split different option set', () => {
       entryPath: "./lib/browser.js",
       sourceFile: ["/project/src/browser.cjs", "/project/src/browser.js"],
       outputFile: "/project/lib/browser.js",
+      customConditions: [],
     },
     {
       key: 'exports["."].browser.production',
@@ -59,11 +63,12 @@ test('groupEntries should split different option set', () => {
       entryPath: "./lib/browser.min.js",
       sourceFile: ["/project/src/browser.cjs", "/project/src/browser.js"],
       outputFile: "/project/lib/browser.min.js",
+      customConditions: [],
     },
   ];
 
   expect(groupBundleEntries(entries)).toEqual<BundleEntryGroup>({
-    [hashBundleOptions({ mode: undefined, module: 'commonjs', platform: 'node', sourcemap: true, minify: false })]: [
+    [hashBundleOptions({ mode: undefined, module: 'commonjs', platform: 'node', sourcemap: true, minify: false, customConditions: [] })]: [
       {
         key: 'exports["."].node.require',
         module: "commonjs",
@@ -74,9 +79,10 @@ test('groupEntries should split different option set', () => {
         entryPath: "./lib/index.cjs",
         sourceFile: ["/project/src/index.cjs", "/project/src/index.js"],
         outputFile: "/project/lib/index.cjs",
+      customConditions: [],
       },
     ],
-    [hashBundleOptions({ mode: 'development', module: 'esmodule', platform: 'node', sourcemap: true, minify: false })]: [
+    [hashBundleOptions({ mode: 'development', module: 'esmodule', platform: 'node', sourcemap: true, minify: false, customConditions: [] })]: [
       {
         key: 'exports["."].node.import.development',
         module: "esmodule",
@@ -87,9 +93,10 @@ test('groupEntries should split different option set', () => {
         entryPath: "./lib/index.mjs",
         sourceFile: ["/project/src/index.mjs", "/project/src/index.js"],
         outputFile: "/project/lib/index.mjs",
+      customConditions: [],
       },
     ],
-    [hashBundleOptions({ mode: 'production', module: 'esmodule', platform: 'node', sourcemap: true, minify: true })]: [
+    [hashBundleOptions({ mode: 'production', module: 'esmodule', platform: 'node', sourcemap: true, minify: true, customConditions: [] })]: [
       {
         key: 'exports["."].node.import.production',
         module: "esmodule",
@@ -100,9 +107,10 @@ test('groupEntries should split different option set', () => {
         entryPath: "./lib/index.min.mjs",
         sourceFile: ["/project/src/index.mjs", "/project/src/index.js"],
         outputFile: "/project/lib/index.min.mjs",
+      customConditions: [],
       },
     ],
-    [hashBundleOptions({ mode: 'development', module: 'commonjs', platform: 'browser', sourcemap: true, minify: false })]: [
+    [hashBundleOptions({ mode: 'development', module: 'commonjs', platform: 'browser', sourcemap: true, minify: false, customConditions: [] })]: [
       {
         key: 'exports["."].browser.development',
         module: "commonjs",
@@ -113,9 +121,10 @@ test('groupEntries should split different option set', () => {
         entryPath: "./lib/browser.js",
         sourceFile: ["/project/src/browser.cjs", "/project/src/browser.js"],
         outputFile: "/project/lib/browser.js",
+      customConditions: [],
       },
     ],
-    [hashBundleOptions({ mode: 'production', module: 'commonjs', platform: 'browser', sourcemap: true, minify: true })]: [
+    [hashBundleOptions({ mode: 'production', module: 'commonjs', platform: 'browser', sourcemap: true, minify: true, customConditions: [] })]: [
       {
         key: 'exports["."].browser.production',
         module: "commonjs",
@@ -126,6 +135,7 @@ test('groupEntries should split different option set', () => {
         entryPath: "./lib/browser.min.js",
         sourceFile: ["/project/src/browser.cjs", "/project/src/browser.js"],
         outputFile: "/project/lib/browser.min.js",
+      customConditions: [],
       },
     ],
   })
@@ -143,6 +153,7 @@ test('groupEntries should merge same option set', () => {
       entryPath: "./lib/index.cjs",
       sourceFile: ["/project/src/index.cjs", "/project/src/index.js"],
       outputFile: "/project/lib/index.cjs",
+      customConditions: [],
     },
     {
       key: 'exports["."].default.require',
@@ -154,6 +165,7 @@ test('groupEntries should merge same option set', () => {
       entryPath: "./lib/index.cjs",
       sourceFile: ["/project/src/index.cjs", "/project/src/index.js"],
       outputFile: "/project/lib/index.cjs",
+      customConditions: [],
     },
     {
       key: 'exports["."].default.default.require',
@@ -165,11 +177,12 @@ test('groupEntries should merge same option set', () => {
       entryPath: "./lib/index.cjs",
       sourceFile: ["/project/src/index.cjs", "/project/src/index.js"],
       outputFile: "/project/lib/index.cjs",
+      customConditions: [],
     },
   ];
 
   expect(groupBundleEntries(entries)).toEqual<BundleEntryGroup>({
-    [hashBundleOptions({ mode: undefined, module: 'commonjs', platform: 'neutral', sourcemap: true, minify: false })]: [
+    [hashBundleOptions({ mode: undefined, module: 'commonjs', platform: 'neutral', sourcemap: true, minify: false, customConditions: [] })]: [
       {
         key: 'exports["."].require',
         module: "commonjs",
@@ -180,6 +193,7 @@ test('groupEntries should merge same option set', () => {
         entryPath: "./lib/index.cjs",
         sourceFile: ["/project/src/index.cjs", "/project/src/index.js"],
         outputFile: "/project/lib/index.cjs",
+      customConditions: [],
       },
       {
         key: 'exports["."].default.require',
@@ -191,6 +205,7 @@ test('groupEntries should merge same option set', () => {
         entryPath: "./lib/index.cjs",
         sourceFile: ["/project/src/index.cjs", "/project/src/index.js"],
         outputFile: "/project/lib/index.cjs",
+      customConditions: [],
       },
       {
         key: 'exports["."].default.default.require',
@@ -202,6 +217,7 @@ test('groupEntries should merge same option set', () => {
         entryPath: "./lib/index.cjs",
         sourceFile: ["/project/src/index.cjs", "/project/src/index.js"],
         outputFile: "/project/lib/index.cjs",
+      customConditions: [],
       },
     ],
   });

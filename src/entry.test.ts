@@ -93,6 +93,7 @@ describe('getEntriesFromContext', () => {
         entryPath: "./lib/index.js",
         sourceFile: ["/project/src/index.cjs", "/project/src/index.js"],
         outputFile: "/project/lib/index.js",
+        customConditions: [],
       },
     ]);
     expect(reporter.warn).toHaveBeenCalledWith(
@@ -119,6 +120,7 @@ describe('getEntriesFromContext', () => {
         entryPath: "./lib/index.js",
         sourceFile: ["/project/src/index.cjs", "/project/src/index.js"],
         outputFile: "/project/lib/index.js",
+        customConditions: [],
       },
     ]);
     expect(reporter.warn).toHaveBeenCalledWith(
@@ -145,6 +147,7 @@ describe('getEntriesFromContext', () => {
         entryPath: "./lib/index.js",
         sourceFile: ["/project/src/index.mjs", "/project/src/index.js"],
         outputFile: "/project/lib/index.js",
+        customConditions: [],
       },
     ]);
     expect(reporter.warn).toHaveBeenCalledWith(
@@ -171,6 +174,7 @@ describe('getEntriesFromContext', () => {
         entryPath: "./lib/index.cjs",
         sourceFile: ["/project/src/index.cjs", "/project/src/index.js"],
         outputFile: "/project/lib/index.cjs",
+        customConditions: [],
       },
     ]);
     expect(reporter.warn).toHaveBeenCalledWith(
@@ -197,6 +201,7 @@ describe('getEntriesFromContext', () => {
         entryPath: "./lib/index.mjs",
         sourceFile: ["/project/src/index.mjs", "/project/src/index.js"],
         outputFile: "/project/lib/index.mjs",
+        customConditions: [],
       },
     ]);
     expect(reporter.warn).toHaveBeenCalledWith(
@@ -222,6 +227,7 @@ describe('getEntriesFromContext', () => {
         entryPath: "./lib/index.json",
         sourceFile: ["/project/src/index.json"],
         outputFile: "/project/lib/index.json",
+        customConditions: [],
       },
     ]);
   });
@@ -242,6 +248,7 @@ describe('getEntriesFromContext', () => {
         platform: "node",
         sourceFile: ["/project/src/index.node"],
         outputFile: "/project/lib/index.node",
+        customConditions: [],
       },
     ]);
   });
@@ -266,6 +273,7 @@ describe('getEntriesFromContext', () => {
           "/project/src/index.css",
         ],
         outputFile: "/project/lib/index.css",
+        customConditions: [],
       },
     ]);
   });
@@ -287,6 +295,7 @@ describe('getEntriesFromContext', () => {
         entryPath: "./lib/main.js",
         sourceFile: ["/project/src/main.cjs", "/project/src/main.js"],
         outputFile: "/project/lib/main.js",
+        customConditions: [],
       },
       {
         key: "module",
@@ -298,6 +307,7 @@ describe('getEntriesFromContext', () => {
         entryPath: "./lib/module.js",
         sourceFile: ["/project/src/module.mjs", "/project/src/module.js"],
         outputFile: "/project/lib/module.js",
+        customConditions: [],
       },
     ]);
     expect(reporter.warn).toHaveBeenCalledWith(
@@ -333,6 +343,7 @@ describe('getEntriesFromContext', () => {
         entryPath: "./lib/index.js",
         sourceFile: ["/project/src/index.cjs", "/project/src/index.js"],
         outputFile: "/project/lib/index.js",
+        customConditions: [],
       },
     ]);
     expect(reporter.warn).toHaveBeenCalledWith(
@@ -363,6 +374,7 @@ describe('getEntriesFromContext', () => {
         entryPath: "./lib/index.js",
         sourceFile: ["/project/src/index.cjs", "/project/src/index.js"],
         outputFile: "/project/lib/index.js",
+        customConditions: [],
       },
     ]);
   });
@@ -384,6 +396,7 @@ describe('getEntriesFromContext', () => {
         entryPath: "./lib/index.js",
         sourceFile: ["/project/src/index.cjs", "/project/src/index.js"],
         outputFile: "/project/lib/index.js",
+        customConditions: [],
       },
     ]);
     expect(reporter.warn).not.toHaveBeenCalled();
@@ -409,6 +422,7 @@ describe('getEntriesFromContext', () => {
         entryPath: "./lib/index.js",
         sourceFile: ["/project/src/index.cjs", "/project/src/index.js"],
         outputFile: "/project/lib/index.js",
+        customConditions: [],
       },
     ]);
     expect(reporter.warn).toHaveBeenCalledWith(
@@ -441,6 +455,7 @@ describe('getEntriesFromContext', () => {
           '/project/src/require.js',
         ],
         outputFile: '/project/lib/require.js',
+        customConditions: [],
       },
       {
         key: 'exports.import',
@@ -455,6 +470,7 @@ describe('getEntriesFromContext', () => {
           '/project/src/import.js',
         ],
         outputFile: '/project/lib/import.js',
+        customConditions: [],
       },
     ]);
 
@@ -481,6 +497,7 @@ describe('getEntriesFromContext', () => {
         entryPath: "./lib/index.js",
         sourceFile: ["/project/src/index.cjs", "/project/src/index.js"],
         outputFile: "/project/lib/index.js",
+        customConditions: [],
       },
       {
         key: 'exports["./feature"]',
@@ -495,6 +512,7 @@ describe('getEntriesFromContext', () => {
           "/project/src/feature/index.js",
         ],
         outputFile: "/project/lib/feature/index.js",
+        customConditions: [],
       },
       {
         key: 'exports["./package.json"]',
@@ -506,6 +524,7 @@ describe('getEntriesFromContext', () => {
         entryPath: "./package.json",
         sourceFile: ["/project/package.json"],
         outputFile: "/project/package.json",
+        customConditions: [],
       },
     ]);
   });
@@ -532,6 +551,7 @@ describe('getEntriesFromContext', () => {
         entryPath: "./lib/index.cjs",
         sourceFile: ["/project/src/index.cjs", "/project/src/index.js"],
         outputFile: "/project/lib/index.cjs",
+        customConditions: [],
       },
       {
         key: 'exports["."].import',
@@ -543,6 +563,7 @@ describe('getEntriesFromContext', () => {
         entryPath: "./lib/index.js",
         sourceFile: ["/project/src/index.mjs", "/project/src/index.js"],
         outputFile: "/project/lib/index.js",
+        customConditions: [],
       },
     ]);
   });
@@ -583,6 +604,7 @@ describe('getEntriesFromContext', () => {
         entryPath: "./lib/index.cjs",
         sourceFile: ["/project/src/index.cjs", "/project/src/index.js"],
         outputFile: "/project/lib/index.cjs",
+        customConditions: [],
       },
       {
         key: 'exports["."].node.import.development',
@@ -594,6 +616,7 @@ describe('getEntriesFromContext', () => {
         entryPath: "./lib/index.mjs",
         sourceFile: ["/project/src/index.mjs", "/project/src/index.js"],
         outputFile: "/project/lib/index.mjs",
+        customConditions: [],
       },
       {
         key: 'exports["."].node.import.production',
@@ -605,6 +628,7 @@ describe('getEntriesFromContext', () => {
         entryPath: "./lib/index.min.mjs",
         sourceFile: ["/project/src/index.mjs", "/project/src/index.js"],
         outputFile: "/project/lib/index.min.mjs",
+        customConditions: [],
       },
 
       // Browsers don't support CommonJS.
@@ -622,6 +646,7 @@ describe('getEntriesFromContext', () => {
         entryPath: "./lib/browser.js",
         sourceFile: ["/project/src/browser.cjs", "/project/src/browser.js"],
         outputFile: "/project/lib/browser.js",
+        customConditions: [],
       },
 
       // Using some popular extension patterns like `*.min.js` can be inferred as regular extension.
@@ -635,6 +660,7 @@ describe('getEntriesFromContext', () => {
         entryPath: "./lib/browser.min.js",
         sourceFile: ["/project/src/browser.cjs", "/project/src/browser.js"],
         outputFile: "/project/lib/browser.min.js",
+        customConditions: [],
       },
 
       // Deno only supports ESM.
@@ -652,6 +678,7 @@ describe('getEntriesFromContext', () => {
         entryPath: "./lib/deno.js",
         sourceFile: ["/project/src/deno.cjs", "/project/src/deno.js"],
         outputFile: "/project/lib/deno.js",
+        customConditions: [],
       },
     ]);
   });
@@ -675,6 +702,7 @@ describe('getEntriesFromContext', () => {
           '/project/src/bin.js',
         ],
         outputFile: '/project/lib/bin.js',
+        customConditions: [],
       },
     ]);
   });
@@ -711,6 +739,7 @@ describe('getEntriesFromContext', () => {
           '/project/src/command.js',
         ],
         outputFile: '/project/lib/command.js',
+        customConditions: [],
       },
       {
         key: 'bin["command2"]',
@@ -725,6 +754,7 @@ describe('getEntriesFromContext', () => {
           '/project/src/command.js',
         ],
         outputFile: '/project/lib/command.cjs',
+        customConditions: [],
       },
       {
         key: 'bin["command3"]',
@@ -739,6 +769,7 @@ describe('getEntriesFromContext', () => {
           '/project/src/command.js',
         ],
         outputFile: '/project/lib/command.mjs',
+        customConditions: [],
       },
     ]);
   });
@@ -798,6 +829,7 @@ describe('getEntriesFromContext', () => {
             '/project/src/require.js',
           ],
           outputFile: '/project/require.js',
+        customConditions: [],
         },
         {
           key: 'exports.import',
@@ -812,6 +844,7 @@ describe('getEntriesFromContext', () => {
             '/project/src/import.js',
           ],
           outputFile: '/project/import.js',
+        customConditions: [],
         },
       ]);
 
@@ -841,6 +874,7 @@ describe('getEntriesFromContext', () => {
             '/project/src/index.js',
           ],
           outputFile: '/project/index.js',
+        customConditions: [],
         },
         {
           key: 'exports["./feature"]',
@@ -855,6 +889,7 @@ describe('getEntriesFromContext', () => {
             '/project/src/feature/index.js',
           ],
           outputFile: '/project/feature/index.js',
+        customConditions: [],
         },
         {
           key: 'exports["./package.json"]',
@@ -866,6 +901,7 @@ describe('getEntriesFromContext', () => {
           entryPath: './package.json',
           sourceFile: ['/project/package.json'],
           outputFile: '/project/package.json',
+        customConditions: [],
         },
       ]);
     });
@@ -911,6 +947,7 @@ describe('getEntriesFromContext', () => {
             '/project/require.js',
           ],
           outputFile: '/project/lib/require.js',
+        customConditions: [],
         },
         {
           key: 'exports.import',
@@ -925,6 +962,7 @@ describe('getEntriesFromContext', () => {
             '/project/import.js',
           ],
           outputFile: '/project/lib/import.js',
+        customConditions: [],
         },
       ]);
 
@@ -954,6 +992,7 @@ describe('getEntriesFromContext', () => {
             '/project/index.js',
           ],
           outputFile: '/project/lib/index.js',
+        customConditions: [],
         },
         {
           key: 'exports["./feature"]',
@@ -968,6 +1007,7 @@ describe('getEntriesFromContext', () => {
             '/project/feature/index.js',
           ],
           outputFile: '/project/lib/feature/index.js',
+        customConditions: [],
         },
         {
           key: 'exports["./package.json"]',
@@ -979,6 +1019,7 @@ describe('getEntriesFromContext', () => {
           entryPath: './package.json',
           sourceFile: ['/project/package.json'],
           outputFile: '/project/package.json',
+        customConditions: [],
         },
       ]);
     });
@@ -1024,6 +1065,7 @@ describe('getEntriesFromContext', () => {
             '/project/src/index.js',
           ],
           outputFile: '/project/lib/index.cjs',
+        customConditions: [],
         },
         {
           key: 'exports.import',
@@ -1039,6 +1081,7 @@ describe('getEntriesFromContext', () => {
             '/project/src/index.js',
           ],
           outputFile: '/project/lib/index.mjs',
+        customConditions: [],
         },
       ]);
     });
@@ -1104,6 +1147,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
           '/project/src/index.js',
         ],
         outputFile: '/project/lib/index.js',
+        customConditions: [],
       },
       {
         key: 'module',
@@ -1120,6 +1164,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
           '/project/src/index.js',
         ],
         outputFile: '/project/lib/index.mjs',
+        customConditions: [],
       },
       {
         key: 'types',
@@ -1134,6 +1179,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
           '/project/src/index.ts',
         ],
         outputFile: '/project/lib/index.d.ts',
+        customConditions: [],
       },
     ]);
   });
@@ -1163,6 +1209,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
           '/project/src/index.ts',
         ],
         outputFile: '/project/lib/index.d.ts',
+        customConditions: [],
       },
       {
         key: 'exports["."].require',
@@ -1179,6 +1226,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
           '/project/src/index.js',
         ],
         outputFile: '/project/lib/index.cjs',
+        customConditions: [],
       },
       {
         key: 'exports["."].import',
@@ -1195,6 +1243,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
           '/project/src/index.js',
         ],
         outputFile: '/project/lib/index.mjs',
+        customConditions: [],
       },
     ]);
   });
@@ -1252,6 +1301,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
           '/project/src/index.ts',
         ],
         outputFile: '/project/lib/index.d.ts',
+        customConditions: [],
       },
       {
         key: 'exports["."].require.types',
@@ -1266,6 +1316,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
           '/project/src/index.ts',
         ],
         outputFile: '/project/lib/index.d.cts',
+        customConditions: [],
       },
       {
         key: 'exports["."].require.development',
@@ -1282,6 +1333,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
           '/project/src/index.js',
         ],
         outputFile: '/project/lib/index.cjs',
+        customConditions: [],
       },
       {
         key: 'exports["."].require.production',
@@ -1298,6 +1350,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
           '/project/src/index.js',
         ],
         outputFile: '/project/lib/index.min.cjs',
+        customConditions: [],
       },
     ]);
   });
@@ -1331,6 +1384,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
           '/project/src/index.ts',
         ],
         outputFile: '/project/lib/index.d.ts',
+        customConditions: [],
       },
       {
         key: 'exports["."].require.types',
@@ -1345,6 +1399,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
           '/project/src/index.ts',
         ],
         outputFile: '/project/lib/index.d.cts',
+        customConditions: [],
       },
       {
         key: 'exports["."].require.development',
@@ -1361,6 +1416,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
           '/project/src/index.js',
         ],
         outputFile: '/project/lib/index.cjs',
+        customConditions: [],
       },
       {
         key: 'exports["."].require.production',
@@ -1377,6 +1433,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
           '/project/src/index.js',
         ],
         outputFile: '/project/lib/index.min.cjs',
+        customConditions: [],
       },
       {
         key: 'exports["."].default',
@@ -1393,6 +1450,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
           '/project/src/index.js',
         ],
         outputFile: '/project/lib/index.js',
+        customConditions: [],
       },
     ]);
   });
@@ -1433,6 +1491,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
           '/project/src/index.ts',
         ],
         outputFile: '/project/lib/index.d.cts',
+        customConditions: [],
       },
       {
         key: 'exports["."].require.development',
@@ -1449,6 +1508,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
           '/project/src/index.js',
         ],
         outputFile: '/project/lib/index.cjs',
+        customConditions: [],
       },
       {
         key: 'exports["."].require.production',
@@ -1465,6 +1525,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
           '/project/src/index.js',
         ],
         outputFile: '/project/lib/index.min.cjs',
+        customConditions: [],
       },
       {
         key: 'exports["."].import.types',
@@ -1479,6 +1540,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
           '/project/src/index.ts',
         ],
         outputFile: '/project/lib/index.d.mts',
+        customConditions: [],
       },
       {
         key: 'exports["."].import.development',
@@ -1495,6 +1557,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
           '/project/src/index.js',
         ],
         outputFile: '/project/lib/index.mjs',
+        customConditions: [],
       },
       {
         key: 'exports["."].import.production',
@@ -1511,6 +1574,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
           '/project/src/index.js',
         ],
         outputFile: '/project/lib/index.min.mjs',
+        customConditions: [],
       },
       {
         key: 'exports["."].import.node.types',
@@ -1525,6 +1589,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
           '/project/src/index.node.ts',
         ],
         outputFile: '/project/lib/index.node.d.ts',
+        customConditions: [],
       },
       {
         key: 'exports["."].import.node.default',
@@ -1541,6 +1606,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
           '/project/src/index.node.js',
         ],
         outputFile: '/project/lib/index.node.js',
+        customConditions: [],
       },
     ]);
   });
@@ -1607,6 +1673,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
             '/project/index.ts',
           ],
           outputFile: '/project/index.d.ts',
+        customConditions: [],
         },
         {
           key: 'exports["."].require',
@@ -1621,6 +1688,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
             '/project/index.ts',
           ],
           outputFile: '/project/index.cjs',
+        customConditions: [],
         },
         {
           key: 'exports["."].import',
@@ -1635,6 +1703,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
             '/project/index.ts',
           ],
           outputFile: '/project/index.mjs',
+        customConditions: [],
         },
       ]);
     });
@@ -1684,6 +1753,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
             '/project/src/index.js',
           ],
           outputFile: '/project/lib/index.jsx',
+        customConditions: [],
         },
         {
           key: 'types',
@@ -1699,6 +1769,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
             '/project/src/index.ts',
           ],
           outputFile: '/project/lib/index.d.ts',
+        customConditions: [],
         },
       ]);
     });
@@ -1729,6 +1800,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
             '/project/src/index.ts',
           ],
           outputFile: '/project/lib/index.d.ts',
+        customConditions: [],
         },
         {
           key: 'exports["."].require',
@@ -1747,6 +1819,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
             '/project/src/index.js',
           ],
           outputFile: '/project/lib/index.cjs',
+        customConditions: [],
         },
         {
           key: 'exports["."].import',
@@ -1765,6 +1838,7 @@ describe('getEntriesFromContext - in TypeScript project', () => {
             '/project/src/index.js',
           ],
           outputFile: '/project/lib/index.mjs',
+        customConditions: [],
         },
       ]);
     });
@@ -1838,6 +1912,7 @@ describe('common usecases', () => {
           '/project/client.ts',
         ],
         outputFile: '/project/client.d.ts',
+        customConditions: [],
       },
       {
         key: 'exports["."].require',
@@ -1854,6 +1929,7 @@ describe('common usecases', () => {
           '/project/client.js',
         ],
         outputFile: '/project/client.min.js',
+        customConditions: [],
       },
       {
         key: 'exports["."].import',
@@ -1870,6 +1946,7 @@ describe('common usecases', () => {
           '/project/client.js',
         ],
         outputFile: '/project/client.min.mjs',
+        customConditions: [],
       },
       {
         key: 'exports["./server"].types',
@@ -1883,6 +1960,7 @@ describe('common usecases', () => {
           '/project/server.ts',
         ],
         outputFile: '/project/server.d.ts',
+        customConditions: [],
       },
       {
         key: 'exports["./server"].require',
@@ -1899,6 +1977,7 @@ describe('common usecases', () => {
           '/project/server.js',
         ],
         outputFile: '/project/server.js',
+        customConditions: [],
       },
       {
         key: 'exports["./server"].import',
@@ -1915,6 +1994,7 @@ describe('common usecases', () => {
           '/project/server.js',
         ],
         outputFile: '/project/server.mjs',
+        customConditions: [],
       },
       {
         key: 'exports["./package.json"]',
@@ -1928,6 +2008,7 @@ describe('common usecases', () => {
           '/project/package.json',
         ],
         outputFile: '/project/package.json',
+        customConditions: [],
       },
     ]);
   });
@@ -1957,6 +2038,7 @@ describe('common usecases', () => {
           '/project/index.ts',
         ],
         outputFile: '/project/index.d.ts',
+        customConditions: [],
       },
       {
         key: 'exports["."].browser',
@@ -1977,6 +2059,7 @@ describe('common usecases', () => {
           '/project/index.js',
         ],
         outputFile: '/project/index.browser.min.js',
+        customConditions: [],
       },
       {
         key: 'exports["."].default',
@@ -1993,6 +2076,7 @@ describe('common usecases', () => {
           '/project/index.js',
         ],
         outputFile: '/project/index.js',
+        customConditions: [],
       },
     ]);
   });
@@ -2025,6 +2109,7 @@ describe('common usecases', () => {
           '/project/index.ts',
         ],
         outputFile: '/project/index.d.ts',
+        customConditions: [],
       },
       {
         key: 'exports["."].require',
@@ -2041,6 +2126,7 @@ describe('common usecases', () => {
           '/project/index.js',
         ],
         outputFile: '/project/index.cjs',
+        customConditions: [],
       },
       {
         key: 'exports["."].import',
@@ -2057,6 +2143,7 @@ describe('common usecases', () => {
           '/project/index.js',
         ],
         outputFile: '/project/index.mjs',
+        customConditions: [],
       },
       {
         key: 'exports["./colors.css"]',
@@ -2074,6 +2161,7 @@ describe('common usecases', () => {
           '/project/colors.css',
         ],
         outputFile: '/project/colors.css',
+        customConditions: [],
       },
     ]);
   });
@@ -2124,6 +2212,7 @@ describe('common usecases', () => {
           '/project/src/index.js',
         ],
         outputFile: '/project/lib/index.js',
+        customConditions: [],
       },
       {
         key: 'types',
@@ -2139,6 +2228,75 @@ describe('common usecases', () => {
           '/project/src/index.ts',
         ],
         outputFile: '/project/lib/index.d.ts',
+        customConditions: [],
+      },
+    ]);
+  });
+
+  test('Custom condition exports', () => {
+    expect(
+      entriesFromManifest({
+        name: 'my-package',
+        exports: {
+          '.': {
+            'custom': './lib/index.custom.js',
+            'default': './lib/index.js',
+          },
+       },
+      }).getEntries(),
+    ).toEqual<Entry[]>([
+      {
+        key: 'exports["."].types',
+        module: 'dts',
+        mode: undefined,
+        minify: false,
+        sourcemap: true,
+        platform: 'neutral',
+        entryPath: './lib/index.d.ts',
+        sourceFile: [
+          '/project/src/index.cts',
+          '/project/src/index.ts',
+        ],
+        outputFile: '/project/lib/index.d.ts',
+        customConditions: [],
+      },
+      {
+        key: 'exports["."].custom',
+        module: 'commonjs',
+        mode: undefined,
+        minify: false,
+        sourcemap: true,
+        platform: 'neutral',
+        entryPath: './lib/index.custom.js',
+        sourceFile: [
+          '/project/src/index.custom.cts',
+          '/project/src/index.custom.cjs',
+          '/project/src/index.custom.ts',
+          '/project/src/index.custom.js',
+          '/project/src/index.cts',
+          '/project/src/index.cjs',
+          '/project/src/index.ts',
+          '/project/src/index.js',
+        ],
+        outputFile: '/project/lib/index.custom.js',
+        customConditions: ['custom'],
+      },
+      {
+        key: 'exports["."].default',
+        module: 'commonjs',
+        mode: undefined,
+        minify: false,
+        sourcemap: true,
+        platform: 'neutral',
+        entryPath: './lib/index.js',
+        sourceFile: [
+          '/project/src/index.cts',
+          '/project/src/index.cjs',
+          '/project/src/index.ts',
+          '/project/src/index.js',
+        ],
+        outputFile: '/project/lib/index.js',
+        customConditions: [],
       },
     ]);
   });

@@ -29,6 +29,7 @@ export type BundleOptions = {
   minify: BundleEntry['minify'],
   platform: BundleEntry['platform'],
   sourcemap: BundleEntry['sourcemap'],
+  customConditions: BundleEntry['customConditions'],
 };
 
 export type BundleEntryGroup = Record<
@@ -43,6 +44,7 @@ export function hashBundleOptions(options: BundleOptions): string {
     minify: options.minify,
     platform: options.platform,
     sourcemap: options.sourcemap,
+    customConditions: [...options.customConditions].sort(),
   };
   return JSON.stringify(normalized);
 }
@@ -58,6 +60,7 @@ export function extractBundleOptions(entry: BundleEntry): BundleOptions {
     minify: entry.minify,
     platform: entry.platform,
     sourcemap: entry.sourcemap,
+    customConditions: entry.customConditions,
   };
   return options;
 }

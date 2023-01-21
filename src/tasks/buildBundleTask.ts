@@ -165,6 +165,7 @@ async function buildBundleGroup({
     sourcemap: options.sourcemap,
     minify: options.minify,
     plugins: [],
+    conditions: options.customConditions,
   };
 
   if (options.platform === 'deno') {

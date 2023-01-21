@@ -118,6 +118,7 @@ describe('normalizeImportMaps', () => {
         platform: 'neutral',
         minify: false,
         sourcemap: false,
+        customConditions: [],
       }),
     ).toEqual({
       imports: {
@@ -135,6 +136,7 @@ describe('normalizeImportMaps', () => {
         },
       },
     });
+
     expect(
       normalizeImportMaps(nodeImportMaps, {
         mode: undefined,
@@ -142,12 +144,14 @@ describe('normalizeImportMaps', () => {
         platform: 'node',
         minify: false,
         sourcemap: false,
+        customConditions: [],
       }),
     ).toEqual({
       imports: {
         '#dep': 'dep-node-native',
       },
     });
+
     expect(
       normalizeImportMaps(nodeImportMaps, {
         mode: undefined,
@@ -155,12 +159,14 @@ describe('normalizeImportMaps', () => {
         platform: 'browser',
         minify: false,
         sourcemap: false,
+        customConditions: [],
       }),
     ).toEqual({
       imports: {
         '#dep': './dep-polyfill.js',
       },
     });
+
     expect(
       normalizeImportMaps(nodeImportMaps, {
         mode: undefined,
@@ -168,10 +174,55 @@ describe('normalizeImportMaps', () => {
         platform: 'neutral',
         minify: false,
         sourcemap: false,
+        customConditions: [],
       }),
     ).toEqual({
       imports: {
         '#dep': './dep-polyfill.js',
+      },
+    });
+  });
+
+  test('custom condition importMaps', () => {
+    const nodeImportMaps = validate({
+      imports: {
+        '#shared/*.js': './src/shared/*.js',
+        '#globals/*.js': {
+          custom: './src/globals/*.custom.js',
+          default: './src/globals/*.js',
+        },
+      },
+    });
+
+    expect(
+      normalizeImportMaps(nodeImportMaps, {
+        mode: undefined,
+        module: 'commonjs',
+        platform: 'neutral',
+        minify: false,
+        sourcemap: false,
+        customConditions: ['custom'],
+      }),
+    ).toEqual({
+      imports: {
+        '#shared/*.js': './src/shared/*.js',
+        '#globals/*.js': './src/globals/*.custom.js',
+      },
+    });
+
+    expect(
+      normalizeImportMaps(nodeImportMaps, {
+        mode: undefined,
+        module: 'commonjs',
+        platform: 'neutral',
+        minify: false,
+        sourcemap: false,
+        customConditions: [],
+      }),
+    ).toEqual({
+      imports: {
+        '#shared/*.js': './src/shared/*.js',
+        '#globals/*.js': './src/globals/*.js',
       },
     });
   });
@@ -195,6 +246,7 @@ describe('normalizeImportMaps', () => {
         platform: 'node',
         minify: false,
         sourcemap: false,
+        customConditions: [],
       }),
     ).toEqual({
       imports: {
@@ -208,6 +260,7 @@ describe('normalizeImportMaps', () => {
         platform: 'node',
         minify: false,
         sourcemap: false,
+        customConditions: [],
       }),
     ).toEqual({
       imports: {
@@ -221,6 +274,7 @@ describe('normalizeImportMaps', () => {
         platform: 'neutral',
         minify: false,
         sourcemap: false,
+        customConditions: [],
       }),
     ).toEqual({
       imports: {
@@ -234,6 +288,7 @@ describe('normalizeImportMaps', () => {
         platform: 'browser',
         minify: false,
         sourcemap: false,
+        customConditions: [],
       }),
     ).toEqual({
       imports: {
@@ -259,6 +314,7 @@ describe('normalizeImportMaps', () => {
           platform: 'neutral',
           minify: false,
           sourcemap: false,
+          customConditions: [],
         }),
       ).toEqual({
         imports: {
@@ -272,6 +328,7 @@ describe('normalizeImportMaps', () => {
           platform: 'neutral',
           minify: false,
           sourcemap: false,
+          customConditions: [],
         }),
       ).toEqual({
         imports: {
