@@ -1,5 +1,11 @@
 # nanobundle
 
+## 1.3.1
+
+### Patch Changes
+
+- 8f22759: Fix subpath pattern validation for importMaps
+
 ## 1.3.0
 
 ### Minor Changes
