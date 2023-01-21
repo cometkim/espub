@@ -1,5 +1,11 @@
 # nanobundle
 
+## 1.3.3
+
+### Patch Changes
+
+- 0b85f38: Fix subpath pattern imports resolution
+
 ## 1.3.2
 
 ### Patch Changes
