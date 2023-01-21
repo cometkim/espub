@@ -1914,7 +1914,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild@npm:^0.17.0":
+"esbuild@npm:^0.17.3":
   version: 0.17.3
   resolution: "esbuild@npm:0.17.3"
   dependencies:
@@ -3084,7 +3084,7 @@ __metadata:
     all-contributors-cli: ^6.24.0
     browserslist: ^4.21.4
     c8: ^7.12.0
-    esbuild: ^0.17.0
+    esbuild: ^0.17.3
     kleur: ^4.1.5
     meow: ^11.0.0
     pkg-types: ^1.0.1
