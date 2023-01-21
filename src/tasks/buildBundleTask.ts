@@ -140,8 +140,7 @@ async function buildBundleGroup({
     entryPointsEntries.push([
       path.relative(
         baseDir,
-        // FIXME: add normal CSS bundle support instead of this ad-hoc handling
-        entry.outputFile.replace(/\.css$/, ''),
+        entry.outputFile.replace(/\.[^\.]+$/, ''),
       ),
       sourceFile,
     ]);
@@ -154,6 +153,7 @@ async function buildBundleGroup({
     entryPoints,
     outdir: baseDir,
     bundle: true,
+    tsconfig: context.tsconfigPath,
     jsx: context.jsx,
     jsxDev: context.jsxDev,
     jsxFactory: context.jsxFactory,
@@ -203,9 +203,7 @@ async function buildBundleGroup({
 
   const outputFiles = result.outputFiles.map(outputFile => ({
     ...outputFile,
-    path: outputFile.path
-      .replace(/\.js$/, '')
-      .replace(/\.js\.map$/, '.map'),
+    path: outputFile.path,
   }));
 
   return {

@@ -25,6 +25,7 @@ export async function reportEmitResultsTask({
 }: ReportEmitResultsTaskOptions): Promise<void> {
   const bundles = bundleOutputs
     .filter(bundle => !bundle.path.endsWith('.map'))
+    .filter(bundle => !bundle.path.endsWith('.LEGAL.txt'))
   const lastBundle = bundles.at(-1);
   const plural = bundles.length !== 1;
 
