@@ -9,7 +9,7 @@ import { NanobundleConfigError } from './errors';
 
 import { type BundleOptions } from './entryGroup';
 
-const importSubpathPattern = /^(?<dirname>.+\/)(?<filename>(?<base>[^\/]+?)(?<ext>\.[^\.]+)?)$/;
+const importSubpathPattern = /^(?<dirname>.+\/)(?<filename>(?<base>[^\/\.]+?)(?<ext>\..+)?)$/;
 
 export type NodeImportMaps = {
   imports: Exclude<ConditionalImports, string>,
@@ -265,12 +265,9 @@ export function replaceSubpathPattern(importMaps: ImportMaps, modulePath: string
           );
       }
       if (fromPrefixMatch?.groups?.['base'] === '*') {
-        if (
-          fromPrefixMatch?.groups?.['ext'] === toPrefixMatch?.groups?.['ext'] &&
-          fromPrefixMatch?.groups?.['ext'] === modulePathMatch?.groups?.['ext']
-        ) {
+        if (fromPrefixMatch?.groups?.['ext'] === modulePathMatch?.groups?.['ext']) {
           return (toPrefixMatch?.groups?.['dirname'] || '') +
-            (modulePathMatch?.groups?.['filename'] || '');
+            (modulePathMatch?.groups?.['base'] || '') + (toPrefixMatch?.groups?.['ext'] || '');
         }
       }
     }

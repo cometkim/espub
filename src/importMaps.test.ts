@@ -373,6 +373,17 @@ describe('replaceSubpathPattern', () => {
         '#test/module.js',
       ),
     ).toEqual('./src/test/module.js');
+
+    expect(
+      replaceSubpathPattern(
+        {
+          imports: {
+            '#test/*.js': './src/test/*.default.js',
+          },
+        },
+        '#test/module.js',
+      ),
+    ).toEqual('./src/test/module.default.js');
   });
 
   test('does not replace', () => {
