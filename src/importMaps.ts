@@ -28,10 +28,12 @@ export async function loadImportMaps(context: Context): Promise<NodeImportMaps> 
 type ValidateNodeImportMapsOptions = {
   context: Context,
   importMaps: NodeImportMaps,
+  rootKey?: string,
 }
 export async function validateImportMaps({
   context,
   importMaps,
+  rootKey,
 }: ValidateNodeImportMapsOptions): Promise<ValidNodeImportMaps> {
   for (const [key, importPath] of Object.entries(importMaps.imports)) {
     if (typeof importPath === 'object') {
@@ -40,9 +42,10 @@ export async function validateImportMaps({
         importMaps: {
           imports: importPath,
         },
+        rootKey: rootKey || key,
       });
     } else {
-      if (!key.startsWith('#')) {
+      if (!(rootKey || key).startsWith('#')) {
         if (
           key.endsWith('/') ||
           key.includes('*') ||
@@ -61,7 +64,12 @@ export async function validateImportMaps({
         continue;
       }
 
-      const resolvedPath = path.resolve(path.dirname(context.importMapsPath), importPath);
+      const resolvedPath = path.resolve(
+        path.dirname(context.importMapsPath),
+        importPath.includes('*')
+          ? path.dirname(importPath)
+          : importPath,
+      );
       const exist = await fsUtils.exists(resolvedPath);
       if (!exist) {
         throw new NanobundleConfigError(`${formatUtils.path(resolvedPath)} doesn't exist`);
