@@ -18,6 +18,7 @@ export type Entry = {
   module: "commonjs" | "esmodule" | "dts" | "file";
   sourceFile: string[];
   outputFile: string;
+  customConditions: string[],
 };
 
 type EntryTarget = {
@@ -29,6 +30,7 @@ type EntryTarget = {
   mode: Entry['mode'],
   module: Entry['module'],
   preferredModule?: 'esmodule' | 'commonjs',
+  customConditions: string[],
 };
 
 interface GetEntriesFromContext {
@@ -83,6 +85,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
       module,
       mode,
       preferredModule,
+      customConditions,
     } = target;
 
     if (!entryPath.startsWith('./')) {
@@ -270,6 +273,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
       module,
       sourceFile,
       outputFile: resolvedOutputFile,
+      customConditions,
     });
   }
 
@@ -291,6 +295,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
           module: 'commonjs',
           preferredModule: 'commonjs',
           entryPath,
+          customConditions: [],
         });
         break;
       }
@@ -303,6 +308,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
           module: 'esmodule',
           preferredModule: 'esmodule',
           entryPath,
+          customConditions: [],
         });
         break;
       }
@@ -314,6 +320,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
           mode: defaultMode,
           module: 'file',
           entryPath,
+          customConditions: [],
         });
         break;
       }
@@ -325,6 +332,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
           mode: defaultMode,
           module: "file",
           entryPath,
+          customConditions: [],
         });
         break;
       }
@@ -341,6 +349,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
           mode: defaultMode,
           module: defaultModule,
           entryPath,
+          customConditions: [],
         });
         break;
       }
@@ -363,6 +372,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
         module: 'esmodule',
         preferredModule: 'esmodule',
         entryPath,
+        customConditions: [],
       });
     } else {
       throw new NanobundleEntryError(Message.INVALID_MODULE_EXTENSION());
@@ -385,6 +395,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
         module: 'dts',
         preferredModule: defaultPreferredModule,
         entryPath,
+        customConditions: [],
       });
     } else {
       throw new NanobundleEntryError(Message.INVALID_TYPES_EXTENSION());
@@ -409,6 +420,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
           module: defaultModule,
           preferredModule: defaultPreferredModule,
           entryPath,
+          customConditions: [],
         });
         break;
       }
@@ -421,6 +433,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
           module: 'commonjs',
           preferredModule: defaultPreferredModule,
           entryPath,
+          customConditions: [],
         });
         break;
       }
@@ -433,6 +446,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
           module: 'esmodule',
           preferredModule: defaultPreferredModule,
           entryPath,
+          customConditions: [],
         });
         break;
       }
@@ -450,6 +464,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
     module,
     preferredModule,
     entryPath,
+    customConditions,
   }: {
     key: string,
     parentKey: string,
@@ -458,6 +473,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
     module: Entry['module'],
     preferredModule?: 'commonjs' | 'esmodule',
     entryPath: ConditionalExports,
+    customConditions: string[],
   }) {
     if (typeof entryPath === 'string') {
       if (parentKey === 'types') {
@@ -470,6 +486,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
           module: 'dts',
           preferredModule,
           entryPath,
+          customConditions,
         });
         return;
       }
@@ -486,6 +503,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
             module: 'commonjs',
             preferredModule: 'commonjs',
             entryPath,
+            customConditions,
           });
           break;
         }
@@ -499,6 +517,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
             module: 'esmodule',
             preferredModule: 'esmodule',
             entryPath,
+            customConditions,
           });
           break;
         }
@@ -512,6 +531,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
             module: 'file',
             preferredModule,
             entryPath,
+            customConditions,
           });
           break;
         }
@@ -525,6 +545,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
             module: 'file',
             preferredModule,
             entryPath,
+            customConditions,
           });
           break;
         }
@@ -543,6 +564,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
             module,
             preferredModule,
             entryPath,
+            customConditions,
           });
           break;
         }
@@ -613,6 +635,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
               module: 'esmodule',
               preferredModule: 'esmodule',
               entryPath: output,
+              customConditions,
             });
             break;
           }
@@ -625,6 +648,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
               module: 'commonjs',
               preferredModule: 'commonjs',
               entryPath: output,
+              customConditions,
             });
             break;
           }
@@ -637,6 +661,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
               module: 'dts',
               preferredModule: undefined,
               entryPath: output,
+              customConditions,
             });
             break;
           }
@@ -649,6 +674,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
               module: 'dts',
               preferredModule,
               entryPath: output,
+              customConditions,
             });
             break;
           }
@@ -661,6 +687,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
               module,
               preferredModule,
               entryPath: output,
+              customConditions,
             });
             break;
           }
@@ -673,6 +700,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
               module,
               preferredModule,
               entryPath: output,
+              customConditions,
             });
             break;
           }
@@ -685,6 +713,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
               module,
               preferredModule,
               entryPath: output,
+              customConditions,
             });
             break;
           }
@@ -697,6 +726,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
               module,
               preferredModule,
               entryPath: output,
+              customConditions,
             });
             break;
           }
@@ -709,6 +739,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
               module,
               preferredModule,
               entryPath: output,
+              customConditions,
             });
             break;
           }
@@ -721,6 +752,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
               module,
               preferredModule,
               entryPath: output,
+              customConditions,
             });
             break;
           }
@@ -733,6 +765,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
               module,
               preferredModule,
               entryPath: output,
+              customConditions,
             });
             break;
           }
@@ -746,8 +779,20 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
                 module,
                 preferredModule,
                 entryPath: output,
+                customConditions,
               });
             } else {
+              reporter.warn(Message.CUSTOM_CONDITION(currentKey));
+              addConditionalEntry({
+                key: `${key}.${currentKey}`,
+                parentKey: currentKey,
+                platform,
+                mode,
+                module,
+                preferredModule,
+                entryPath: output,
+                customConditions: [...new Set([...customConditions, currentKey])],
+              });
             }
             break;
           }
@@ -765,6 +810,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
       module: defaultModule,
       preferredModule: defaultPreferredModule,
       entryPath: manifest.exports,
+      customConditions: [],
     });
   } else if (manifest.main || manifest.module) {
     reporter.warn(Message.RECOMMEND_EXPORTS());
@@ -948,6 +994,10 @@ export const Message = {
 
   NO_NEED_JSX: (path: string) => dedent`
     ${formatUtils.path(path)} doesn't have to be \`.jsx\` unless you are using ${formatUtils.key('preserve')} mode.
+  `,
+
+  CUSTOM_CONDITION: (condition: string) => dedent`
+    Custom condition ${formatUtils.key(condition)} may has no effects.
   `,
 
 } as const;

@@ -81,6 +81,7 @@ export function normalizeImportMaps(
     mode: BundleOptions['mode'],
     module: BundleOptions['module'],
     platform: BundleOptions['platform'],
+    customConditions: BundleOptions['customConditions'],
   ): string {
     if (typeof imports === 'string') {
       return imports;
@@ -97,6 +98,7 @@ export function normalizeImportMaps(
               mode,
               module,
               'node',
+              customConditions,
             );
           }
         }
@@ -110,6 +112,7 @@ export function normalizeImportMaps(
               mode,
               module,
               'browser',
+              customConditions,
             );
           }
         }
@@ -123,6 +126,7 @@ export function normalizeImportMaps(
               mode,
               'commonjs',
               platform,
+              customConditions,
             );
           }
         }
@@ -136,6 +140,7 @@ export function normalizeImportMaps(
               mode,
               'esmodule',
               platform,
+              customConditions,
             );
           }
         }
@@ -149,6 +154,7 @@ export function normalizeImportMaps(
               'development',
               module,
               platform,
+              customConditions,
             );
           }
         }
@@ -162,6 +168,21 @@ export function normalizeImportMaps(
               'production',
               module,
               platform,
+              customConditions,
+            );
+          }
+        }
+        if (customConditions.includes(key)) {
+          if (typeof value === 'string') {
+            return value;
+          } else {
+            return normalize(
+              rootKey,
+              imports,
+              mode,
+              module,
+              platform,
+              customConditions,
             );
           }
         }
@@ -175,6 +196,7 @@ export function normalizeImportMaps(
               mode,
               module,
               platform,
+              customConditions,
             );
           }
         }
@@ -184,7 +206,7 @@ export function normalizeImportMaps(
     }
   }
 
-  const { mode, module, platform } = bundleOptions;
+  const { mode, module, platform, customConditions } = bundleOptions;
   const result: ImportMaps = {
     imports: {},
   };
@@ -195,6 +217,7 @@ export function normalizeImportMaps(
       mode,
       module,
       platform,
+      customConditions,
     );
   }
 
