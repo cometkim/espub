@@ -1,5 +1,11 @@
 # nanobundle
 
+## 1.3.2
+
+### Patch Changes
+
+- 95ee87d: Fix legal comments output path
+
 ## 1.3.1
 
 ### Patch Changes
