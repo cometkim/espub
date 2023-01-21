@@ -1,5 +1,15 @@
 # nanobundle
 
+## 1.3.0
+
+### Minor Changes
+
+- 28d0d02: upgrade esbuild to v0.17.x
+- 74182e0: Set --keep-names build flag by default
+- 684408c: Support custom condition for imports & exports entries
+- 7d8f1bf: support subpath pattern import maps
+- 7fb6b21: Set legal comments to be liked by default
+
 ## 1.2.2
 
 ### Patch Changes
