@@ -6,6 +6,7 @@ node_modules/
 coverage/
 
 /bin.min.mjs
+/bin.min.mjs.LEGAL.txt
 
 .yarn/*
 !.yarn/patches
