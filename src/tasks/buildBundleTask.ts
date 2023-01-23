@@ -1,4 +1,3 @@
-import * as path from 'node:path';
 import * as esbuild from 'esbuild';
 import dedent from 'string-dedent';
 
@@ -118,8 +117,7 @@ async function buildBundleGroup({
   bundleEntries,
   options,
 }: BuildBundleGroupOptions): Promise<BuildBundleGroupResult> {
-  const baseDir = path.resolve(context.cwd);
-  const entryPointsEntries: [string, string][] = [];
+  const entryPoints: Array<{ in: string, out: string }> = [];
   for (const entry of bundleEntries) {
     const sourceFile = await fsUtils.chooseExist(entry.sourceFile);
     if (!sourceFile) {
@@ -137,21 +135,17 @@ async function buildBundleGroup({
 
       `, []);
     }
-    entryPointsEntries.push([
-      path.relative(
-        baseDir,
-        entry.outputFile.replace(/\.[^\.]+$/, ''),
-      ),
-      sourceFile,
-    ]);
+    entryPoints.push({
+      in: sourceFile,
+      out: entry.outputFile,
+    });
   }
 
-  const entryPoints = Object.fromEntries(entryPointsEntries);
   context.reporter.debug('esbuild entryPoints: %o', entryPoints);
 
   const esbuildOptions: esbuild.BuildOptions = {
-    entryPoints,
-    outdir: baseDir,
+    // entryPoints,
+    // outdir: baseDir,
     bundle: true,
     tsconfig: context.tsconfigPath,
     jsx: context.jsx,
@@ -196,19 +190,26 @@ async function buildBundleGroup({
 
   context.reporter.debug('esbuild build options %o', esbuildOptions);
 
-  const result = await esbuild.build({
-    ...esbuildOptions,
-    write: false,
-  });
+  const results = await Promise.all(
+    entryPoints.map(entry => esbuild.build({
+      ...esbuildOptions,
+      entryPoints: [entry.in],
+      outfile: entry.out,
+      write: false,
+    }))
+  );
 
-  const outputFiles = result.outputFiles.map(outputFile => ({
+  const outputFiles = results.flatMap(result => result.outputFiles.map(outputFile => ({
     ...outputFile,
     path: outputFile.path,
-  }));
+  })));
+
+  const errors = results.flatMap(result => result.errors);
+  const warnings = results.flatMap(result => result.warnings);
 
   return {
-    errors: result.errors,
-    warnings: result.warnings,
+    errors,
+    warnings,
     outputFiles,
   };
 }
