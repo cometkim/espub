@@ -66,24 +66,6 @@ describe('validateImportMaps', () => {
       context: defaultContext,
       importMaps: {
         imports: {
-          'src/': 'dest/',
-        },
-      },
-    })).rejects.toThrowError(NanobundleConfigError);
-
-    await expect(validateImportMaps({
-      context: defaultContext,
-      importMaps: {
-        imports: {
-          './src/': './dest/',
-        },
-      },
-    })).rejects.toThrowError(NanobundleConfigError);
-
-    await expect(validateImportMaps({
-      context: defaultContext,
-      importMaps: {
-        imports: {
           'src/*.js': 'dest/*.js',
         },
       },

@@ -46,14 +46,9 @@ export async function validateImportMaps({
       });
     } else {
       if (!(rootKey || key).startsWith('#')) {
-        if (
-          key.endsWith('/') ||
-          key.includes('*') ||
-          importPath.endsWith('/') ||
-          importPath.includes('*')
-        ) {
+        if (key.includes('*') || importPath.includes('*')) {
           throw new NanobundleConfigError(
-            'Directory or subpath pattern imports is supported only for Node.js-style imports like #pattern',
+            'Subpath pattern (*) imports is supported only for Node.js-style imports like #pattern/*.js',
           );
         }
       }
