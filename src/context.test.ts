@@ -37,7 +37,7 @@ describe('parseConfig', () => {
     standalone: false,
     bundle: true,
     dts: true,
-    sourcemap: undefined,
+    sourcemap: true,
   };
   const defaultManifest: Manifest = {
     name: 'package'
