@@ -1,5 +1,11 @@
 # nanobundle
 
+## 1.3.6
+
+### Patch Changes
+
+- 4559578: regression: emit sourcemap by default
+
 ## 1.3.5
 
 ### Patch Changes
