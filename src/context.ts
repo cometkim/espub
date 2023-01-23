@@ -99,8 +99,8 @@ export function parseConfig({
   if (tsconfig?.compilerOptions?.sourceMap != null) {
     sourcemap = tsconfig.compilerOptions.sourceMap;
   }
-  if (flags.sourcemap != null) {
-    sourcemap = flags.sourcemap;
+  if (flags.sourcemap === false) {
+    sourcemap = false;
   }
 
   let platform: Entry['platform'] = 'neutral';

@@ -94,6 +94,7 @@ Options
     },
     sourcemap: {
       type: 'boolean',
+      default: true,
     },
     bundle: {
       type: 'boolean',
