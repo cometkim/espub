@@ -1,5 +1,11 @@
 # nanobundle
 
+## 1.3.4
+
+### Patch Changes
+
+- 1c6dc99: regression: allow directory style importMaps
+
 ## 1.3.3
 
 ### Patch Changes
