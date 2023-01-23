@@ -1,5 +1,11 @@
 # nanobundle
 
+## 1.3.5
+
+### Patch Changes
+
+- bcafa5f: Fix to output files with .mjs/.cjs extension properly
+
 ## 1.3.4
 
 ### Patch Changes
