@@ -5,6 +5,8 @@
 node_modules/
 coverage/
 
+/bin.mjs
+/bin.mjs.LEGAL.txt
 /bin.min.mjs
 /bin.min.mjs.LEGAL.txt
 
