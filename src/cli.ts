@@ -48,6 +48,8 @@ Options
 
   --no-sourcemap       Disable source map generation
 
+  --no-legal-comments  Disable legal comments generation
+
   --no-bundle          Disable ESBuild bundle and other files build
 
   --no-dts             Disable TypeScript .d.ts build
@@ -93,6 +95,10 @@ Options
       default: false,
     },
     sourcemap: {
+      type: 'boolean',
+      default: true,
+    },
+    legalComments: {
       type: 'boolean',
       default: true,
     },

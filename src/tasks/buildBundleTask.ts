@@ -158,7 +158,7 @@ async function buildBundleGroup({
     target: context.targets,
     format: options.module === 'commonjs' ? 'cjs' : 'esm',
     sourcemap: options.sourcemap,
-    legalComments: 'linked',
+    legalComments: context.legalComments ? 'linked' : 'none',
     minify: options.minify,
     plugins: [],
     conditions: options.customConditions,

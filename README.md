@@ -192,6 +192,8 @@ More interestingly, it supports all of Node.js' notoriously complex **[Condition
 
     --no-sourcemap       Disable source map generation
 
+    --no-legal-comments  Disable legal comments generation
+
     --no-bundle          Disable ESBuild bundle and other files build
 
     --no-dts             Disable TypeScript .d.ts build

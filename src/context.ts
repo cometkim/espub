@@ -21,6 +21,7 @@ export type Context = {
   module: Entry['module'],
   platform: Entry['platform'],
   sourcemap: boolean,
+  legalComments: boolean,
   bundle: boolean,
   declaration: boolean,
   jsx: 'transform' | 'preserve' | 'automatic' | undefined,
@@ -68,6 +69,7 @@ export function parseConfig({
   }
   const bundle = flags.bundle;
   const verbose = flags.verbose;
+  const legalComments = flags.legalComments;
   const standalone = flags.standalone;
   const tsconfigPath = resolvedTsConfigPath;
   const importMapsPath = path.resolve(cwd, flags.importMaps);
@@ -189,6 +191,7 @@ export function parseConfig({
     module,
     platform,
     sourcemap,
+    legalComments,
     bundle,
     declaration,
     jsx,
