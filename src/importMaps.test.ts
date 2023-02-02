@@ -40,6 +40,7 @@ describe('validateImportMaps', () => {
     module: 'commonjs',
     platform: 'neutral',
     sourcemap: true,
+    legalComments: true,
     bundle: true,
     declaration: false,
     standalone: false,
