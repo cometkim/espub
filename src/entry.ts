@@ -14,8 +14,8 @@ export type Entry = {
   minify: boolean;
   mode: undefined | 'development' | 'production';
   sourcemap: boolean;
-  platform: "neutral" | "browser" | "deno" | "node";
-  module: "commonjs" | "esmodule" | "dts" | "file";
+  platform: 'neutral' | 'browser' | 'deno' | 'node';
+  module: 'commonjs' | 'esmodule' | 'css' | 'dts' | 'file';
   sourceFile: string[];
   outputFile: string;
   customConditions: string[],
@@ -60,6 +60,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
   const defaultPreferredModule = ({
     commonjs: 'commonjs',
     esmodule: 'esmodule',
+    css: undefined,
     dts: undefined,
     file: undefined,
   } as const)[defaultModule];
@@ -200,6 +201,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
           useJsx && useJsSource && sourceFileCandidates.add(resolvedSourceFileWithoutCondition.replace(/\.c?jsx?$/, '.jsx'));
           useJsSource && sourceFileCandidates.add(resolvedSourceFileWithoutCondition.replace(/\.c?jsx?$/, '.js'));
         }
+        useJsSource && sourceFileCandidates.add(resolvedSourceFile);
         break;
       }
       case 'esmodule': {
@@ -218,6 +220,11 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
           useJsx && useJsSource && sourceFileCandidates.add(resolvedSourceFileWithoutCondition.replace(/\.m?jsx?$/, '.jsx'));
           useJsSource && sourceFileCandidates.add(resolvedSourceFileWithoutCondition.replace(/\.m?jsx?$/, '.js'));
         }
+        useJsSource && sourceFileCandidates.add(resolvedSourceFile);
+        break;
+      }
+      case 'css': {
+        sourceFileCandidates.add(resolvedSourceFile);
         break;
       }
       case 'dts': {
@@ -230,14 +237,6 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
         }
         useJsx && sourceFileCandidates.add(resolvedSourceFile.replace(/\.d\.(m|c)?ts$/, '.tsx'));
         sourceFileCandidates.add(resolvedSourceFile.replace(/\.d\.(m|c)?ts$/, '.ts'));
-        break;
-      }
-    }
-
-    switch (module) {
-      case 'commonjs':
-      case 'esmodule': {
-        useJsSource && sourceFileCandidates.add(resolvedSourceFile);
         break;
       }
       case 'file': {
@@ -330,7 +329,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
           sourcemap,
           platform: defaultPlatform,
           mode: defaultMode,
-          module: "file",
+          module: 'file',
           entryPath,
           customConditions: [],
         });
@@ -543,6 +542,20 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
             platform,
             mode,
             module: 'file',
+            preferredModule,
+            entryPath,
+            customConditions,
+          });
+          break;
+        }
+        case '.css': {
+          addEntry({
+            key,
+            parentKey,
+            sourcemap,
+            platform,
+            mode,
+            module: 'css',
             preferredModule,
             entryPath,
             customConditions,
@@ -866,6 +879,11 @@ export class NanobundleEntryError extends NanobundleError {
 }
 
 export const Message = {
+  INVALID_MAIN_EXTENSION: () => dedent`
+    Only ${formatUtils.path('.js')}, ${formatUtils.path('.cjs')}, ${formatUtils.path('.mjs')}, ${formatUtils.path('.json')}, or ${formatUtils.path('.node')} allowed for ${formatUtils.key('main')} entry.
+
+  `,
+
   INVALID_MODULE_EXTENSION: () => dedent`
     Only ${formatUtils.path('.js')} or ${formatUtils.path('.mjs')} allowed for ${formatUtils.key('module')} entry.
 

@@ -143,50 +143,54 @@ async function buildBundleGroup({
 
   context.reporter.debug('esbuild entryPoints: %o', entryPoints);
 
-  const esbuildOptions: esbuild.BuildOptions = {
-    // entryPoints,
-    // outdir: baseDir,
+  let esbuildOptions: esbuild.BuildOptions = {
     bundle: true,
-    tsconfig: context.tsconfigPath,
-    jsx: context.jsx,
-    jsxDev: context.jsxDev,
-    jsxFactory: context.jsxFactory,
-    jsxFragment: context.jsxFragment,
-    jsxImportSource: context.jsxImportSource,
-    treeShaking: true,
-    keepNames: true,
     target: context.targets,
-    format: options.module === 'commonjs' ? 'cjs' : 'esm',
     sourcemap: options.sourcemap,
     legalComments: context.legalComments ? 'linked' : 'none',
     minify: options.minify,
-    plugins: [],
-    conditions: options.customConditions,
   };
 
-  if (options.platform === 'deno') {
-    esbuildOptions.platform = 'neutral';
-  } else {
-    esbuildOptions.platform = options.platform;
-  }
-
-  if (options.mode) {
-    esbuildOptions.define = {
-      'process.env.NODE_ENV': JSON.stringify(options.mode),
+  if (options.module === 'commonjs' || options.module === 'esmodule') {
+    esbuildOptions = {
+      ...esbuildOptions,
+      tsconfig: context.tsconfigPath,
+      jsx: context.jsx,
+      jsxDev: context.jsxDev,
+      jsxFactory: context.jsxFactory,
+      jsxFragment: context.jsxFragment,
+      jsxImportSource: context.jsxImportSource,
+      treeShaking: true,
+      keepNames: true,
+      format: options.module === 'commonjs' ? 'cjs' : 'esm',
+      plugins: [],
+      conditions: options.customConditions,
     };
+
+    if (options.platform === 'deno') {
+      esbuildOptions.platform = 'neutral';
+    } else {
+      esbuildOptions.platform = options.platform;
+    }
+
+    if (options.mode) {
+      esbuildOptions.define = {
+        'process.env.NODE_ENV': JSON.stringify(options.mode),
+      };
+    }
+
+    const importMaps = normalizeImportMaps(validImportMaps, options);
+    const importMapsPlugin = makeImportMapsPlugin({ context, importMaps });
+    esbuildOptions.plugins?.push(importMapsPlugin);
+
+    const embedPlugin = makeEmbedPlugin({ context });
+    esbuildOptions.plugins?.push(embedPlugin);
+
+    esbuildOptions.plugins = [
+      ...esbuildOptions.plugins ?? [],
+      ...plugins,
+    ];
   }
-
-  const importMaps = normalizeImportMaps(validImportMaps, options);
-  const importMapsPlugin = makeImportMapsPlugin({ context, importMaps });
-  esbuildOptions.plugins?.push(importMapsPlugin);
-
-  const embedPlugin = makeEmbedPlugin({ context });
-  esbuildOptions.plugins?.push(embedPlugin);
-
-  esbuildOptions.plugins = [
-    ...esbuildOptions.plugins ?? [],
-    ...plugins,
-  ];
 
   context.reporter.debug('esbuild build options %o', esbuildOptions);
 

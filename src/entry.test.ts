@@ -1,4 +1,3 @@
-import * as path from 'node:path';
 import {
   describe,
   test,
@@ -13,8 +12,6 @@ import { type Reporter } from './reporter';
 import { parseConfig } from './context';
 import { getEntriesFromContext } from "./entry";
 import * as formatUtils from './formatUtils';
-
-const resolve = (cwd: string, to: string) => path.join(cwd, to);
 
 class ViReporter implements Reporter {
   debug = vi.fn();
@@ -2151,17 +2148,13 @@ describe('common usecases', () => {
       },
       {
         key: 'exports["./colors.css"]',
-        module: 'commonjs',
+        module: 'css',
         mode: undefined,
         minify: false,
         sourcemap: true,
         platform: 'neutral',
         entryPath: './colors.css',
         sourceFile: [
-          '/project/colors.css.cts',
-          '/project/colors.css.cjs',
-          '/project/colors.css.ts',
-          '/project/colors.css.js',
           '/project/colors.css',
         ],
         outputFile: '/project/colors.css',

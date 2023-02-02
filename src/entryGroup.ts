@@ -3,10 +3,10 @@ import { type OverrideProps } from '@cometjs/core';
 import { type Entry } from './entry';
 
 export type BundleEntry = OverrideProps<Entry, {
-  module: 'esmodule' | 'commonjs',
+  module: 'esmodule' | 'commonjs' | 'css',
 }>;
 export function filterBundleEntry(entry: Entry): entry is BundleEntry {
-  return entry.module === 'esmodule' || entry.module === 'commonjs';
+  return entry.module === 'esmodule' || entry.module === 'commonjs' || entry.module === 'css';
 }
 
 export type TypeEntry = OverrideProps<Entry, {
