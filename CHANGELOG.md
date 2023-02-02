@@ -1,5 +1,13 @@
 # nanobundle
 
+## 1.4.0
+
+### Minor Changes
+
+- b71eeef: Add --no-legal-comments to disable emitting legal text
+- 0ab2a4a: Support CSS bundle explicitly
+- 745a02c: Don't emit empty legal comments
+
 ## 1.3.6
 
 ### Patch Changes
