@@ -29,6 +29,7 @@ export function module(module: Entry['module']): string {
     commonjs: 'CommonJS',
     file: 'File',
     dts: 'TypeScript declaration',
+    css: 'CSS',
   }[module];
 }
 
