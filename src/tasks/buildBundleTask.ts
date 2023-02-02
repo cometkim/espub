@@ -199,10 +199,19 @@ async function buildBundleGroup({
     }))
   );
 
-  const outputFiles = results.flatMap(result => result.outputFiles.map(outputFile => ({
-    ...outputFile,
-    path: outputFile.path,
-  })));
+  const outputFiles = results.flatMap(result => 
+    result.outputFiles
+      .filter(outputFile => {
+        if (outputFile.path.endsWith('.LEGAL.txt') && outputFile.contents.length === 0) {
+          return false;
+        }
+        return true;
+      })
+      .map(outputFile => ({
+        ...outputFile,
+        path: outputFile.path,
+      })),
+  );
 
   const errors = results.flatMap(result => result.errors);
   const warnings = results.flatMap(result => result.warnings);
