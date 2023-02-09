@@ -1,5 +1,11 @@
 # nanobundle
 
+## 1.5.0
+
+### Minor Changes
+
+- a546f4d: Support defined value `process.env.NANABUNDLE_PACKAGE_NAME` and `process.env.NANOBUNDLE_PACKAGE_VERSION`
+
 ## 1.4.0
 
 ### Minor Changes
