@@ -149,6 +149,10 @@ async function buildBundleGroup({
     sourcemap: options.sourcemap,
     legalComments: context.legalComments ? 'linked' : 'none',
     minify: options.minify,
+    define: {
+      'process.env.NANOBUNDLE_PACKAGE_NAME': JSON.stringify(context.manifest.name || 'unknown'),
+      'process.env.NANOBUNDLE_PACKAGE_VERSION': JSON.stringify(context.manifest.version || '0.0.0'),
+    },
   };
 
   if (options.module === 'commonjs' || options.module === 'esmodule') {
@@ -175,7 +179,9 @@ async function buildBundleGroup({
 
     if (options.mode) {
       esbuildOptions.define = {
+        ...esbuildOptions.define,
         'process.env.NODE_ENV': JSON.stringify(options.mode),
+        'process.env.NANOBUNDLE_MODE': JSON.stringify(options.mode),
       };
     }
 

@@ -4,6 +4,8 @@ import * as fs from 'node:fs/promises';
 export type Manifest = {
   name?: string,
 
+  version?: string,
+
   type?: 'commonjs' | 'module',
 
   /**
