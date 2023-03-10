@@ -229,18 +229,23 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
       }
       case 'dts': {
         const explicitMatcher = /\.d\.(c|m)ts$/;
+        let implicitMatcher;
+        let implicitReplacement = '.ts';
         if (!useTsSource) break;
         if (preferredModule === 'commonjs') {
-          sourceFileCandidates.add(resolvedSourceFile.replace(/\.d\.c?ts$/, '.cts'));
+          implicitMatcher = /\.d\.(c?)ts$/;
+          implicitReplacement = '.cts';
+        } else if (preferredModule === 'esmodule') {
+          implicitMatcher = /\.d\.(m?)ts$/;
+          implicitReplacement = '.mts';
         }
-        if (preferredModule === 'esmodule') {
-          sourceFileCandidates.add(resolvedSourceFile.replace(/\.d\.m?ts$/, '.mts'));
+        if (implicitMatcher?.test(resolvedSourceFile)) {
+          sourceFileCandidates.add(resolvedSourceFile.replace(implicitMatcher, implicitReplacement));
+        } else if (explicitMatcher.test(resolvedSourceFile)) {
+          sourceFileCandidates.add(resolvedSourceFile.replace(explicitMatcher, '.$1ts'))
         }
         useJsx && sourceFileCandidates.add(resolvedSourceFile.replace(/\.d\.(m|c)?ts$/, '.tsx'));
         sourceFileCandidates.add(resolvedSourceFile.replace(/\.d\.(m|c)?ts$/, '.ts'));
-        if (explicitMatcher.test(resolvedSourceFile)) {
-          sourceFileCandidates.add(resolvedSourceFile.replace(explicitMatcher, '.$1ts'));
-        }
         break;
       }
       case 'file': {
