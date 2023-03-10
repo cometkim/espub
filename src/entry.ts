@@ -237,6 +237,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
         }
         useJsx && sourceFileCandidates.add(resolvedSourceFile.replace(/\.d\.(m|c)?ts$/, '.tsx'));
         sourceFileCandidates.add(resolvedSourceFile.replace(/\.d\.(m|c)?ts$/, '.ts'));
+        sourceFileCandidates.add(resolvedSourceFile.replace(/\.d\.(m|c)ts$/, '.$1ts'));
         break;
       }
       case 'file': {
