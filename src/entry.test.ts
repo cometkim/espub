@@ -1843,6 +1843,50 @@ describe('getEntriesFromContext - in TypeScript project', () => {
       ]);
     });
   });
+
+  describe('mxied TypeScript projects', () => {
+    test('esm types entry in implicit commonjs module', () => {
+      expect(
+        entriesFromManifest({
+          name: 'my-package',
+          exports: {
+            types: './lib/index.d.mts'
+          }
+        }).getEntries()[0].sourceFile).toEqual(
+          [
+            '/project/src/index.ts',
+            '/project/src/index.mts'
+          ]);
+    });
+
+    test('esm types entry in explicit commonjs module', () => {
+      expect(
+        entriesFromManifest({
+          name: 'my-package',
+          type: 'commonjs',
+          exports: {
+            types: './lib/index.d.mts'
+          }
+        }).getEntries()[0].sourceFile).toEqual([
+          '/project/src/index.ts',
+          '/project/src/index.mts'
+        ]);
+
+      test('cjs types entry in explicit esm module', () => {
+        expect(
+          entriesFromManifest({
+            name: 'my-package',
+            type: 'module',
+            exports: {
+              types: './lib/index.d.cts'
+            }
+          }).getEntries()[0].sourceFile).toEqual([
+            '/project/src/index.ts',
+            '/project/src/index.cts'
+          ]);
+      });
+    });
+  });
 });
 
 describe('common usecases', () => {
