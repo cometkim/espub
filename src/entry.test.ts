@@ -1871,21 +1871,21 @@ describe('getEntriesFromContext - in TypeScript project', () => {
           '/project/src/index.mts',
           '/project/src/index.ts'
         ]);
-
-      test('cjs types entry in explicit esm module', () => {
-        expect(
-          entriesFromManifest({
-            name: 'my-package',
-            type: 'module',
-            exports: {
-              types: './lib/index.d.cts'
-            }
-          }).getEntries()[0].sourceFile).toEqual([
-            '/project/src/index.ts',
-            '/project/src/index.cts'
-          ]);
       });
-    });
+
+    test('cjs types entry in explicit esm module', () => {
+      expect(
+        entriesFromManifest({
+          name: 'my-package',
+          type: 'module',
+          exports: {
+            types: './lib/index.d.cts'
+          }
+        }).getEntries()[0].sourceFile).toEqual([
+          '/project/src/index.cts',
+          '/project/src/index.ts',
+        ]);
+      });
   });
 });
 
