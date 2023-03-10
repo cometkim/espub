@@ -228,6 +228,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
         break;
       }
       case 'dts': {
+        const explicitMatcher = /\.d\.(c|m)ts$/;
         if (!useTsSource) break;
         if (preferredModule === 'commonjs') {
           sourceFileCandidates.add(resolvedSourceFile.replace(/\.d\.c?ts$/, '.cts'));
@@ -237,7 +238,9 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
         }
         useJsx && sourceFileCandidates.add(resolvedSourceFile.replace(/\.d\.(m|c)?ts$/, '.tsx'));
         sourceFileCandidates.add(resolvedSourceFile.replace(/\.d\.(m|c)?ts$/, '.ts'));
-        sourceFileCandidates.add(resolvedSourceFile.replace(/\.d\.(m|c)ts$/, '.$1ts'));
+        if (explicitMatcher.test(resolvedSourceFile)) {
+          sourceFileCandidates.add(resolvedSourceFile.replace(explicitMatcher, '.$1ts'));
+        }
         break;
       }
       case 'file': {
