@@ -1854,8 +1854,8 @@ describe('getEntriesFromContext - in TypeScript project', () => {
           }
         }).getEntries()[0].sourceFile).toEqual(
           [
-            '/project/src/index.ts',
-            '/project/src/index.mts'
+            '/project/src/index.mts',
+            '/project/src/index.ts'
           ]);
     });
 
@@ -1868,8 +1868,8 @@ describe('getEntriesFromContext - in TypeScript project', () => {
             types: './lib/index.d.mts'
           }
         }).getEntries()[0].sourceFile).toEqual([
-          '/project/src/index.ts',
-          '/project/src/index.mts'
+          '/project/src/index.mts',
+          '/project/src/index.ts'
         ]);
 
       test('cjs types entry in explicit esm module', () => {
