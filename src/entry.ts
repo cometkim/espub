@@ -242,7 +242,7 @@ export const getEntriesFromContext: GetEntriesFromContext = ({
         if (implicitMatcher?.test(resolvedSourceFile)) {
           sourceFileCandidates.add(resolvedSourceFile.replace(implicitMatcher, implicitReplacement));
         } else if (explicitMatcher.test(resolvedSourceFile)) {
-          sourceFileCandidates.add(resolvedSourceFile.replace(explicitMatcher, '.$1ts'))
+          sourceFileCandidates.add(resolvedSourceFile.replace(explicitMatcher, '.$1ts'));
         }
         useJsx && sourceFileCandidates.add(resolvedSourceFile.replace(/\.d\.(m|c)?ts$/, '.tsx'));
         sourceFileCandidates.add(resolvedSourceFile.replace(/\.d\.(m|c)?ts$/, '.ts'));
