@@ -1,5 +1,11 @@
 # nanobundle
 
+## 1.5.1
+
+### Patch Changes
+
+- 680ff26: Add support for `modulde`-packages with `.cts` entrypoints and `commonjs` packages with `.mts` entrypoints
+
 ## 1.5.0
 
 ### Minor Changes
