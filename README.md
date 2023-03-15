@@ -4,7 +4,7 @@
 [![Integration](https://github.com/cometkim/nanobundle/actions/workflows/integration.yml/badge.svg)](https://github.com/cometkim/nanobundle/actions/workflows/integration.yml)
 [![codecov](https://codecov.io/gh/cometkim/nanobundle/branch/main/graph/badge.svg?token=6Oj3oxqiyQ)](https://codecov.io/gh/cometkim/nanobundle)
 [![LICENSE - MIT](https://img.shields.io/github/license/cometkim/nanobundle)](#license) <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 Perfect build tool for libraries, powered by [esbuild]
@@ -363,6 +363,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://blog.cometkim.kr/"><img src="https://avatars.githubusercontent.com/u/9696352?v=4?s=100" width="100px;" alt="Hyeseong Kim"/><br /><sub><b>Hyeseong Kim</b></sub></a><br /><a href="https://github.com/cometkim/nanobundle/commits?author=cometkim" title="Code">💻</a> <a href="#maintenance-cometkim" title="Maintenance">🚧</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/eolme"><img src="https://avatars.githubusercontent.com/u/11076888?v=4?s=100" width="100px;" alt="Anton Petrov"/><br /><sub><b>Anton Petrov</b></sub></a><br /><a href="https://github.com/cometkim/nanobundle/commits?author=eolme" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://www.easylogic.studio/"><img src="https://avatars.githubusercontent.com/u/591983?v=4?s=100" width="100px;" alt="jinho park"/><br /><sub><b>jinho park</b></sub></a><br /><a href="https://github.com/cometkim/nanobundle/commits?author=easylogic" title="Tests">⚠️</a> <a href="https://github.com/cometkim/nanobundle/issues?q=author%3Aeasylogic" title="Bug reports">🐛</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://nuth.ch/"><img src="https://avatars.githubusercontent.com/u/7085564?v=4?s=100" width="100px;" alt="Manuel Thalmann"/><br /><sub><b>Manuel Thalmann</b></sub></a><br /><a href="https://github.com/cometkim/nanobundle/commits?author=manuth" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
