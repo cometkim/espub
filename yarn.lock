@@ -1070,24 +1070,24 @@ __metadata:
   linkType: hard
 
 "@xstate/cli@npm:^0.4.0":
-  version: 0.4.0
-  resolution: "@xstate/cli@npm:0.4.0"
+  version: 0.4.2
+  resolution: "@xstate/cli@npm:0.4.2"
   dependencies:
     "@babel/core": ^7.19.3
-    "@xstate/machine-extractor": ^0.8.0
-    "@xstate/tools-shared": ^2.0.0
+    "@xstate/machine-extractor": ^0.9.0
+    "@xstate/tools-shared": ^2.0.2
     chokidar: ^3.5.3
     commander: ^8.0.0
     xstate: ^4.33.4
   bin:
     xstate: bin/bin.js
-  checksum: 18987308dbd08e353c0c2c285c87e5617f25bdd25f0e4816d294c37dab2cf9f8bb459e1719403bd7a7a24de3bd27bb9f5a568a47b658989aba1eb79a807d5214
+  checksum: 8122f7e82e3ce1f9bee053f11f0053d0b2bdbf488c1dd9de227a98a66f29065e2b74f04380fcb1ed556a78b1760c16e4795d083fa160e36de0cd397c3ea69942
   languageName: node
   linkType: hard
 
-"@xstate/machine-extractor@npm:^0.8.0":
-  version: 0.8.0
-  resolution: "@xstate/machine-extractor@npm:0.8.0"
+"@xstate/machine-extractor@npm:^0.9.0":
+  version: 0.9.1
+  resolution: "@xstate/machine-extractor@npm:0.9.1"
   dependencies:
     "@babel/parser": ^7.19.4
     "@babel/traverse": ^7.19.4
@@ -1095,19 +1095,19 @@ __metadata:
     recast: ^0.21.2
   peerDependencies:
     xstate: ^4
-  checksum: cf073098f8169cdbf23f4f24c1ea500ae57b3853ffbbc0166d09ac8cbd6f3a4cd21585d7b85601add567e03bacc2a3220c3858a7a8f3ec27402990d3839243dd
+  checksum: 6868a00ae8746fc1c2506e19c844eda4e58941bdd2e2f733b06396b654b68f6c1845dae20ec88a9a58372507d9fb938d9c2522bb76b038c06448f71a130d424e
   languageName: node
   linkType: hard
 
-"@xstate/tools-shared@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "@xstate/tools-shared@npm:2.0.0"
+"@xstate/tools-shared@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "@xstate/tools-shared@npm:2.0.2"
   dependencies:
-    "@xstate/machine-extractor": ^0.8.0
+    "@xstate/machine-extractor": ^0.9.0
   peerDependencies:
     prettier: ^2.3.1
     xstate: ^4
-  checksum: 5f1aab8422cfb1034f03c70e10202b1e732ad02307344078af154ff21893d86c76d33358df73ca7283a31b37d03ef238aa09f8900d5a8f61812213fd58359615
+  checksum: f64e8ab4180f1dbf0c66880c9afaadf91ee9102395e79c58ed65b6042843b016a460b786346c4fcbffeeb3990977e16bd26acda632cd081b76f1010ca86e92fc
   languageName: node
   linkType: hard
 
