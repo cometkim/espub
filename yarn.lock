@@ -5176,7 +5176,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tsconfck@npm:^2.0.1":
+"tsconfck@npm:^2.0.1, tsconfck@npm:^2.0.2":
   version: 2.1.0
   resolution: "tsconfck@npm:2.1.0"
   peerDependencies:
@@ -5187,20 +5187,6 @@ __metadata:
   bin:
     tsconfck: bin/tsconfck.js
   checksum: e40e9dce2438fd2b0cf9f27732046028cea34e4e29e28b5de49815d723e46a0d1ac175d3a520e3fc140cb0b70b5fb61fdbfdf849df8f693288e744386c317f11
-  languageName: node
-  linkType: hard
-
-"tsconfck@npm:^2.0.2":
-  version: 2.0.2
-  resolution: "tsconfck@npm:2.0.2"
-  peerDependencies:
-    typescript: ^4.3.5
-  peerDependenciesMeta:
-    typescript:
-      optional: true
-  bin:
-    tsconfck: bin/tsconfck.js
-  checksum: bc914042b2f5e1f9d7bbadd05b74031f32e2f1757061743d70d86d17dda0734d838e67abb0105b81db67c30b66496e5d408cbe216bb43b3d567a181b0448ddc1
   languageName: node
   linkType: hard
 
