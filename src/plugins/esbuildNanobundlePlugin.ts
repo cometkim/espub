@@ -1,22 +1,24 @@
+import * as path from 'node:path';
 import { type Plugin } from 'esbuild';
 
 import { type Context } from '../context';
 import * as fsUtils from '../fsUtils';
+import { type ImportMaps, replaceSubpathPattern } from '../importMaps';
 
 type PluginOptions = {
   context: Context,
+  importMaps: ImportMaps,
 };
 
-/**
- * @deprecated since esbuild resolution cannot be chained
- */
 export function makePlugin({
+  context,
   context: {
     reporter,
     standalone,
     externalDependencies,
     forceExternalDependencies,
   },
+  importMaps,
 }: PluginOptions): Plugin {
   const ownedModule = (packageName: string, modulePath: string) => {
     return packageName === modulePath || modulePath.startsWith(packageName + '/');
@@ -36,8 +38,18 @@ export function makePlugin({
     return standalone || !externalDependencies.some(dep => ownedModule(dep, modulePath));
   };
 
+  const resolveModulePathFromImportMaps = async (modulePath: string) => {
+    const resolved = path.resolve(path.dirname(context.importMapsPath), modulePath);
+    const exist = await fsUtils.chooseExist([
+      resolved.replace(/\.(c|m)?js$/, '.tsx'),
+      resolved.replace(/\.(c|m)?js$/, '.ts'),
+      resolved,
+    ]);
+    return exist || resolved;
+  };
+
   return {
-    name: 'nanobundle/embed',
+    name: 'nanobundle',
     setup(build) {
       let dependOnNode = false;
 
@@ -46,15 +58,24 @@ export function makePlugin({
           return;
         }
 
-        let resolvedAsNodeApi = isNodeApi(args.path);
+        const modulePath = replaceSubpathPattern(importMaps, args.path);
+        const external = !fsUtils.isFileSystemReference(modulePath);
+
+        let resolvedAsNodeApi = isNodeApi(modulePath);
         if (resolvedAsNodeApi) {
           dependOnNode = true;
         }
 
-        let external = resolvedAsNodeApi || !shouldEmbed(args.path);
-        let path = external ? args.path : undefined;
+        if (!resolvedAsNodeApi && shouldEmbed(modulePath)) {
+          return {};
+        }
 
-        return { path, external };
+        return {
+          external,
+          path: external
+            ? modulePath
+            : await resolveModulePathFromImportMaps(modulePath),
+        };
       });
 
       build.onEnd(() => {
