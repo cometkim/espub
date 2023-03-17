@@ -1,5 +1,17 @@
 # nanobundle
 
+## 1.6.0
+
+### Minor Changes
+
+- a3b954c: update esbuild
+- ff6a370: update esbuild
+- 4946b5c: Support TypeScript v5
+
+### Patch Changes
+
+- 3d07b82: Fix standalone mode (embedding externals)
+
 ## 1.5.1
 
 ### Patch Changes
