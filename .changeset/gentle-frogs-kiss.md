@@ -1,0 +1,5 @@
+---
+"nanobundle": minor
+---
+
+update esbuild
