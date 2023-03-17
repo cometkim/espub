@@ -3856,7 +3856,7 @@ __metadata:
     pretty-bytes: ^6.0.0
     semver: ^7.3.8
     string-dedent: ^3.0.1
-    tsconfck: ^2.0.2
+    tsconfck: ^2.1.0
     typescript: ^5.0.0
     vite: ^4.0.0
     vitest: ^0.29.0
@@ -5176,7 +5176,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tsconfck@npm:^2.0.1, tsconfck@npm:^2.0.2":
+"tsconfck@npm:^2.0.1, tsconfck@npm:^2.1.0":
   version: 2.1.0
   resolution: "tsconfck@npm:2.1.0"
   peerDependencies:
