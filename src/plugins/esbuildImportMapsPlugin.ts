@@ -10,6 +10,9 @@ type PluginOptions = {
   importMaps: ImportMaps,
 };
 
+/**
+ * @deprecated since esbuild resolution cannot be chained
+ */
 export function makePlugin({
   context,
   importMaps,

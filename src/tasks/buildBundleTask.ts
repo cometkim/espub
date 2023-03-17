@@ -18,8 +18,7 @@ import {
   type ValidNodeImportMaps,
 } from '../importMaps';
 import { type OutputFile } from '../outputFile';
-import { makePlugin as makeImportMapsPlugin } from '../plugins/esbuildImportMapsPlugin';
-import { makePlugin as makeEmbedPlugin } from '../plugins/esbuildEmbedPlugin';
+import { makePlugin as makeDefaultPlugin } from '../plugins/esbuildNanobundlePlugin';
 
 export class BuildBundleTaskError extends NanobundleError {
   esbuildErrors: esbuild.Message[];
@@ -167,7 +166,6 @@ async function buildBundleGroup({
       treeShaking: true,
       keepNames: true,
       format: options.module === 'commonjs' ? 'cjs' : 'esm',
-      plugins: [],
       conditions: options.customConditions,
     };
 
@@ -186,16 +184,9 @@ async function buildBundleGroup({
     }
 
     const importMaps = normalizeImportMaps(validImportMaps, options);
-    const importMapsPlugin = makeImportMapsPlugin({ context, importMaps });
-    esbuildOptions.plugins?.push(importMapsPlugin);
 
-    const embedPlugin = makeEmbedPlugin({ context });
-    esbuildOptions.plugins?.push(embedPlugin);
-
-    esbuildOptions.plugins = [
-      ...esbuildOptions.plugins ?? [],
-      ...plugins,
-    ];
+    const defaultPlugin = makeDefaultPlugin({ context, importMaps });
+    esbuildOptions.plugins = [defaultPlugin, ...plugins];
   }
 
   context.reporter.debug('esbuild build options %o', esbuildOptions);
