@@ -5388,17 +5388,10 @@ resolve@^1.10.0:
   languageName: node
   linkType: hard
 
-"xstate@npm:^4.33.4":
-  version: 4.35.0
-  resolution: "xstate@npm:4.35.0"
-  checksum: 7bf1a3874eb11cdbbd22ceb5743e3abb62db416b1f7769522c2911f49dd3e9f6ad681f18c7800351bfb3f09c586a5bcfb06b773b6befb5f128d05447a6e1a328
-  languageName: node
-  linkType: hard
-
-"xstate@npm:^4.35.0":
-  version: 4.37.1
-  resolution: "xstate@npm:4.37.1"
-  checksum: 919fa88003b081636b4d003ab4eab6e58b582b2c2461b62ddd2eb6356d5795f183e78daa540ba70be711a8daa90db17bd6b3288851a5356e6b4775094d459e1c
+"xstate@npm:^4.33.4, xstate@npm:^4.35.0":
+  version: 4.37.2
+  resolution: "xstate@npm:4.37.2"
+  checksum: 79380fa82b32048033689813532c2f88949a613c6c0764c5e3dc5d318839abbaf887fcf99bc4cd66531d4a8249d9045fc00acab08b94483d4ca84407a3b74f23
   languageName: node
   linkType: hard
 
