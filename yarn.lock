@@ -3717,7 +3717,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mlly@npm:^1.1.1, mlly@npm:^1.2.0":
+"mlly@npm:^1.2.0":
   version: 1.2.0
   resolution: "mlly@npm:1.2.0"
   dependencies:
@@ -4167,13 +4167,13 @@ __metadata:
   linkType: hard
 
 "pkg-types@npm:^1.0.1, pkg-types@npm:^1.0.2":
-  version: 1.0.2
-  resolution: "pkg-types@npm:1.0.2"
+  version: 1.0.3
+  resolution: "pkg-types@npm:1.0.3"
   dependencies:
     jsonc-parser: ^3.2.0
-    mlly: ^1.1.1
+    mlly: ^1.2.0
     pathe: ^1.1.0
-  checksum: 2d0a70c1721c2ebbe075b912531a4f43136e6658fdcc59dc76c39966201ab5ddf265868d1211943183406d4b70d373c17e3b176487bc2020ea737d030b0fd080
+  checksum: 4b305c834b912ddcc8a0fe77530c0b0321fe340396f84cbb87aecdbc126606f47f2178f23b8639e71a4870f9631c7217aef52ffed0ae17ea2dbbe7e43d116a6e
   languageName: node
   linkType: hard
 
