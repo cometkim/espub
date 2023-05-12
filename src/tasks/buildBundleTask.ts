@@ -122,7 +122,7 @@ async function buildBundleGroup({
     if (!sourceFile) {
       // FIXME
       throw new BuildBundleTaskError(dedent`
-        Source file doesn not exist.
+        Source file does not exist.
 
           Expected one of
             - ${entry.sourceFile.join('\n    - ')}
