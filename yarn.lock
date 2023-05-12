@@ -3542,8 +3542,8 @@ __metadata:
   linkType: hard
 
 "meow@npm:^12.0.0":
-  version: 12.0.0
-  resolution: "meow@npm:12.0.0"
+  version: 12.0.1
+  resolution: "meow@npm:12.0.1"
   dependencies:
     "@types/minimist": ^1.2.2
     camelcase-keys: ^8.0.2
@@ -3557,7 +3557,7 @@ __metadata:
     trim-newlines: ^5.0.0
     type-fest: ^3.9.0
     yargs-parser: ^21.1.1
-  checksum: 2249c4064cd53839303ab6d37c737ca48df57d4d519400e8e086f04b0a4fe8a0fdb553e12b3147e608ce8876ab12c2fcb16e0734f757ffc642a7c5240d0b9858
+  checksum: 0779f3761d0cedf0c58275dfd0c6b6fe6c1e1f2b709aebfc8febcf49b4ee701dd11a620c7e46af70e6531cbf60a483171e1bd3a2021fa62f84008ba638fb9f9a
   languageName: node
   linkType: hard
 
