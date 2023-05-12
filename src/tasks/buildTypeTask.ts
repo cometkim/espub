@@ -130,7 +130,7 @@ export async function buildTypeTask({
       ts.getPreEmitDiagnostics(program).concat(result.diagnostics),
     );
 
-    const errrorDiagnostics: Diagnostic[] = [];
+    const errorDiagnostics: Diagnostic[] = [];
 
     for (const diagnostic of allDiagnostics) {
       if (diagnosticIgnores.includes(diagnostic.code)) {
@@ -138,7 +138,7 @@ export async function buildTypeTask({
       }
       switch (diagnostic.category) {
         case ts.DiagnosticCategory.Error: {
-          errrorDiagnostics.push(diagnostic);
+          errorDiagnostics.push(diagnostic);
           break;
         }
         default: {
@@ -148,11 +148,11 @@ export async function buildTypeTask({
       }
     }
 
-    if (errrorDiagnostics.length > 0) {
+    if (errorDiagnostics.length > 0) {
       throw new BuildTypeTaskTsError(
         ts,
         host,
-        errrorDiagnostics,
+        errorDiagnostics,
       );
     }
   }
