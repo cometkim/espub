@@ -1233,8 +1233,8 @@ __metadata:
   linkType: hard
 
 "@xstate/cli@npm:^0.5.0":
-  version: 0.5.0
-  resolution: "@xstate/cli@npm:0.5.0"
+  version: 0.5.1
+  resolution: "@xstate/cli@npm:0.5.1"
   dependencies:
     "@babel/core": ^7.21.4
     "@xstate/machine-extractor": ^0.9.0
@@ -1245,7 +1245,7 @@ __metadata:
     xstate: ^4.33.4
   bin:
     xstate: bin/bin.js
-  checksum: 8084a90ca870fdb10f140a9b98ed376aedf9d4afef90dd49c3783723e79705916631aeb1ff9238c6088b5729267a6948b3c5cb91c514e169b622d7237ad37771
+  checksum: bde025fe14eb001f0ce4aee0b1d1d03b0469eb8711cd404d3281ffa7f556e65bf2ae24ea7a3bfc4946010875f3c3fdc01d344d46097f21ae6a06d7d074a53012
   languageName: node
   linkType: hard
 
