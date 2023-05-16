@@ -597,16 +597,14 @@ __metadata:
   linkType: hard
 
 "@cometjs/core@npm:^2.1.0":
-  version: 2.3.1
-  resolution: "@cometjs/core@npm:2.3.1"
-  dependencies:
-    tsconfck: ^2.0.1
+  version: 2.3.2
+  resolution: "@cometjs/core@npm:2.3.2"
   peerDependencies:
     typescript: ^4.5.0 || ^5.0.0
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 0641ac86b8ea60597bb07bd0cf075aafcda831cb37f1f5d68b3470afc1973b1f24a115521ddeb6208f960e91b0d231812abbf2a7a77c462ea46351b861d0a240
+  checksum: f6b3f9c96937107bbc60c67ba7152e0037f51da3716149a6ddee791b91adf57b1279bbd2ff0fe24fe9f7dff7eab77308f9f60f30af64b09470fb2cf108a09a12
   languageName: node
   linkType: hard
 
@@ -5041,20 +5039,6 @@ resolve@^1.10.0:
   version: 5.0.0
   resolution: "trim-newlines@npm:5.0.0"
   checksum: 028a42134d05f732808da53c9613091392cd8a345b38d481fa202dba35a5806b0bbdeaffa8a256b772efb03b7f22cdaa49883421d49c730c5b80d9acf0a65ecd
-  languageName: node
-  linkType: hard
-
-"tsconfck@npm:^2.0.1":
-  version: 2.1.0
-  resolution: "tsconfck@npm:2.1.0"
-  peerDependencies:
-    typescript: ^4.3.5 || ^5.0.0
-  peerDependenciesMeta:
-    typescript:
-      optional: true
-  bin:
-    tsconfck: bin/tsconfck.js
-  checksum: e40e9dce2438fd2b0cf9f27732046028cea34e4e29e28b5de49815d723e46a0d1ac175d3a520e3fc140cb0b70b5fb61fdbfdf849df8f693288e744386c317f11
   languageName: node
   linkType: hard
 
