@@ -5561,9 +5561,9 @@ resolve@^1.10.0:
   linkType: hard
 
 "xstate@npm:^4.33.4, xstate@npm:^4.35.0":
-  version: 4.37.2
-  resolution: "xstate@npm:4.37.2"
-  checksum: 79380fa82b32048033689813532c2f88949a613c6c0764c5e3dc5d318839abbaf887fcf99bc4cd66531d4a8249d9045fc00acab08b94483d4ca84407a3b74f23
+  version: 4.38.1
+  resolution: "xstate@npm:4.38.1"
+  checksum: 9dc40ebd22730f58750ad112c03d592c959425a5c5a83ccd7cdea7f6b49d745b95d45d614902888bf592980a90812ab099568867d25bab82dc2c75ebdab99a52
   languageName: node
   linkType: hard
 
