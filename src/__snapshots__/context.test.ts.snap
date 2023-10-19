@@ -1,4 +1,4 @@
-// Vitest Snapshot v1
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`parseConfig > flags > rootDir=outDir is not allowed without TypeScript 1`] = `
 "\\"rootDir\\" (.) and \\"outDir\\" (.) are conflict!
