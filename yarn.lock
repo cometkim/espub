@@ -1137,6 +1137,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@statelyai/sky@npm:0.0.4":
+  version: 0.0.4
+  resolution: "@statelyai/sky@npm:0.0.4"
+  dependencies:
+    partysocket: 0.0.9
+    superjson: 1.13.1
+    xstate: 5.0.0-beta.33
+  checksum: df0158c4ba893b87ec7565b59389125d3ea14a00911f029bf8aa1f0fef07cb015ea844dd11cdc1ae60fa49a70f3c033658bdd55c99491cb99573f5b592587b1d
+  languageName: node
+  linkType: hard
+
 "@tootallnate/once@npm:1":
   version: 1.1.2
   resolution: "@tootallnate/once@npm:1.1.2"
@@ -1297,25 +1308,28 @@ __metadata:
   linkType: hard
 
 "@xstate/cli@npm:^0.5.0":
-  version: 0.5.2
-  resolution: "@xstate/cli@npm:0.5.2"
+  version: 0.5.7
+  resolution: "@xstate/cli@npm:0.5.7"
   dependencies:
     "@babel/core": ^7.21.4
-    "@xstate/machine-extractor": ^0.10.0
-    "@xstate/tools-shared": ^3.0.1
+    "@xstate/machine-extractor": ^0.12.1
+    "@xstate/tools-shared": ^4.0.3
     chokidar: ^3.5.3
     commander: ^8.0.0
-    prettier: ^2.8.7
+    dotenv: ^16.0.3
+    isomorphic-fetch: ^3.0.0
+    prettier: ^2.8.8
     xstate: ^4.33.4
+    xstate-beta: "npm:xstate@beta"
   bin:
     xstate: bin/bin.js
-  checksum: ec9f5824c4cacb276a0c6291048c2c6d3f56e2e20b1b86de0b58cf8166b7b729718594708956d01edd3dae5f1e4c784b26290a0cb568f24c2ca0fffe10cf28ce
+  checksum: df1f49790126e2b02bad6c943da8bc2ebad1bedd84710e5ce76e00f72373940ec8bb355c69951bac3e5e2be6ce589cdbfc94cc6901dc8ff6ce47115359f1d048
   languageName: node
   linkType: hard
 
-"@xstate/machine-extractor@npm:^0.10.0":
-  version: 0.10.0
-  resolution: "@xstate/machine-extractor@npm:0.10.0"
+"@xstate/machine-extractor@npm:^0.12.1":
+  version: 0.12.1
+  resolution: "@xstate/machine-extractor@npm:0.12.1"
   dependencies:
     "@babel/parser": ^7.21.4
     "@babel/traverse": ^7.21.4
@@ -1323,18 +1337,20 @@ __metadata:
     recast: ^0.23.1
   peerDependencies:
     xstate: ^4
-  checksum: 7a17b38af0529383bd1b3e0fdc4aab3f1fbaf3feced145626c07b049780c3c500f83cac1cc8867d781ce07779177ad9d682991485e8aa23fa3610db1b759ba25
+  checksum: bec39305026f236c8fe8f51674c430d45681af04a0751241d00a7991959122457be065330c33e47dd63ec4467b040e1296a39b029d6978620fa0c90ae0e77613
   languageName: node
   linkType: hard
 
-"@xstate/tools-shared@npm:^3.0.1":
-  version: 3.0.1
-  resolution: "@xstate/tools-shared@npm:3.0.1"
+"@xstate/tools-shared@npm:^4.0.3":
+  version: 4.0.3
+  resolution: "@xstate/tools-shared@npm:4.0.3"
   dependencies:
-    "@xstate/machine-extractor": ^0.10.0
+    "@statelyai/sky": 0.0.4
+    "@xstate/machine-extractor": ^0.12.1
   peerDependencies:
+    prettier: ^2
     xstate: ^4
-  checksum: a0392b647a9216f846b7d9cddbbb0f61ed9c43e9055e4039cdef1c8b93f341c824ccb116babc2f8a73c4248072e1f78290ae48efe2b8167780804e9087f02004
+  checksum: cb00f8de1b2199e2e543db52b735abc2852fc253b035383a48e46a3a0ee26cf6482e3d098da07e56f2e750740ef9ed56dff223c35b5410864d2e65ed5644da1e
   languageName: node
   linkType: hard
 
@@ -2018,6 +2034,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"copy-anything@npm:^3.0.2":
+  version: 3.0.5
+  resolution: "copy-anything@npm:3.0.5"
+  dependencies:
+    is-what: ^4.1.8
+  checksum: d39f6601c16b7cbd81cdb1c1f40f2bf0f2ca0297601cf7bfbb4ef1d85374a6a89c559502329f5bada36604464df17623e111fe19a9bb0c3f6b1c92fe2cbe972f
+  languageName: node
+  linkType: hard
+
 "cross-spawn@npm:^5.1.0":
   version: 5.1.0
   resolution: "cross-spawn@npm:5.1.0"
@@ -2192,6 +2217,13 @@ __metadata:
   dependencies:
     path-type: ^4.0.0
   checksum: fa05e18324510d7283f55862f3161c6759a3f2f8dbce491a2fc14c8324c498286c54282c1f0e933cb930da8419b30679389499b919122952a4f8592362ef4615
+  languageName: node
+  linkType: hard
+
+"dotenv@npm:^16.0.3":
+  version: 16.3.1
+  resolution: "dotenv@npm:16.3.1"
+  checksum: 15d75e7279018f4bafd0ee9706593dd14455ddb71b3bcba9c52574460b7ccaf67d5cf8b2c08a5af1a9da6db36c956a04a1192b101ee102a3e0cf8817bbcf3dfd
   languageName: node
   linkType: hard
 
@@ -3357,6 +3389,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"is-what@npm:^4.1.8":
+  version: 4.1.15
+  resolution: "is-what@npm:4.1.15"
+  checksum: fe27f6cd4af41be59a60caf46ec09e3071bcc69b9b12a7c871c90f54360edb6d0bc7240cb944a251fb0afa3d35635d1cecea9e70709876b368a8285128d70a89
+  languageName: node
+  linkType: hard
+
 "is-windows@npm:^1.0.0":
   version: 1.0.2
   resolution: "is-windows@npm:1.0.2"
@@ -3368,6 +3407,16 @@ __metadata:
   version: 2.0.0
   resolution: "isexe@npm:2.0.0"
   checksum: 26bf6c5480dda5161c820c5b5c751ae1e766c587b1f951ea3fcfc973bafb7831ae5b54a31a69bd670220e42e99ec154475025a468eae58ea262f813fdc8d1c62
+  languageName: node
+  linkType: hard
+
+"isomorphic-fetch@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "isomorphic-fetch@npm:3.0.0"
+  dependencies:
+    node-fetch: ^2.6.1
+    whatwg-fetch: ^3.4.1
+  checksum: e5ab79a56ce5af6ddd21265f59312ad9a4bc5a72cebc98b54797b42cb30441d5c5f8d17c5cd84a99e18101c8af6f90c081ecb8d12fd79e332be1778d58486d75
   languageName: node
   linkType: hard
 
@@ -3427,7 +3476,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"js-tokens@npm:^4.0.0":
+"js-tokens@npm:^3.0.0 || ^4.0.0, js-tokens@npm:^4.0.0":
   version: 4.0.0
   resolution: "js-tokens@npm:4.0.0"
   checksum: 8a95213a5a77deb6cbe94d86340e8d9ace2b93bc367790b260101d2f36a2eaf4e4e22d9fa9cf459b38af3a32fb4190e638024cf82ec95ef708680e405ea7cc78
@@ -3579,6 +3628,17 @@ __metadata:
   version: 4.17.21
   resolution: "lodash@npm:4.17.21"
   checksum: eb835a2e51d381e561e508ce932ea50a8e5a68f4ebdd771ea240d3048244a8d13658acbd502cd4829768c56f2e16bdd4340b9ea141297d472517b83868e677f7
+  languageName: node
+  linkType: hard
+
+"loose-envify@npm:^1.1.0":
+  version: 1.4.0
+  resolution: "loose-envify@npm:1.4.0"
+  dependencies:
+    js-tokens: ^3.0.0 || ^4.0.0
+  bin:
+    loose-envify: cli.js
+  checksum: 6517e24e0cad87ec9888f500c5b5947032cdfe6ef65e1c1936a0c48a524b81e65542c9c3edc91c97d5bddc806ee2a985dbc79be89215d613b1de5db6d1cfe6f4
   languageName: node
   linkType: hard
 
@@ -3983,6 +4043,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"node-fetch@npm:^2.6.1":
+  version: 2.7.0
+  resolution: "node-fetch@npm:2.7.0"
+  dependencies:
+    whatwg-url: ^5.0.0
+  peerDependencies:
+    encoding: ^0.1.0
+  peerDependenciesMeta:
+    encoding:
+      optional: true
+  checksum: d76d2f5edb451a3f05b15115ec89fc6be39de37c6089f1b6368df03b91e1633fd379a7e01b7ab05089a25034b2023d959b47e59759cb38d88341b2459e89d6e5
+  languageName: node
+  linkType: hard
+
 "node-gyp@npm:latest":
   version: 8.4.1
   resolution: "node-gyp@npm:8.4.1"
@@ -4242,6 +4316,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"partysocket@npm:0.0.9":
+  version: 0.0.9
+  resolution: "partysocket@npm:0.0.9"
+  dependencies:
+    react: ^18.2.0
+  checksum: cb37c00832dba75d09088dbb1467e8873dd2909c5a0b404f1e73ad5f9382a36468433b51b3d474a16419473682e7e1c0effeaf121760b21a30965e14e4fc7896
+  languageName: node
+  linkType: hard
+
 "path-exists@npm:^4.0.0":
   version: 4.0.0
   resolution: "path-exists@npm:4.0.0"
@@ -4378,7 +4461,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:^2, prettier@npm:^2.8.7":
+"prettier@npm:^2, prettier@npm:^2.8.8":
   version: 2.8.8
   resolution: "prettier@npm:2.8.8"
   bin:
@@ -4463,6 +4546,15 @@ __metadata:
   version: 17.0.2
   resolution: "react-is@npm:17.0.2"
   checksum: 9d6d111d8990dc98bc5402c1266a808b0459b5d54830bbea24c12d908b536df7883f268a7868cfaedde3dd9d4e0d574db456f84d2e6df9c4526f99bb4b5344d8
+  languageName: node
+  linkType: hard
+
+"react@npm:^18.2.0":
+  version: 18.2.0
+  resolution: "react@npm:18.2.0"
+  dependencies:
+    loose-envify: ^1.1.0
+  checksum: 88e38092da8839b830cda6feef2e8505dec8ace60579e46aa5490fc3dc9bba0bd50336507dc166f43e3afc1c42939c09fe33b25fae889d6f402721dcd78fca1b
   languageName: node
   linkType: hard
 
@@ -5096,6 +5188,15 @@ resolve@^1.10.0:
   languageName: node
   linkType: hard
 
+"superjson@npm:1.13.1":
+  version: 1.13.1
+  resolution: "superjson@npm:1.13.1"
+  dependencies:
+    copy-anything: ^3.0.2
+  checksum: 9c8c664a924ce097250112428805ccc8b500018b31a91042e953d955108b8481c156005d836b413940c9fa5f124a3195f55f3a518fe76510a254a59f9151a204
+  languageName: node
+  linkType: hard
+
 "supports-color@npm:^5.3.0":
   version: 5.5.0
   resolution: "supports-color@npm:5.5.0"
@@ -5612,6 +5713,13 @@ resolve@^1.10.0:
   languageName: node
   linkType: hard
 
+"whatwg-fetch@npm:^3.4.1":
+  version: 3.6.19
+  resolution: "whatwg-fetch@npm:3.6.19"
+  checksum: 2896bc9ca867ea514392c73e2a272f65d5c4916248fe0837a9df5b1b92f247047bc76cf7c29c28a01ac6c5fb4314021d2718958c8a08292a96d56f72b2f56806
+  languageName: node
+  linkType: hard
+
 "whatwg-url@npm:^5.0.0":
   version: 5.0.0
   resolution: "whatwg-url@npm:5.0.0"
@@ -5735,6 +5843,20 @@ resolve@^1.10.0:
   version: 1.0.2
   resolution: "wrappy@npm:1.0.2"
   checksum: 159da4805f7e84a3d003d8841557196034155008f817172d4e986bd591f74aa82aa7db55929a54222309e01079a65a92a9e6414da5a6aa4b01ee44a511ac3ee5
+  languageName: node
+  linkType: hard
+
+"xstate-beta@npm:xstate@beta":
+  version: 5.0.0-beta.34
+  resolution: "xstate@npm:5.0.0-beta.34"
+  checksum: fec1407eda9558dec072f1cb1f2666df2c73a5931b934360fab27f0ad064db66ca3b52b5a20fdd969c920922ec929fade7ff10d267c0e6f004e06ed640c8170d
+  languageName: node
+  linkType: hard
+
+"xstate@npm:5.0.0-beta.33":
+  version: 5.0.0-beta.33
+  resolution: "xstate@npm:5.0.0-beta.33"
+  checksum: 84d086bfbaa713076f05169b04895b06e2ca27388ce050b87fa9eaaa949e0c24c2be607ddf7142438e732e3060f0fd5b8c43d4c4cfbbf13183a6e3797377dcce
   languageName: node
   linkType: hard
 
