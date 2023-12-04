@@ -6179,9 +6179,9 @@ __metadata:
   linkType: hard
 
 "xstate@npm:^4.33.4, xstate@npm:^4.35.0":
-  version: 4.38.2
-  resolution: "xstate@npm:4.38.2"
-  checksum: ce6186dd1f5ea647c4fe44b3df397b8d4e5b523ba043138201487beefb7591632232f4e2618225fb97950456115b08671ce1fee02d66e7f269f73c39a5968642
+  version: 4.38.3
+  resolution: "xstate@npm:4.38.3"
+  checksum: 8a2063743517390107275113bca0e757dba99102e7d57d40cf656b5cc03a6f2c5e10fbf3752294d9d29fbe1d8757bb9a54f54c934a22f205a237956dd10dcd0f
   languageName: node
   linkType: hard
 
