@@ -50,7 +50,7 @@
     "pretty-bytes": "^6.0.0",
     "semver": "^7.3.8",
     "string-dedent": "^3.0.1",
-    "tsconfck": "^2.1.0",
+    "tsconfck": "^3.0.0",
     "xstate": "^4.35.0"
   },
   "devDependencies": {

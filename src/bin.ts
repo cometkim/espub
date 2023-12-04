@@ -32,9 +32,7 @@ try {
     const manifest = await loadManifest({ basePath: flags.cwd });
     reporter.debug('loaded manifest %o', manifest);
 
-    const tsconfigResult = await parseTsConfig(flags.tsconfig, {
-      resolveWithEmptyIfConfigNotFound: true,
-    });
+    const tsconfigResult = await parseTsConfig(flags.tsconfig);
     const tsconfigPath = (
       tsconfigResult.tsconfigFile !== 'no_tsconfig_file_found'
         ? tsconfigResult.tsconfigFile

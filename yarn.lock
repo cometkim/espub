@@ -3980,7 +3980,7 @@ __metadata:
     pretty-bytes: "npm:^6.0.0"
     semver: "npm:^7.3.8"
     string-dedent: "npm:^3.0.1"
-    tsconfck: "npm:^2.1.0"
+    tsconfck: "npm:^3.0.0"
     typescript: "npm:^5.0.0"
     vitest: "npm:^0.34.6"
     xstate: "npm:^4.35.0"
@@ -5302,17 +5302,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tsconfck@npm:^2.1.0":
-  version: 2.1.2
-  resolution: "tsconfck@npm:2.1.2"
+"tsconfck@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "tsconfck@npm:3.0.0"
   peerDependencies:
-    typescript: ^4.3.5 || ^5.0.0
+    typescript: ^5.0.0
   peerDependenciesMeta:
     typescript:
       optional: true
   bin:
     tsconfck: bin/tsconfck.js
-  checksum: 6efc9cbbccdbbcafc86a744a1804fcd8438097c2beaac370444cc413fa1582a019a74002a111e3005b89ca0b0169ace730161864628fc751754e29b335c3c79f
+  checksum: 3614f52675b6c279c6e3d72f4dfdc8bb80c7b051e6d3227bcc67c6af9e8a4449a3eee9c6cf92b6720906bb32df03bc85830786fc7cf9ed3a9a98edb21b2ccc90
   languageName: node
   linkType: hard
 
