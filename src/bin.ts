@@ -50,7 +50,10 @@ try {
       reporter.debug('loaded tsconfig %o', tsconfig);
     }
 
-    const targets = await loadTargets({ basePath: flags.cwd });
+    const targets = loadTargets({
+      manifest,
+      basePath: flags.cwd,
+    });
     reporter.debug(`loaded targets ${targets.join(', ')}`);
 
     const context = parseConfig({

@@ -55,7 +55,7 @@ export type Config = {
 export function parseConfig({
   flags,
   manifest,
-  targets: inputTargets,
+  targets,
   reporter,
   tsconfig,
   tsconfigPath: resolvedTsConfigPath,
@@ -106,27 +106,12 @@ export function parseConfig({
   }
 
   let platform: Entry['platform'] = 'neutral';
-  if (['node', 'deno', 'web'].includes(flags.platform || '')) {
+  if (['node', 'deno', 'browser'].includes(flags.platform || '')) {
     platform = flags.platform as Entry['platform'];
   } else if (manifest.engines?.node) {
     platform = 'node';
-  }
-
-  let targets = [...inputTargets];
-  if (manifest.engines?.node) {
-    const version = semver.minVersion(manifest.engines.node);
-    if (version) {
-      targets = [...targets, `node${version.major}`];
-    }
-  }
-  if (platform === 'node' && !targets.some(target => target.startsWith('node'))) {
-    targets = [...targets, 'node14'];
-  }
-  if (platform === 'node') {
-    targets = targets.filter(target => target.startsWith('node'));
-  }
-  if (platform === 'browser') {
-    targets = targets.filter(target => !target.startsWith('node'));
+  } else if (manifest.engines?.deno) {
+    platform = 'deno';
   }
 
   let declaration = false;

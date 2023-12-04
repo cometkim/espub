@@ -144,7 +144,6 @@ async function buildBundleGroup({
 
   let esbuildOptions: esbuild.BuildOptions = {
     bundle: true,
-    target: context.targets,
     sourcemap: options.sourcemap,
     legalComments: context.legalComments ? 'linked' : 'none',
     minify: options.minify,
@@ -170,10 +169,18 @@ async function buildBundleGroup({
     };
 
     if (options.platform === 'deno') {
-      esbuildOptions.target = ['deno1.9'];
       esbuildOptions.platform = 'neutral';
+      esbuildOptions.target = context.targets
+        .filter(target => target.startsWith('deno'));
     } else {
       esbuildOptions.platform = options.platform;
+      if (options.platform === 'node') {
+        esbuildOptions.target = context.targets
+          .filter(target => target.startsWith('node'));
+      } else {
+        esbuildOptions.target = context.targets
+          .filter(target => !(target.startsWith('node') || target.startsWith('deno')));
+      }
     }
 
     if (options.mode) {

@@ -6,6 +6,7 @@ import { type Flags } from './cli';
 import { type Manifest } from './manifest';
 import { type Reporter } from './reporter';
 import { parseConfig } from './context';
+import { loadTargets } from './target';
 
 class ViReporter implements Reporter {
   debug = vi.fn();
@@ -41,7 +42,7 @@ describe('parseConfig', () => {
     legalComments: true,
   };
   const defaultManifest: Manifest = {
-    name: 'package'
+    name: 'package',
   };
   const defaultTsConfig: TSConfig = {
     compilerOptions: {
@@ -49,11 +50,9 @@ describe('parseConfig', () => {
       declaration: true,
     },
   };
-  const defaultTargets: string[] = [
-    'chrome',
-    'firefox',
-    'safari',
-  ];
+  const defaultTargets = loadTargets({
+    manifest: defaultManifest,
+  });
 
   test('validate manifest', () => {
     const result = parseConfig({
@@ -196,9 +195,13 @@ describe('parseConfig', () => {
         },
       };
 
+      const targets = loadTargets({
+        manifest,
+      });
+
       const result = parseConfig({
         flags: defaultFlags,
-        targets: defaultTargets,
+        targets,
         manifest,
         reporter,
       });
@@ -226,49 +229,13 @@ describe('parseConfig', () => {
         forceExternalDependencies: [],
         manifest,
         targets: [
-          'node16',
-        ],
-        reporter,
-        resolvePath: expect.any(Function),
-        resolveRelativePath: expect.any(Function),
-      });
-    });
-
-    test('default node version is 14', () => {
-      const result = parseConfig({
-        flags: {
-          ...defaultFlags,
-          platform: 'node',
-        },
-        targets: defaultTargets,
-        manifest: defaultManifest,
-        reporter,
-      });
-
-      expect(result).toEqual<Context>({
-        cwd: '/project',
-        verbose: false,
-        module: 'commonjs',
-        platform: 'node',
-        sourcemap: true,
-        legalComments: true,
-        bundle: true,
-        declaration: false,
-        standalone: false,
-        rootDir: 'src',
-        outDir: 'lib',
-        tsconfigPath: undefined,
-        importMapsPath: '/project/package.json',
-        jsx: undefined,
-        jsxDev: false,
-        jsxFactory: 'React.createElement',
-        jsxFragment: 'Fragment',
-        jsxImportSource: 'react',
-        externalDependencies: [],
-        forceExternalDependencies: [],
-        manifest: defaultManifest,
-        targets: [
-          'node14',
+          'chrome96',
+          'firefox115',
+          'edge118',
+          'ios15.6',
+          'safari15.6',
+          'node16.0.0',
+          'deno1.9',
         ],
         reporter,
         resolvePath: expect.any(Function),

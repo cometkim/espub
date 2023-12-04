@@ -1,4 +1,7 @@
 import browserslist from 'browserslist';
+import semver from 'semver';
+
+import { type Manifest } from './manifest';
 
 type SupportedBrowser = keyof typeof browsersToTargets;
 type EsbuildTarget = typeof browsersToTargets[SupportedBrowser];
@@ -8,7 +11,6 @@ const browsersToTargets = {
   'firefox': 'firefox',
   'safari': 'safari',
   'edge': 'edge',
-  'node': 'node',
   'ios_saf': 'ios',
   'android': 'chrome',
   'and_chr': 'chrome',
@@ -22,13 +24,14 @@ function isSupportedBrowser(browser: string): browser is SupportedBrowser {
 }
 
 type LoadTargetOptions = {
-  basePath: string,
+  basePath?: string,
   query?: string,
+  manifest?: Manifest,
 };
 
-export async function loadTargets(options: LoadTargetOptions): Promise<string[]> {
-  const queries = browserslist(options.query, {
-    path: options.basePath,
+export function loadTargets(options?: LoadTargetOptions): string[] {
+  const queries = browserslist(options?.query, {
+    path: options?.basePath,
   });
 
   const targetVersions = new Map<EsbuildTarget, number>();
@@ -61,6 +64,28 @@ export async function loadTargets(options: LoadTargetOptions): Promise<string[]>
     }
   }
 
-  return Array.from(targetVersions.entries())
+  let targets = Array.from(targetVersions.entries())
     .map(targetVersion => targetVersion.join(''));
+
+  if (options?.manifest?.engines?.node) {
+    const version = semver.minVersion(options.manifest.engines.node);
+    if (version) {
+      targets.push('node' + version.format());
+    }
+  } else {
+    targets.push('node14');
+  }
+
+  if (options?.manifest?.engines?.deno) {
+    const version = semver.minVersion(options.manifest.engines.deno);
+    if (version) {
+      targets.push('deno' + version.format());
+    }
+  } else {
+    // minimum version supports ClassPrivateBrandCheck
+    // See https://github.com/evanw/esbuild/issues/2940#issuecomment-1437818002
+    targets.push('deno1.9');
+  }
+
+  return targets;
 }
