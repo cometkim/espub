@@ -30,7 +30,7 @@
     "node": ">=18.0.0"
   },
   "resolutions": {
-    "browserslist": "4.21.9",
+    "browserslist": "4.22.2",
     "vite": "^5.0.0"
   },
   "peerDependencies": {
