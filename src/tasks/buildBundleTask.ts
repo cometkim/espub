@@ -144,7 +144,6 @@ async function buildBundleGroup({
 
   let esbuildOptions: esbuild.BuildOptions = {
     bundle: true,
-    target: context.targets,
     sourcemap: options.sourcemap,
     legalComments: context.legalComments ? 'linked' : 'none',
     minify: options.minify,
@@ -169,11 +168,16 @@ async function buildBundleGroup({
       conditions: options.customConditions,
     };
 
+    const targets = context.targets.slice();
+
     if (options.platform === 'deno') {
+      targets.push('deno1.9');
       esbuildOptions.platform = 'neutral';
     } else {
       esbuildOptions.platform = options.platform;
     }
+
+    esbuildOptions.target = targets;
 
     if (options.mode) {
       esbuildOptions.define = {
