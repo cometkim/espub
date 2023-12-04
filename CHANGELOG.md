@@ -1,5 +1,24 @@
 # nanobundle
 
+## 2.0.0
+
+### Major Changes
+
+- 7bf90bf: Drop Node'js < v18 and TypeScript < v5 as required by tsconfck v3. (#224)
+- dbe79a0: Set default target Node.js version to v18.0.0
+- 03ce072: Deprecate the `--platform` flag to specify default target platform
+
+### Minor Changes
+
+- 24d37be: Better support for Deno target transform
+- fb11c28: Update esbuild to v0.19
+- 24d37be: Reduce bloats on output for deno
+
+### Patch Changes
+
+- d2ed35b: Fix target option specified properly
+- f38bb52: Update browserslist
+
 ## 1.6.0
 
 ### Minor Changes
