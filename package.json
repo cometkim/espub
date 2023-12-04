@@ -55,7 +55,7 @@
   },
   "devDependencies": {
     "@changesets/cli": "^2.20.0",
-    "@types/node": "^18.0.0",
+    "@types/node": "^20.0.0",
     "@types/semver": "^7.3.13",
     "@vitest/coverage-v8": "^0.34.6",
     "@xstate/cli": "^0.5.0",
