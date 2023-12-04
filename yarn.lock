@@ -1391,17 +1391,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@statelyai/sky@npm:0.0.4":
-  version: 0.0.4
-  resolution: "@statelyai/sky@npm:0.0.4"
-  dependencies:
-    partysocket: "npm:0.0.9"
-    superjson: "npm:1.13.1"
-    xstate: "npm:5.0.0-beta.33"
-  checksum: 113a394f5b527a461593f212e045bdd70f1490e9c210ccf56776cc2a8b7fbdae27c3aefa1734b65e0f7ac0a73e09bcf53ba8ca763a1df8f135c2946cc5f33261
-  languageName: node
-  linkType: hard
-
 "@tootallnate/once@npm:1":
   version: 1.1.2
   resolution: "@tootallnate/once@npm:1.1.2"
@@ -1567,12 +1556,12 @@ __metadata:
   linkType: hard
 
 "@xstate/cli@npm:^0.5.0":
-  version: 0.5.7
-  resolution: "@xstate/cli@npm:0.5.7"
+  version: 0.5.11
+  resolution: "@xstate/cli@npm:0.5.11"
   dependencies:
     "@babel/core": "npm:^7.21.4"
-    "@xstate/machine-extractor": "npm:^0.12.1"
-    "@xstate/tools-shared": "npm:^4.0.3"
+    "@xstate/machine-extractor": "npm:^0.13.0"
+    "@xstate/tools-shared": "npm:^4.0.5"
     chokidar: "npm:^3.5.3"
     commander: "npm:^8.0.0"
     dotenv: "npm:^16.0.3"
@@ -1582,13 +1571,13 @@ __metadata:
     xstate-beta: "npm:xstate@beta"
   bin:
     xstate: bin/bin.js
-  checksum: e617d6f8b25fe8593b874f2c46a82bc8cc6096c46c59f743eddd3e45ab75d7b877dbef5bf7ffa2791996a1b20a12eca47e1a573c7b3fde0f74a0fd10531c4d21
+  checksum: 02bf9f35661a2b8e93d3618ac1e44c07442e0453861800340c814caee03ce818d0a86e27d0682c6acbeca23d2e7c882713cfadc254c7f7e080c912dd81fe1373
   languageName: node
   linkType: hard
 
-"@xstate/machine-extractor@npm:^0.12.1":
-  version: 0.12.1
-  resolution: "@xstate/machine-extractor@npm:0.12.1"
+"@xstate/machine-extractor@npm:^0.13.0":
+  version: 0.13.0
+  resolution: "@xstate/machine-extractor@npm:0.13.0"
   dependencies:
     "@babel/parser": "npm:^7.21.4"
     "@babel/traverse": "npm:^7.21.4"
@@ -1596,20 +1585,19 @@ __metadata:
     recast: "npm:^0.23.1"
   peerDependencies:
     xstate: ^4
-  checksum: 23be578f19eeab4a978e4b88696d1232156ff09a1cfbcc1bc3b9ddd5e9fac6b9ab972df46074e1f2084b204014d1c6dae8143118ec69493a8e1d7a8141ff2776
+  checksum: 449cd18e42afccfd7e927683190757b61dd7a74b5ec2a51c786698203370a8348c7b497d6d3b4666ec1a949016792e124d22a65c398ff0a011e82c11b2890453
   languageName: node
   linkType: hard
 
-"@xstate/tools-shared@npm:^4.0.3":
-  version: 4.0.3
-  resolution: "@xstate/tools-shared@npm:4.0.3"
+"@xstate/tools-shared@npm:^4.0.5":
+  version: 4.0.5
+  resolution: "@xstate/tools-shared@npm:4.0.5"
   dependencies:
-    "@statelyai/sky": "npm:0.0.4"
-    "@xstate/machine-extractor": "npm:^0.12.1"
+    "@xstate/machine-extractor": "npm:^0.13.0"
   peerDependencies:
     prettier: ^2
     xstate: ^4
-  checksum: 675503a1267e6bfa99e2abb54ef142e86c5f11cb685135390873e9ae753173ac146e6bf48c2e044b6f14fa44f4b3272fb888f10db0d9b427b37b8a932f675e34
+  checksum: 9af83b255b586c4ee9e9131c41bcdb37377fbd9de2060d4782c0b8f96a89754e86d9101462d4b4dece6b2c82b8df9bb8d6f4c317fed5530d01ab1ceb593a36a1
   languageName: node
   linkType: hard
 
@@ -2230,15 +2218,6 @@ __metadata:
   version: 2.0.0
   resolution: "convert-source-map@npm:2.0.0"
   checksum: 8f2f7a27a1a011cc6cc88cc4da2d7d0cfa5ee0369508baae3d98c260bb3ac520691464e5bbe4ae7cdf09860c1d69ecc6f70c63c6e7c7f7e3f18ec08484dc7d9b
-  languageName: node
-  linkType: hard
-
-"copy-anything@npm:^3.0.2":
-  version: 3.0.5
-  resolution: "copy-anything@npm:3.0.5"
-  dependencies:
-    is-what: "npm:^4.1.8"
-  checksum: 01eadd500c7e1db71d32d95a3bfaaedcb839ef891c741f6305ab0461398056133de08f2d1bf4c392b364e7bdb7ce498513896e137a7a183ac2516b065c28a4fe
   languageName: node
   linkType: hard
 
@@ -3654,13 +3633,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-what@npm:^4.1.8":
-  version: 4.1.15
-  resolution: "is-what@npm:4.1.15"
-  checksum: 7d9bab85977d8352684a7b046cfee8d68e23029f0d6d5b4b7f366cf6c83dee39903e412b655ebf155dc9706d4d1bce02f6351f75a1426381961b4155394082db
-  languageName: node
-  linkType: hard
-
 "is-windows@npm:^1.0.0":
   version: 1.0.2
   resolution: "is-windows@npm:1.0.2"
@@ -3735,7 +3707,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"js-tokens@npm:^3.0.0 || ^4.0.0, js-tokens@npm:^4.0.0":
+"js-tokens@npm:^4.0.0":
   version: 4.0.0
   resolution: "js-tokens@npm:4.0.0"
   checksum: e248708d377aa058eacf2037b07ded847790e6de892bbad3dac0abba2e759cb9f121b00099a65195616badcb6eca8d14d975cb3e89eb1cfda644756402c8aeed
@@ -3887,17 +3859,6 @@ __metadata:
   version: 4.17.21
   resolution: "lodash@npm:4.17.21"
   checksum: d8cbea072bb08655bb4c989da418994b073a608dffa608b09ac04b43a791b12aeae7cd7ad919aa4c925f33b48490b5cfe6c1f71d827956071dae2e7bb3a6b74c
-  languageName: node
-  linkType: hard
-
-"loose-envify@npm:^1.1.0":
-  version: 1.4.0
-  resolution: "loose-envify@npm:1.4.0"
-  dependencies:
-    js-tokens: "npm:^3.0.0 || ^4.0.0"
-  bin:
-    loose-envify: cli.js
-  checksum: 655d110220983c1a4b9c0c679a2e8016d4b67f6e9c7b5435ff5979ecdb20d0813f4dec0a08674fcbdd4846a3f07edbb50a36811fd37930b94aaa0d9daceb017e
   languageName: node
   linkType: hard
 
@@ -4568,15 +4529,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"partysocket@npm:0.0.9":
-  version: 0.0.9
-  resolution: "partysocket@npm:0.0.9"
-  dependencies:
-    react: "npm:^18.2.0"
-  checksum: 551be33faabc53dd6394f7fe0a3f62ccd72a25e818e73e34416da886e442838eae11511c85196e06ecf9a6d8f7a3a7109739a1b86819846a0f14d53ee1c38aba
-  languageName: node
-  linkType: hard
-
 "path-exists@npm:^4.0.0":
   version: 4.0.0
   resolution: "path-exists@npm:4.0.0"
@@ -4798,15 +4750,6 @@ __metadata:
   version: 18.2.0
   resolution: "react-is@npm:18.2.0"
   checksum: 6eb5e4b28028c23e2bfcf73371e72cd4162e4ac7ab445ddae2afe24e347a37d6dc22fae6e1748632cd43c6d4f9b8f86dcf26bf9275e1874f436d129952528ae0
-  languageName: node
-  linkType: hard
-
-"react@npm:^18.2.0":
-  version: 18.2.0
-  resolution: "react@npm:18.2.0"
-  dependencies:
-    loose-envify: "npm:^1.1.0"
-  checksum: b562d9b569b0cb315e44b48099f7712283d93df36b19a39a67c254c6686479d3980b7f013dc931f4a5a3ae7645eae6386b4aa5eea933baa54ecd0f9acb0902b8
   languageName: node
   linkType: hard
 
@@ -5471,15 +5414,6 @@ __metadata:
   dependencies:
     acorn: "npm:^8.8.2"
   checksum: 287ccf57f139f58908324a9115b9dd6a6f6876f16543ecc3eb9b646e67f86c633634c842a5319b8b7e15ee7169dfb4ebcfd91601085d038322f5b1146fe90eaf
-  languageName: node
-  linkType: hard
-
-"superjson@npm:1.13.1":
-  version: 1.13.1
-  resolution: "superjson@npm:1.13.1"
-  dependencies:
-    copy-anything: "npm:^3.0.2"
-  checksum: 596edde148df1f05f09236b0715ad97bcf803514e65a271d4f945557e35652b838e65c96520946b7ee7a62cb96f26a565749dc14897de2bcf9ac12371f1a4f8c
   languageName: node
   linkType: hard
 
@@ -6168,13 +6102,6 @@ __metadata:
   version: 5.0.0-beta.34
   resolution: "xstate@npm:5.0.0-beta.34"
   checksum: 88e5635bf788c3590fa535fc73a8b8b56183bd29e6627aad992df31e756c660f8f05e7fcfeec6255dda1a2f79bd18ce1e926c8526556b143421f191d1c6b36e7
-  languageName: node
-  linkType: hard
-
-"xstate@npm:5.0.0-beta.33":
-  version: 5.0.0-beta.33
-  resolution: "xstate@npm:5.0.0-beta.33"
-  checksum: e5b1471e331ff95eb96d83d798c86f4116b6524425e499a380e241d5a3e7d0560f729d946b05ab45fc46db9a8f88df48a680836e497357bbc3cf6379fc556b64
   languageName: node
   linkType: hard
 
