@@ -1,7 +1,6 @@
 import * as path from 'node:path';
 import dedent from 'string-dedent';
 import { type TSConfig } from 'pkg-types';
-import * as semver from 'semver';
 
 import { type Flags } from './cli';
 import { type Manifest } from './manifest';
@@ -103,6 +102,10 @@ export function parseConfig({
   }
   if (flags.sourcemap === false) {
     sourcemap = false;
+  }
+
+  if (flags.platform) {
+    reporter.warn(`${formatUtils.literal('--platform')} flag is deprecated, and will be removed next major update.`);
   }
 
   let platform: Entry['platform'] = 'neutral';

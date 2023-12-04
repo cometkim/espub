@@ -27,7 +27,7 @@ Options
   --out-dir            Specify the path to resolve source entry (default: ./lib)
                        This also can be configured by tsconfig.json
 
-  --platform           Specify bundle target platform (default: "netural")
+  --platform           DEPRECATED. Specify bundle target platform (default: "netural")
                        One of "netural", "browser", "node" is allowed
 
   --standalone         Embed external dependencies into the bundle (default: false)
