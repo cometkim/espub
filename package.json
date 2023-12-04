@@ -27,7 +27,8 @@
     "bin.mjs"
   ],
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=18.0.0",
+    "deno": ">=1.9.0"
   },
   "resolutions": {
     "vite": "^5.0.0"

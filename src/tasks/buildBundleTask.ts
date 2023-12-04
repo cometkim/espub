@@ -170,6 +170,7 @@ async function buildBundleGroup({
     };
 
     if (options.platform === 'deno') {
+      esbuildOptions.target = ['deno1.9'];
       esbuildOptions.platform = 'neutral';
     } else {
       esbuildOptions.platform = options.platform;
