@@ -73,7 +73,8 @@ export function loadTargets(options?: LoadTargetOptions): string[] {
       targets.push('node' + version.format());
     }
   } else {
-    targets.push('node14');
+    // latest officially supported version
+    targets.push('node18');
   }
 
   if (options?.manifest?.engines?.deno) {
