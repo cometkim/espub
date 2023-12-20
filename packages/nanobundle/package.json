@@ -1,0 +1,69 @@
+{
+  "name": "nanobundle",
+  "version": "2.0.0",
+  "type": "module",
+  "license": "MIT",
+  "bin": "./bin.min.mjs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cometkim/espub.git",
+    "directory": "packages/nanobundle"
+  },
+  "bugs": {
+    "url": "https://github.com/cometkim/espub"
+  },
+  "author": {
+    "name": "Hyeseong Kim",
+    "email": "hey@hyeseong.kim"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "prepack": "yarn build",
+    "build": "node build.mjs",
+    "build:self": "node bin.min.mjs build --platform=node",
+    "type-check": "tsc --noEmit --skipLibCheck",
+    "test": "vitest"
+  },
+  "files": [
+    "bin.mjs"
+  ],
+  "engines": {
+    "node": ">=18.0.0",
+    "deno": ">=1.9.0"
+  },
+  "resolutions": {
+    "vite": "^5.0.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "peerDependenciesMeta": {
+    "typescript": {
+      "optional": true
+    }
+  },
+  "dependencies": {
+    "@cometjs/core": "^2.1.0",
+    "browserslist": "^4.22.2",
+    "esbuild": "^0.19.0",
+    "kleur": "^4.1.5",
+    "meow": "^12.0.0",
+    "pretty-bytes": "^6.0.0",
+    "semver": "^7.3.8",
+    "string-dedent": "^3.0.1",
+    "tsconfck": "^3.0.0",
+    "xstate": "^4.35.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "@types/semver": "^7.3.13",
+    "@vitest/coverage-v8": "^0.34.6",
+    "@xstate/cli": "^0.5.0",
+    "pkg-types": "^1.0.1",
+    "typescript": "^5.0.0",
+    "vitest": "^0.34.6"
+  },
+  "packageManager": "yarn@4.0.2"
+}

@@ -1,4 +1,2 @@
 .yarn/**          linguist-vendored
 .yarn/releases/*  binary linguist-vendored
-
-*.typegen.ts      linguist-generated
