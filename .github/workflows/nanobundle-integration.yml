@@ -45,7 +45,7 @@ jobs:
         run: yarn install --immutable
 
       - name: Execute Tests
-        run: yarn workspace test run --coverage
+        run: yarn workspace nanobundle test run --coverage
 
       - uses: codecov/codecov-action@v3
         with:
