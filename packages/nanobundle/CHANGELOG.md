@@ -1,5 +1,11 @@
 # nanobundle
 
+## 2.0.1
+
+### Patch Changes
+
+- c5855c7: Update package info
+
 ## 2.0.0
 
 ### Major Changes
