@@ -54,7 +54,7 @@
     "semver": "^7.3.8",
     "string-dedent": "^3.0.1",
     "tsconfck": "^3.0.0",
-    "xstate": "^4.35.0"
+    "xstate": "^5.0.0"
   },
   "devDependencies": {
     "@types/node": "^18.0.0",
