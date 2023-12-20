@@ -1,4 +1,4 @@
-name: Integration
+name: "[nanobundle] Integration"
 
 on:
   pull_request:
@@ -26,7 +26,7 @@ jobs:
         run: yarn install --immutable
 
       - name: Type Check
-        run: yarn type-check
+        run: yarn workspace nanobundle type-check
 
   test:
     name: Running unit tests
@@ -45,6 +45,8 @@ jobs:
         run: yarn install --immutable
 
       - name: Execute Tests
-        run: yarn test run --coverage
+        run: yarn workspace nanobundle test run --coverage
 
       - uses: codecov/codecov-action@v3
+        with:
+          directory: packages/nanobundle

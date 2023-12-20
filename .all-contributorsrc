@@ -1,10 +1,11 @@
 {
-  "projectName": "nanobundle",
+  "projectName": "espub",
   "projectOwner": "cometkim",
   "repoType": "github",
   "repoHost": "https://github.com",
   "files": [
-    "README.md"
+    "README.md",
+    "packages/nanobundle/README.md"
   ],
   "imageSize": 100,
   "commit": true,
