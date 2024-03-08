@@ -5292,8 +5292,8 @@ __metadata:
   linkType: hard
 
 "tsconfck@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "tsconfck@npm:3.0.0"
+  version: 3.0.3
+  resolution: "tsconfck@npm:3.0.3"
   peerDependencies:
     typescript: ^5.0.0
   peerDependenciesMeta:
@@ -5301,7 +5301,7 @@ __metadata:
       optional: true
   bin:
     tsconfck: bin/tsconfck.js
-  checksum: 3614f52675b6c279c6e3d72f4dfdc8bb80c7b051e6d3227bcc67c6af9e8a4449a3eee9c6cf92b6720906bb32df03bc85830786fc7cf9ed3a9a98edb21b2ccc90
+  checksum: d45009230c4caa5fc765bdded96f3b8703a7cdd44a1d63024914b0fb1c4dabf9e94d28cc9f9edccaef9baa7b99adc963502d34943d82fcb07b92e1161ee03c56
   languageName: node
   linkType: hard
 
