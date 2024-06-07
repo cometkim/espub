@@ -47,6 +47,6 @@ jobs:
       - name: Execute Tests
         run: yarn workspace nanobundle test run --coverage
 
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v4
         with:
           directory: packages/nanobundle
