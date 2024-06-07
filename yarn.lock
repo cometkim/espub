@@ -1394,12 +1394,12 @@ __metadata:
   linkType: hard
 
 "@xstate/cli@npm:^0.5.0":
-  version: 0.5.11
-  resolution: "@xstate/cli@npm:0.5.11"
+  version: 0.5.17
+  resolution: "@xstate/cli@npm:0.5.17"
   dependencies:
     "@babel/core": "npm:^7.21.4"
-    "@xstate/machine-extractor": "npm:^0.13.0"
-    "@xstate/tools-shared": "npm:^4.0.5"
+    "@xstate/machine-extractor": "npm:^0.16.0"
+    "@xstate/tools-shared": "npm:^4.1.0"
     chokidar: "npm:^3.5.3"
     commander: "npm:^8.0.0"
     dotenv: "npm:^16.0.3"
@@ -1409,13 +1409,13 @@ __metadata:
     xstate-beta: "npm:xstate@beta"
   bin:
     xstate: bin/bin.js
-  checksum: 02bf9f35661a2b8e93d3618ac1e44c07442e0453861800340c814caee03ce818d0a86e27d0682c6acbeca23d2e7c882713cfadc254c7f7e080c912dd81fe1373
+  checksum: 043ba57afa76c653986d3f7f9109a4b5ff72d3fd672917a5fcd1661a948bf1d1b6bcc539e79c462c8b5b02038bd6de378020137507a68c0f4fd21415cc208130
   languageName: node
   linkType: hard
 
-"@xstate/machine-extractor@npm:^0.13.0":
-  version: 0.13.0
-  resolution: "@xstate/machine-extractor@npm:0.13.0"
+"@xstate/machine-extractor@npm:^0.16.0":
+  version: 0.16.0
+  resolution: "@xstate/machine-extractor@npm:0.16.0"
   dependencies:
     "@babel/parser": "npm:^7.21.4"
     "@babel/traverse": "npm:^7.21.4"
@@ -1423,19 +1423,19 @@ __metadata:
     recast: "npm:^0.23.1"
   peerDependencies:
     xstate: ^4
-  checksum: 449cd18e42afccfd7e927683190757b61dd7a74b5ec2a51c786698203370a8348c7b497d6d3b4666ec1a949016792e124d22a65c398ff0a011e82c11b2890453
+  checksum: 0f9a617fda3da7c1e568c381759d4b46999e8967a2b721e53522af2dc653849dea7ce36f9df50ab13afdfe17e5c62b8a61490190c35b1c61683be8a8a4f58793
   languageName: node
   linkType: hard
 
-"@xstate/tools-shared@npm:^4.0.5":
-  version: 4.0.5
-  resolution: "@xstate/tools-shared@npm:4.0.5"
+"@xstate/tools-shared@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "@xstate/tools-shared@npm:4.1.0"
   dependencies:
-    "@xstate/machine-extractor": "npm:^0.13.0"
+    "@xstate/machine-extractor": "npm:^0.16.0"
   peerDependencies:
     prettier: ^2
     xstate: ^4
-  checksum: 9af83b255b586c4ee9e9131c41bcdb37377fbd9de2060d4782c0b8f96a89754e86d9101462d4b4dece6b2c82b8df9bb8d6f4c317fed5530d01ab1ceb593a36a1
+  checksum: af5d29fe22506b33a26300aa01fef215b3dd3498106a5825c7b04370cdcbfcb7aa5d882393836ed0bd9b61d027ec6b528ce9bc7ad47859ebefb56fe1867cf842
   languageName: node
   linkType: hard
 
