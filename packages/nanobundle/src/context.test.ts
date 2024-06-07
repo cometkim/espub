@@ -231,9 +231,9 @@ describe('parseConfig', () => {
         targets: [
           'chrome96',
           'firefox115',
-          'edge118',
+          'edge124',
           'ios15.6',
-          'safari15.6',
+          'safari17.4',
           'node16.0.0',
           'deno1.9',
         ],
