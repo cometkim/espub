@@ -1,6 +1,10 @@
 #!/usr/bin/env node
 
-import { parse as parseTsConfig } from 'tsconfck';
+import {
+  parse as parseTsConfig,
+  TSConfckParseError,
+  type TSConfckParseResult,
+} from 'tsconfck';
 import dedent from 'string-dedent';
 
 import { cli } from './cli';
@@ -32,20 +36,19 @@ try {
     const manifest = await loadManifest({ basePath: flags.cwd });
     reporter.debug('loaded manifest %o', manifest);
 
-    const tsconfigResult = await parseTsConfig(flags.tsconfig);
-    const tsconfigPath = (
-      tsconfigResult.tsconfigFile !== 'no_tsconfig_file_found'
-        ? tsconfigResult.tsconfigFile
-        : undefined
-    );
+    let tsconfigResult: TSConfckParseResult | undefined;
+    try {
+      tsconfigResult = await parseTsConfig(flags.tsconfig);
+    } catch (err) {
+      if (err instanceof TSConfckParseError) {
+        throw err;
+      }
+    }
+    const tsconfigPath = tsconfigResult?.tsconfigFile;
     if (tsconfigPath) {
       reporter.debug(`loaded tsconfig from ${tsconfigPath}`);
     }
-    const tsconfig = (
-      tsconfigResult.tsconfigFile !== 'no_tsconfig_file_found'
-        ? tsconfigResult.tsconfig
-        : undefined
-    );
+    const tsconfig = tsconfigResult?.tsconfig;
     if (tsconfig) {
       reporter.debug('loaded tsconfig %o', tsconfig);
     }
@@ -109,9 +112,9 @@ try {
   }
 } catch (error) {
   if (error instanceof NanobundleError) {
-    if (error.message) {
-      reporter.error(error.message);
-    }
+    reporter.error(error.message);
+  } else if (error instanceof TSConfckParseError) {
+    reporter.error(error.message);
   } else {
     reporter.captureException(error);
   }
