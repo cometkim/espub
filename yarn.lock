@@ -4117,7 +4117,7 @@ __metadata:
     tsconfck: "npm:^3.0.0"
     typescript: "npm:^5.0.0"
     vitest: "npm:^1.0.0"
-    xstate: "npm:^4.35.0"
+    xstate: "npm:^5.0.0"
   peerDependencies:
     typescript: ^5.0.0
   peerDependenciesMeta:
@@ -6005,10 +6005,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"xstate@npm:^4.33.4, xstate@npm:^4.35.0":
+"xstate@npm:^4.33.4":
   version: 4.38.3
   resolution: "xstate@npm:4.38.3"
   checksum: 10c0/8a2063743517390107275113bca0e757dba99102e7d57d40cf656b5cc03a6f2c5e10fbf3752294d9d29fbe1d8757bb9a54f54c934a22f205a237956dd10dcd0f
+  languageName: node
+  linkType: hard
+
+"xstate@npm:^5.0.0":
+  version: 5.13.1
+  resolution: "xstate@npm:5.13.1"
+  checksum: 10c0/aee7fb6940c6198c13ead0090717aa78fb79baa4feb293c0a10b368c04a7128428e7702e2beabea44f4438b51bb65cefc9047b60c288a85de8b9761ef2d68726
   languageName: node
   linkType: hard
 
