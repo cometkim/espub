@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`parseConfig > flags > rootDir=outDir is not allowed without TypeScript 1`] = `
-"\\"rootDir\\" (.) and \\"outDir\\" (.) are conflict!
+[NanobundleConfigError: "rootDir" (.) and "outDir" (.) are conflict!
 
-Please specify different directory for one of them."
+Please specify different directory for one of them.]
 `;
