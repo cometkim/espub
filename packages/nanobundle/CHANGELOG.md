@@ -1,5 +1,17 @@
 # nanobundle
 
+## 2.1.0
+
+### Minor Changes
+
+- d32b8a3: Upgrade esbulid to ^0.21.4
+- 2b3f3ee: Update browserslist, `default` query will be affected
+
+### Patch Changes
+
+- c5855c7: Update package info
+- 6f44020: Fix fsconfck loading behavior
+
 ## 2.0.0
 
 ### Major Changes
