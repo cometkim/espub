@@ -59,11 +59,11 @@
   "devDependencies": {
     "@types/node": "^18.0.0",
     "@types/semver": "^7.3.13",
-    "@vitest/coverage-v8": "^1.0.0",
+    "@vitest/coverage-v8": "^2.0.0",
     "@xstate/cli": "^0.5.0",
     "pkg-types": "^1.0.1",
     "typescript": "^5.0.0",
-    "vitest": "^1.6.0"
+    "vitest": "^2.0.0"
   },
   "packageManager": "yarn@4.3.0"
 }
