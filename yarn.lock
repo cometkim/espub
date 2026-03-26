@@ -4957,9 +4957,9 @@ __metadata:
   linkType: hard
 
 "string-dedent@npm:^3.0.1":
-  version: 3.0.1
-  resolution: "string-dedent@npm:3.0.1"
-  checksum: 10c0/2c4fe9ab339c7b0ad613c8850bb139f9efb30cbc03c8214ae25453a8ebc328abb9530a718a2bf971b88749a25aef9dc9ae0463b712b7ac354b0bbd5e5986472c
+  version: 3.0.2
+  resolution: "string-dedent@npm:3.0.2"
+  checksum: 10c0/86464d5e8b6cd09811fd70f60d64d805b02f88cdc8540c1b6385e51a369b45d369931b52aa14eb2ce5308fa1ce1143b366b1c1fc79728bfe14d2211ba62c6d4c
   languageName: node
   linkType: hard
 
